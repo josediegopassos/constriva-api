@@ -1,0 +1,15 @@
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.csproj.AssemblyReference.cache
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.AssemblyInfoInputs.cache
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.AssemblyInfo.cs
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.csproj.CoreCompileInputs.cache
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\bin\Debug\net8.0\Constriva.Application.deps.json
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\bin\Debug\net8.0\Constriva.Application.dll
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\bin\Debug\net8.0\Constriva.Application.pdb
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\bin\Debug\net8.0\Constriva.Domain.dll
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\bin\Debug\net8.0\Constriva.Domain.pdb
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriv.62B545C3.Up2Date
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.dll
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\refint\Constriva.Application.dll
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\Constriva.Application.pdb
+C:\Projetos\Capital\Constriva\backend\src\Constriva.Application\obj\Debug\net8.0\ref\Constriva.Application.dll

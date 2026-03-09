@@ -1,0 +1,1 @@
+// Moved to CreateUsuarioHandlerTests.cs, CreateUsuarioTenantHandlerTests.cs, ResetSenhaHandlerTests.cs, UpdateUsuarioHandlerTests.cs, AtivarDesativarUsuarioHandlerTests.cs, CreateUsuarioValidatorTests.cs

@@ -1,0 +1,16 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+WORKDIR /app
+
+# Variáveis para hot reload via dotnet watch
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+ENV DOTNET_WATCH_RESTART_ON_RUDE_EDIT=1
+ENV ASPNETCORE_ENVIRONMENT=Development
+
+EXPOSE 5000
+
+# O código-fonte é montado via volume no docker-compose.dev.yml.
+# Este entrypoint restaura dependências e inicia com watch a cada subida.
+ENTRYPOINT ["dotnet", "watch", "run", \
+  "--project", "src/Constriva.API/Constriva.API.csproj", \
+  "--urls", "http://+:5000", \
+  "--no-launch-profile"]
