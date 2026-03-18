@@ -9,7 +9,8 @@ namespace Constriva.Application.Features.Obras.Commands;
 
 public record CreateFaseCommand(
     Guid ObraId, Guid EmpresaId, string Nome, int Ordem,
-    DateTime Inicio, DateTime Fim, decimal ValorPrevisto, Guid? FasePaiId = null)
+    DateTime Inicio, DateTime Fim, decimal ValorPrevisto,
+    string? Descricao = null, string? Cor = null, Guid? FasePaiId = null)
     : IRequest<FaseObraDto>, ITenantRequest;
 
 public class CreateFaseCommandHandler : IRequestHandler<CreateFaseCommand, FaseObraDto>
@@ -28,7 +29,7 @@ public class CreateFaseCommandHandler : IRequestHandler<CreateFaseCommand, FaseO
         var fase = new FaseObra
         {
             ObraId = r.ObraId, EmpresaId = r.EmpresaId,
-            Nome = r.Nome, Ordem = r.Ordem,
+            Nome = r.Nome, Descricao = r.Descricao, Ordem = r.Ordem, Cor = r.Cor,
             DataInicioPrevista = r.Inicio, DataFimPrevista = r.Fim,
             ValorPrevisto = r.ValorPrevisto, FasePaiId = r.FasePaiId
         };
@@ -36,8 +37,13 @@ public class CreateFaseCommandHandler : IRequestHandler<CreateFaseCommand, FaseO
         await _faseRepo.AddAsync(fase, ct);
         await _uow.SaveChangesAsync(ct);
 
-        return new FaseObraDto(fase.Id, fase.Nome, fase.Ordem, 0,
-            fase.DataInicioPrevista, fase.DataFimPrevista, fase.ValorPrevisto, fase.FasePaiId);
+        return new FaseObraDto(
+            fase.Id, fase.Nome, fase.Descricao, fase.Ordem, fase.Status,
+            fase.PercentualConcluido,
+            fase.DataInicioPrevista, fase.DataFimPrevista,
+            fase.DataInicioReal, fase.DataFimReal,
+            fase.ValorPrevisto, fase.ValorRealizado,
+            fase.FasePaiId, fase.Cor);
     }
 }
 

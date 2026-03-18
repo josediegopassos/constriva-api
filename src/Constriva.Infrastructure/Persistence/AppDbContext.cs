@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Constriva.Domain.Entities.Clientes;
 using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Entities.Tenant;
 using Constriva.Domain.Entities.Obras;
@@ -38,6 +39,9 @@ public class AppDbContext : DbContext
     public DbSet<UsuarioPermissao> UsuariosPermissoes => Set<UsuarioPermissao>();
     public DbSet<UsuarioObra> UsuariosObras => Set<UsuarioObra>();
     public DbSet<LogAcesso> LogsAcesso => Set<LogAcesso>();
+
+    // ── Clientes ─────────────────────────────────────────────────────────
+    public DbSet<Cliente> Clientes => Set<Cliente>();
 
     // ── Obras ────────────────────────────────────────────────────────────
     public DbSet<Obra> Obras => Set<Obra>();

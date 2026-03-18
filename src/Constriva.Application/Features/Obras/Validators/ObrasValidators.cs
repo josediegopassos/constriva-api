@@ -32,6 +32,14 @@ public class UpdateObraCommandValidator : AbstractValidator<UpdateObraCommand>
         RuleFor(x => x.Dto.DataFimPrevista)
             .GreaterThan(x => x.Dto.DataInicioPrevista)
             .When(x => x.Dto.DataFimPrevista.HasValue && x.Dto.DataInicioPrevista.HasValue);
+        RuleFor(x => x.Dto.Estado).Length(2).Matches("^[A-Z]{2}$")
+            .WithMessage("Estado deve ser a sigla com 2 letras maiúsculas.")
+            .When(x => x.Dto.Estado != null);
+        RuleFor(x => x.Dto.Cep).Matches(@"^\d{5}-?\d{3}$")
+            .WithMessage("CEP inválido.")
+            .When(x => x.Dto.Cep != null);
+        RuleFor(x => x.Dto.Cidade).MaximumLength(100).When(x => x.Dto.Cidade != null);
+        RuleFor(x => x.Dto.Logradouro).MaximumLength(300).When(x => x.Dto.Logradouro != null);
     }
 }
 

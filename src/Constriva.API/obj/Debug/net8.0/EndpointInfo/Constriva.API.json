@@ -114,6 +114,219 @@
         }
       }
     },
+    "/api/v1/clientes": {
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusClienteEnum"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Constriva.Application.Common.Interfaces.PaginatedResult`1[[Constriva.Application.Features.Clientes.DTOs.ClienteResumoDto, Constriva.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Clientes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.CreateClienteDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.CreateClienteDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.CreateClienteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.ClienteResumoDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clientes/{id}": {
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.ClienteDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.UpdateClienteDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.UpdateClienteDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.UpdateClienteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/clientes/{id}/obras": {
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Constriva.Application.Features.Obras.DTOs.ObraResumoDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/compras/pedidos": {
       "get": {
         "tags": [
@@ -5681,6 +5894,14 @@
             "type": "number",
             "format": "double"
           },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "cor": {
+            "type": "string",
+            "nullable": true
+          },
           "fasePaiId": {
             "type": "string",
             "format": "uuid",
@@ -5731,6 +5952,44 @@
         "properties": {
           "status": {
             "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusPedidoCompraEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Constriva.Application.Common.Interfaces.PaginatedResult`1[[Constriva.Application.Features.Clientes.DTOs.ClienteResumoDto, Constriva.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Constriva.Application.Features.Clientes.DTOs.ClienteResumoDto"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "hasNext": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "hasPrevious": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -6355,6 +6614,9 @@
           },
           "relatorios": {
             "type": "boolean"
+          },
+          "clientes": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -6436,6 +6698,303 @@
             "items": {
               "$ref": "#/components/schemas/Constriva.Application.Features.Auth.DTOs.PermissaoDto"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Constriva.Application.Features.Clientes.DTOs.ClienteDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "codigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoPessoa": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.TipoPessoaEnum"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomeFantasia": {
+            "type": "string",
+            "nullable": true
+          },
+          "documento": {
+            "type": "string",
+            "nullable": true
+          },
+          "inscricaoEstadual": {
+            "type": "string",
+            "nullable": true
+          },
+          "inscricaoMunicipal": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true
+          },
+          "celular": {
+            "type": "string",
+            "nullable": true
+          },
+          "site": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusClienteEnum"
+          },
+          "observacoes": {
+            "type": "string",
+            "nullable": true
+          },
+          "logradouro": {
+            "type": "string",
+            "nullable": true
+          },
+          "numero": {
+            "type": "string",
+            "nullable": true
+          },
+          "complemento": {
+            "type": "string",
+            "nullable": true
+          },
+          "bairro": {
+            "type": "string",
+            "nullable": true
+          },
+          "cidade": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          },
+          "cep": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Constriva.Application.Features.Clientes.DTOs.ClienteResumoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "codigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoPessoa": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.TipoPessoaEnum"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomeFantasia": {
+            "type": "string",
+            "nullable": true
+          },
+          "documento": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusClienteEnum"
+          },
+          "cidade": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Constriva.Application.Features.Clientes.DTOs.CreateClienteDto": {
+        "type": "object",
+        "properties": {
+          "tipoPessoa": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.TipoPessoaEnum"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomeFantasia": {
+            "type": "string",
+            "nullable": true
+          },
+          "documento": {
+            "type": "string",
+            "nullable": true
+          },
+          "inscricaoEstadual": {
+            "type": "string",
+            "nullable": true
+          },
+          "inscricaoMunicipal": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true
+          },
+          "celular": {
+            "type": "string",
+            "nullable": true
+          },
+          "site": {
+            "type": "string",
+            "nullable": true
+          },
+          "observacoes": {
+            "type": "string",
+            "nullable": true
+          },
+          "logradouro": {
+            "type": "string",
+            "nullable": true
+          },
+          "numero": {
+            "type": "string",
+            "nullable": true
+          },
+          "complemento": {
+            "type": "string",
+            "nullable": true
+          },
+          "bairro": {
+            "type": "string",
+            "nullable": true
+          },
+          "cidade": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          },
+          "cep": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Constriva.Application.Features.Clientes.DTOs.UpdateClienteDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoPessoa": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.TipoPessoaEnum"
+          },
+          "nomeFantasia": {
+            "type": "string",
+            "nullable": true
+          },
+          "documento": {
+            "type": "string",
+            "nullable": true
+          },
+          "inscricaoEstadual": {
+            "type": "string",
+            "nullable": true
+          },
+          "inscricaoMunicipal": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true
+          },
+          "celular": {
+            "type": "string",
+            "nullable": true
+          },
+          "site": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusClienteEnum"
+          },
+          "observacoes": {
+            "type": "string",
+            "nullable": true
+          },
+          "logradouro": {
+            "type": "string",
+            "nullable": true
+          },
+          "numero": {
+            "type": "string",
+            "nullable": true
+          },
+          "complemento": {
+            "type": "string",
+            "nullable": true
+          },
+          "bairro": {
+            "type": "string",
+            "nullable": true
+          },
+          "cidade": {
+            "type": "string",
+            "nullable": true
+          },
+          "estado": {
+            "type": "string",
+            "nullable": true
+          },
+          "cep": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -7482,6 +8041,9 @@
           },
           "relatorios": {
             "type": "boolean"
+          },
+          "clientes": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -7574,6 +8136,9 @@
             "type": "boolean"
           },
           "ged": {
+            "type": "boolean"
+          },
+          "clientes": {
             "type": "boolean"
           },
           "relatorios": {
@@ -8524,9 +9089,16 @@
             "type": "string",
             "nullable": true
           },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
           "ordem": {
             "type": "integer",
             "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusFaseEnum"
           },
           "percentualConcluido": {
             "type": "number",
@@ -8540,13 +9112,31 @@
             "type": "string",
             "format": "date-time"
           },
+          "dataInicioReal": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataFimReal": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "valorPrevisto": {
+            "type": "number",
+            "format": "double"
+          },
+          "valorRealizado": {
             "type": "number",
             "format": "double"
           },
           "fasePaiId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          },
+          "cor": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -8580,12 +9170,58 @@
           "status": {
             "$ref": "#/components/schemas/Constriva.Domain.Enums.StatusObraEnum"
           },
+          "clienteId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "nomeCliente": {
             "type": "string",
             "nullable": true
           },
           "responsavelTecnico": {
             "type": "string",
+            "nullable": true
+          },
+          "creaResponsavel": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroART": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroRRT": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroAlvara": {
+            "type": "string",
+            "nullable": true
+          },
+          "validadeAlvara": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "areaTotal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaConstruida": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "numeroAndares": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numeroUnidades": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "dataInicioPrevista": {
@@ -8650,6 +9286,16 @@
             "type": "string",
             "nullable": true
           },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "observacoes": {
             "type": "string",
             "nullable": true
@@ -8657,6 +9303,10 @@
           "fotoUrl": {
             "type": "string",
             "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
           "fases": {
             "type": "array",
@@ -8778,11 +9428,23 @@
           "tipo": {
             "$ref": "#/components/schemas/Constriva.Domain.Enums.TipoObraEnum"
           },
+          "tipoContrato": {
+            "$ref": "#/components/schemas/Constriva.Domain.Enums.TipoContratoObraEnum"
+          },
           "nomeCliente": {
             "type": "string",
             "nullable": true
           },
+          "clienteId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "responsavelTecnico": {
+            "type": "string",
+            "nullable": true
+          },
+          "creaResponsavel": {
             "type": "string",
             "nullable": true
           },
@@ -8792,6 +9454,73 @@
           },
           "observacoes": {
             "type": "string",
+            "nullable": true
+          },
+          "numeroART": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroRRT": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroAlvara": {
+            "type": "string",
+            "nullable": true
+          },
+          "validadeAlvara": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "areaTotal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaConstruida": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "numeroAndares": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numeroUnidades": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "valorContrato": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "valorOrcado": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "dataInicioPrevista": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataFimPrevista": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataInicioReal": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataFimReal": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "logradouro": {
@@ -8810,17 +9539,24 @@
             "type": "string",
             "nullable": true
           },
-          "dataInicioPrevista": {
+          "cidade": {
             "type": "string",
-            "format": "date-time",
             "nullable": true
           },
-          "dataFimPrevista": {
+          "estado": {
             "type": "string",
-            "format": "date-time",
             "nullable": true
           },
-          "valorContrato": {
+          "cep": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -11141,6 +11877,14 @@
         ],
         "type": "string"
       },
+      "Constriva.Domain.Enums.StatusClienteEnum": {
+        "enum": [
+          "Ativo",
+          "Inativo",
+          "Bloqueado"
+        ],
+        "type": "string"
+      },
       "Constriva.Domain.Enums.StatusContratoEnum": {
         "enum": [
           "Rascunho",
@@ -11176,6 +11920,16 @@
           "Suspensa",
           "Cancelada",
           "Trial"
+        ],
+        "type": "string"
+      },
+      "Constriva.Domain.Enums.StatusFaseEnum": {
+        "enum": [
+          "NaoIniciada",
+          "EmAndamento",
+          "Concluida",
+          "Atrasada",
+          "Cancelada"
         ],
         "type": "string"
       },
@@ -11373,6 +12127,13 @@
           "Manutencao",
           "Loteamento",
           "Mista"
+        ],
+        "type": "string"
+      },
+      "Constriva.Domain.Enums.TipoPessoaEnum": {
+        "enum": [
+          "PessoaFisica",
+          "PessoaJuridica"
         ],
         "type": "string"
       },

@@ -38,6 +38,6 @@ public class GetEmpresasHandler : IRequestHandler<GetEmpresasQuery, PaginatedRes
         e.Cidade, e.Estado,
         new(e.ModuloObras, e.ModuloEstoque, e.ModuloCronograma, e.ModuloOrcamento,
             e.ModuloCompras, e.ModuloQualidade, e.ModuloContratos, e.ModuloRH,
-            e.ModuloFinanceiro, e.ModuloSST, e.ModuloGED, e.ModuloRelatorios),
+            e.ModuloFinanceiro, e.ModuloSST, e.ModuloGED, e.ModuloRelatorios, e.ModuloClientes),
         totalUsuarios, totalObras, e.CreatedAt);
 }

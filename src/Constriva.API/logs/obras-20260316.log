@@ -1,0 +1,108 @@
+2026-03-16 20:07:20.100 -03:00 [INF] Request starting HTTP/2 OPTIONS https://localhost:54902/api/v1/obras/dashboard - null null
+2026-03-16 20:07:20.100 -03:00 [INF] Request starting HTTP/2 OPTIONS https://localhost:54902/api/v1/obras?page=1&pageSize=20 - null null
+2026-03-16 20:07:20.135 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.136 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.156 -03:00 [INF] HTTP OPTIONS /api/v1/obras/dashboard responded 204 in 24.9329 ms
+2026-03-16 20:07:20.166 -03:00 [INF] HTTP OPTIONS /api/v1/obras responded 204 in 35.1324 ms
+2026-03-16 20:07:20.190 -03:00 [INF] Request finished HTTP/2 OPTIONS https://localhost:54902/api/v1/obras?page=1&pageSize=20 - 204 null null 91.6383ms
+2026-03-16 20:07:20.192 -03:00 [INF] Request starting HTTP/2 GET https://localhost:54902/api/v1/obras/dashboard - null null
+2026-03-16 20:07:20.192 -03:00 [INF] Request starting HTTP/2 GET https://localhost:54902/api/v1/obras?page=1&pageSize=20 - null null
+2026-03-16 20:07:20.215 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.187 -03:00 [INF] Request finished HTTP/2 OPTIONS https://localhost:54902/api/v1/obras/dashboard - 204 null null 89.2591ms
+2026-03-16 20:07:20.221 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.234 -03:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '16/03/2026 02:48:43', Current time (UTC): '16/03/2026 23:07:20'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-16 20:07:20.235 -03:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '16/03/2026 02:48:43', Current time (UTC): '16/03/2026 23:07:20'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-16 20:07:20.248 -03:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '16/03/2026 02:48:43', Current time (UTC): '16/03/2026 23:07:20'.
+2026-03-16 20:07:20.250 -03:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '16/03/2026 02:48:43', Current time (UTC): '16/03/2026 23:07:20'.
+2026-03-16 20:07:20.259 -03:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-16 20:07:20.259 -03:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-16 20:07:20.268 -03:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-03-16 20:07:20.268 -03:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-03-16 20:07:20.274 -03:00 [INF] HTTP GET /api/v1/obras responded 401 in 53.7897 ms
+2026-03-16 20:07:20.272 -03:00 [INF] HTTP GET /api/v1/obras/dashboard responded 401 in 58.1354 ms
+2026-03-16 20:07:20.282 -03:00 [INF] Request finished HTTP/2 GET https://localhost:54902/api/v1/obras?page=1&pageSize=20 - 401 0 null 89.4693ms
+2026-03-16 20:07:20.284 -03:00 [INF] Request finished HTTP/2 GET https://localhost:54902/api/v1/obras/dashboard - 401 0 null 92.7431ms
+2026-03-16 20:07:20.507 -03:00 [INF] Request starting HTTP/2 OPTIONS https://localhost:54902/api/v1/auth/refresh - null null
+2026-03-16 20:07:20.516 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.519 -03:00 [INF] HTTP OPTIONS /api/v1/auth/refresh responded 204 in 2.8285 ms
+2026-03-16 20:07:20.526 -03:00 [INF] Request finished HTTP/2 OPTIONS https://localhost:54902/api/v1/auth/refresh - 204 null null 18.6676ms
+2026-03-16 20:07:20.528 -03:00 [INF] Request starting HTTP/2 POST https://localhost:54902/api/v1/auth/refresh - application/json 107
+2026-03-16 20:07:20.543 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.546 -03:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '16/03/2026 02:48:43', Current time (UTC): '16/03/2026 23:07:20'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-16 20:07:20.552 -03:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '16/03/2026 02:48:43', Current time (UTC): '16/03/2026 23:07:20'.
+2026-03-16 20:07:20.556 -03:00 [INF] Executing endpoint 'Constriva.API.Controllers.AuthController.Refresh (Constriva.API)'
+2026-03-16 20:07:20.562 -03:00 [INF] Route matched with {action = "Refresh", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Constriva.Application.Features.Auth.DTOs.AuthResponseDto]] Refresh(Constriva.Application.Features.Auth.Commands.RefreshTokenCommand, System.Threading.CancellationToken) on controller Constriva.API.Controllers.AuthController (Constriva.API).
+2026-03-16 20:07:20.575 -03:00 [INF] Handling RefreshTokenCommand
+2026-03-16 20:07:20.655 -03:00 [INF] Executed DbCommand (55ms) [Parameters=[@__refreshToken_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."Ativo", u."AvatarUrl", u."BloqueadoAte", u."Cargo", u."CreatedAt", u."CreatedBy", u."DeletedAt", u."DeletedBy", u."Email", u."EmailConfirmado", u."EmpresaId", u."Idioma", u."IsAdminEmpresa", u."IsDeleted", u."IsSuperAdmin", u."Nome", u."PasswordHash", u."Perfil", u."RefreshToken", u."RefreshTokenExpiry", u."Telefone", u."TentativasLogin", u."TimeZone", u."TokenConfirmacaoEmail", u."TokenRedefinicaoExpiry", u."TokenRedefinicaoSenha", u."UltimoAcesso", u."UpdatedAt", u."UpdatedBy"
+FROM "Usuarios" AS u
+WHERE NOT (u."IsDeleted") AND u."RefreshToken" = @__refreshToken_0
+LIMIT 1
+2026-03-16 20:07:20.678 -03:00 [INF] Executed DbCommand (5ms) [Parameters=[@__usuarioId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."CreatedBy", u."DeletedAt", u."DeletedBy", u."EmpresaId", u."IsDeleted", u."Modulo", u."PodeAdministrar", u."PodeAprovar", u."PodeCriar", u."PodeDeletar", u."PodeEditar", u."PodeExportar", u."PodeVisualizar", u."UpdatedAt", u."UpdatedBy", u."UsuarioId"
+FROM "UsuarioPermissoes" AS u
+WHERE NOT (u."IsDeleted") AND u."UsuarioId" = @__usuarioId_0
+2026-03-16 20:07:20.693 -03:00 [INF] Executed DbCommand (6ms) [Parameters=[@__id_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT e."Id", e."Bairro", e."Cep", e."Cidade", e."Cnpj", e."Complemento", e."ConfiguracoesJson", e."CreatedAt", e."CreatedBy", e."DataVencimento", e."DeletedAt", e."DeletedBy", e."Email", e."Estado", e."InscricaoEstadual", e."InscricaoMunicipal", e."IsDeleted", e."LogoUrl", e."Logradouro", e."MaxObras", e."MaxStorageMb", e."MaxUsuarios", e."ModuloClientes", e."ModuloCompras", e."ModuloContratos", e."ModuloCronograma", e."ModuloEstoque", e."ModuloFinanceiro", e."ModuloGED", e."ModuloObras", e."ModuloOrcamento", e."ModuloQualidade", e."ModuloRH", e."ModuloRelatorios", e."ModuloSST", e."NomeFantasia", e."Numero", e."Plano", e."PrimeiroAcesso", e."RazaoSocial", e."Site", e."Status", e."Telefone", e."UpdatedAt", e."UpdatedBy"
+FROM "Empresas" AS e
+WHERE NOT (e."IsDeleted") AND e."Id" = @__id_0
+LIMIT 1
+2026-03-16 20:07:20.749 -03:00 [INF] Executed DbCommand (17ms) [Parameters=[@p29='?' (DbType = Guid), @p0='?' (DbType = Boolean), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = DateTime), @p5='?' (DbType = Guid), @p6='?' (DbType = DateTime), @p7='?' (DbType = Guid), @p8='?', @p9='?' (DbType = Boolean), @p10='?' (DbType = Guid), @p11='?', @p12='?' (DbType = Boolean), @p13='?' (DbType = Boolean), @p14='?' (DbType = Boolean), @p15='?', @p16='?', @p17='?' (DbType = Int32), @p18='?', @p19='?' (DbType = DateTime), @p20='?', @p21='?' (DbType = Int32), @p22='?', @p23='?', @p24='?' (DbType = DateTime), @p25='?', @p26='?' (DbType = DateTime), @p27='?' (DbType = DateTime), @p28='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "Usuarios" SET "Ativo" = @p0, "AvatarUrl" = @p1, "BloqueadoAte" = @p2, "Cargo" = @p3, "CreatedAt" = @p4, "CreatedBy" = @p5, "DeletedAt" = @p6, "DeletedBy" = @p7, "Email" = @p8, "EmailConfirmado" = @p9, "EmpresaId" = @p10, "Idioma" = @p11, "IsAdminEmpresa" = @p12, "IsDeleted" = @p13, "IsSuperAdmin" = @p14, "Nome" = @p15, "PasswordHash" = @p16, "Perfil" = @p17, "RefreshToken" = @p18, "RefreshTokenExpiry" = @p19, "Telefone" = @p20, "TentativasLogin" = @p21, "TimeZone" = @p22, "TokenConfirmacaoEmail" = @p23, "TokenRedefinicaoExpiry" = @p24, "TokenRedefinicaoSenha" = @p25, "UltimoAcesso" = @p26, "UpdatedAt" = @p27, "UpdatedBy" = @p28
+WHERE "Id" = @p29;
+2026-03-16 20:07:20.758 -03:00 [INF] Executing OkObjectResult, writing value of type 'Constriva.Application.Features.Auth.DTOs.AuthResponseDto'.
+2026-03-16 20:07:20.763 -03:00 [INF] Executed action Constriva.API.Controllers.AuthController.Refresh (Constriva.API) in 195.7636ms
+2026-03-16 20:07:20.767 -03:00 [INF] Executed endpoint 'Constriva.API.Controllers.AuthController.Refresh (Constriva.API)'
+2026-03-16 20:07:20.770 -03:00 [INF] HTTP POST /api/v1/auth/refresh responded 200 in 227.3042 ms
+2026-03-16 20:07:20.777 -03:00 [INF] Request finished HTTP/2 POST https://localhost:54902/api/v1/auth/refresh - 200 null application/json; charset=utf-8 249.6355ms
+2026-03-16 20:07:20.801 -03:00 [INF] Request starting HTTP/2 GET https://localhost:54902/api/v1/obras/dashboard - null null
+2026-03-16 20:07:20.801 -03:00 [INF] Request starting HTTP/2 GET https://localhost:54902/api/v1/obras?page=1&pageSize=20 - null null
+2026-03-16 20:07:20.812 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.815 -03:00 [INF] CORS policy execution successful.
+2026-03-16 20:07:20.818 -03:00 [INF] Executing endpoint 'Constriva.API.Controllers.ObrasController.Dashboard (Constriva.API)'
+2026-03-16 20:07:20.823 -03:00 [INF] Executing endpoint 'Constriva.API.Controllers.ObrasController.GetAll (Constriva.API)'
+2026-03-16 20:07:20.825 -03:00 [INF] Route matched with {action = "Dashboard", controller = "Obras"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Constriva.Application.Features.Obras.DTOs.ObrasDashboardDto]] Dashboard(System.Threading.CancellationToken) on controller Constriva.API.Controllers.ObrasController (Constriva.API).
+2026-03-16 20:07:20.827 -03:00 [INF] Route matched with {action = "GetAll", controller = "Obras"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Constriva.Application.Common.Interfaces.PaginatedResult`1[Constriva.Application.Features.Obras.DTOs.ObraResumoDto]]] GetAll(Int32, Int32, System.String, System.Nullable`1[Constriva.Domain.Enums.StatusObraEnum], System.Nullable`1[Constriva.Domain.Enums.TipoObraEnum], System.Threading.CancellationToken) on controller Constriva.API.Controllers.ObrasController (Constriva.API).
+2026-03-16 20:07:20.850 -03:00 [INF] Handling GetObrasQuery
+2026-03-16 20:07:20.837 -03:00 [INF] Handling GetObrasDashboardQuery
+2026-03-16 20:07:20.868 -03:00 [INF] Executed DbCommand (6ms) [Parameters=[@__empresaId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Obras" AS o
+WHERE NOT (o."IsDeleted") AND o."EmpresaId" = @__empresaId_0 AND NOT (o."IsDeleted")
+2026-03-16 20:07:20.889 -03:00 [INF] Executed DbCommand (4ms) [Parameters=[@__empresaId_0='?' (DbType = Guid), @__p_2='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT o."Id", o."AreaConstruida", o."AreaTotal", o."Bairro", o."Cep", o."Cidade", o."ClienteId", o."Codigo", o."Complemento", o."CreaResponsavel", o."CreatedAt", o."CreatedBy", o."DataFimPrevista", o."DataFimReal", o."DataInicioPrevista", o."DataInicioReal", o."DeletedAt", o."DeletedBy", o."Descricao", o."EmpresaId", o."Estado", o."FotoUrl", o."IsDeleted", o."Latitude", o."Logradouro", o."Longitude", o."Nome", o."NomeCliente", o."Numero", o."NumeroART", o."NumeroAlvara", o."NumeroAndares", o."NumeroRRT", o."NumeroUnidades", o."Observacoes", o."PercentualConcluido", o."ResponsavelTecnico", o."Status", o."Tipo", o."TipoContrato", o."UpdatedAt", o."UpdatedBy", o."ValidadeAlvara", o."ValorContrato", o."ValorOrcado", o."ValorRealizado"
+FROM "Obras" AS o
+WHERE NOT (o."IsDeleted") AND o."EmpresaId" = @__empresaId_0 AND NOT (o."IsDeleted")
+ORDER BY o."CreatedAt" DESC
+LIMIT @__p_2 OFFSET @__p_1
+2026-03-16 20:07:20.902 -03:00 [INF] Executing OkObjectResult, writing value of type 'Constriva.Application.Common.Interfaces.PaginatedResult`1[[Constriva.Application.Features.Obras.DTOs.ObraResumoDto, Constriva.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-16 20:07:20.907 -03:00 [INF] Executed action Constriva.API.Controllers.ObrasController.GetAll (Constriva.API) in 57.1837ms
+2026-03-16 20:07:20.914 -03:00 [INF] Executed DbCommand (18ms) [Parameters=[@__empresaId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT o."Id", o."AreaConstruida", o."AreaTotal", o."Bairro", o."Cep", o."Cidade", o."ClienteId", o."Codigo", o."Complemento", o."CreaResponsavel", o."CreatedAt", o."CreatedBy", o."DataFimPrevista", o."DataFimReal", o."DataInicioPrevista", o."DataInicioReal", o."DeletedAt", o."DeletedBy", o."Descricao", o."EmpresaId", o."Estado", o."FotoUrl", o."IsDeleted", o."Latitude", o."Logradouro", o."Longitude", o."Nome", o."NomeCliente", o."Numero", o."NumeroART", o."NumeroAlvara", o."NumeroAndares", o."NumeroRRT", o."NumeroUnidades", o."Observacoes", o."PercentualConcluido", o."ResponsavelTecnico", o."Status", o."Tipo", o."TipoContrato", o."UpdatedAt", o."UpdatedBy", o."ValidadeAlvara", o."ValorContrato", o."ValorOrcado", o."ValorRealizado"
+FROM "Obras" AS o
+WHERE NOT (o."IsDeleted") AND o."EmpresaId" = @__empresaId_0
+2026-03-16 20:07:20.918 -03:00 [INF] Executed endpoint 'Constriva.API.Controllers.ObrasController.GetAll (Constriva.API)'
+2026-03-16 20:07:20.932 -03:00 [INF] HTTP GET /api/v1/obras responded 200 in 116.7339 ms
+2026-03-16 20:07:20.928 -03:00 [INF] Executing OkObjectResult, writing value of type 'Constriva.Application.Features.Obras.DTOs.ObrasDashboardDto'.
+2026-03-16 20:07:20.939 -03:00 [INF] Request finished HTTP/2 GET https://localhost:54902/api/v1/obras?page=1&pageSize=20 - 200 null application/json; charset=utf-8 138.6069ms
+2026-03-16 20:07:20.942 -03:00 [INF] Executed action Constriva.API.Controllers.ObrasController.Dashboard (Constriva.API) in 104.8364ms
+2026-03-16 20:07:20.954 -03:00 [INF] Executed endpoint 'Constriva.API.Controllers.ObrasController.Dashboard (Constriva.API)'
+2026-03-16 20:07:20.960 -03:00 [INF] HTTP GET /api/v1/obras/dashboard responded 200 in 147.9409 ms
+2026-03-16 20:07:20.965 -03:00 [INF] Request finished HTTP/2 GET https://localhost:54902/api/v1/obras/dashboard - 200 null application/json; charset=utf-8 164.594ms

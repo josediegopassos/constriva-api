@@ -10,6 +10,7 @@ using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Infrastructure.Identity;
 using Constriva.Infrastructure.Persistence;
 using Constriva.Infrastructure.Persistence.Repositories;
+using Constriva.Infrastructure.Persistence.Repositories.Clientes;
 using Constriva.Infrastructure.Persistence.Repositories.Orcamento;
 using Constriva.Infrastructure.Services;
 using System.Text;
@@ -36,6 +37,9 @@ public static class InfrastructureServiceExtensions
         // Repositories - Tenant / Auth
         services.AddScoped<IEmpresaRepository, EmpresaRepository>();
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+        // Repositories - Clientes
+        services.AddScoped<IClienteRepository, ClienteRepository>();
 
         // Repositories - Obras
         services.AddScoped<IObraRepository, ObraRepository>();

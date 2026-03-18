@@ -1,3 +1,4 @@
+using Constriva.Domain.Entities.Clientes;
 using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Enums;
 
@@ -44,6 +45,8 @@ public class Obra : TenantEntity
     public string Cep { get; set; } = null!;
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
+
+    public virtual Cliente? Cliente { get; set; }
 
     public virtual ICollection<FaseObra> Fases { get; set; } = new List<FaseObra>();
     public virtual ICollection<ObraAnexo> Anexos { get; set; } = new List<ObraAnexo>();

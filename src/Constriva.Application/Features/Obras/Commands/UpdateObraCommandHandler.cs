@@ -1,7 +1,5 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
-using Constriva.Domain.Entities.Obras;
-using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Obras.DTOs;
 
@@ -21,20 +19,42 @@ public class UpdateObraCommandHandler : IRequestHandler<UpdateObraCommand, Unit>
         var obra = await _repo.GetByIdAndEmpresaAsync(r.Id, r.EmpresaId, ct)
             ?? throw new KeyNotFoundException($"Obra {r.Id} não encontrada.");
 
-        obra.Nome = r.Dto.Nome ?? obra.Nome;
-        obra.Tipo = r.Dto.Tipo;
-        obra.NomeCliente = r.Dto.NomeCliente ?? obra.NomeCliente;
-        obra.ResponsavelTecnico = r.Dto.ResponsavelTecnico ?? obra.ResponsavelTecnico;
-        obra.Descricao = r.Dto.Descricao ?? obra.Descricao;
-        obra.Observacoes = r.Dto.Observacoes ?? obra.Observacoes;
-        obra.ValorContrato = r.Dto.ValorContrato ?? obra.ValorContrato;
-        if (r.Dto.DataInicioPrevista.HasValue) obra.DataInicioPrevista = r.Dto.DataInicioPrevista.Value;
-        if (r.Dto.DataFimPrevista.HasValue) obra.DataFimPrevista = r.Dto.DataFimPrevista.Value;
-        if (!string.IsNullOrEmpty(r.Dto.Logradouro)) obra.Logradouro = r.Dto.Logradouro;
-        if (!string.IsNullOrEmpty(r.Dto.Numero)) obra.Numero = r.Dto.Numero;
-        if (r.Dto.Complemento != null) obra.Complemento = r.Dto.Complemento;
-        if (!string.IsNullOrEmpty(r.Dto.Bairro)) obra.Bairro = r.Dto.Bairro;
-        if (!string.IsNullOrEmpty(r.Dto.FotoUrl)) obra.FotoUrl = r.Dto.FotoUrl;
+        var dto = r.Dto;
+
+        if (dto.Nome != null)              obra.Nome = dto.Nome;
+        if (dto.Tipo.HasValue)             obra.Tipo = dto.Tipo.Value;
+        if (dto.TipoContrato.HasValue)     obra.TipoContrato = dto.TipoContrato.Value;
+        if (dto.ClienteId.HasValue)        obra.ClienteId = dto.ClienteId;
+        if (dto.NomeCliente != null)       obra.NomeCliente = dto.NomeCliente;
+        if (dto.ResponsavelTecnico != null) obra.ResponsavelTecnico = dto.ResponsavelTecnico;
+        if (dto.CreaResponsavel != null)   obra.CreaResponsavel = dto.CreaResponsavel;
+        if (dto.Descricao != null)         obra.Descricao = dto.Descricao;
+        if (dto.Observacoes != null)       obra.Observacoes = dto.Observacoes;
+        if (dto.NumeroART != null)         obra.NumeroART = dto.NumeroART;
+        if (dto.NumeroRRT != null)         obra.NumeroRRT = dto.NumeroRRT;
+        if (dto.NumeroAlvara != null)      obra.NumeroAlvara = dto.NumeroAlvara;
+        if (dto.ValidadeAlvara.HasValue)   obra.ValidadeAlvara = dto.ValidadeAlvara;
+        if (dto.AreaTotal.HasValue)        obra.AreaTotal = dto.AreaTotal;
+        if (dto.AreaConstruida.HasValue)   obra.AreaConstruida = dto.AreaConstruida;
+        if (dto.NumeroAndares.HasValue)    obra.NumeroAndares = dto.NumeroAndares;
+        if (dto.NumeroUnidades.HasValue)   obra.NumeroUnidades = dto.NumeroUnidades;
+        if (dto.ValorContrato.HasValue)    obra.ValorContrato = dto.ValorContrato.Value;
+        if (dto.ValorOrcado.HasValue)      obra.ValorOrcado = dto.ValorOrcado.Value;
+        if (dto.DataInicioPrevista.HasValue) obra.DataInicioPrevista = dto.DataInicioPrevista.Value;
+        if (dto.DataFimPrevista.HasValue)  obra.DataFimPrevista = dto.DataFimPrevista.Value;
+        if (dto.DataInicioReal.HasValue)   obra.DataInicioReal = dto.DataInicioReal;
+        if (dto.DataFimReal.HasValue)      obra.DataFimReal = dto.DataFimReal;
+        if (dto.Logradouro != null)        obra.Logradouro = dto.Logradouro;
+        if (dto.Numero != null)            obra.Numero = dto.Numero;
+        if (dto.Complemento != null)       obra.Complemento = dto.Complemento;
+        if (dto.Bairro != null)            obra.Bairro = dto.Bairro;
+        if (dto.Cidade != null)            obra.Cidade = dto.Cidade;
+        if (dto.Estado != null)            obra.Estado = dto.Estado;
+        if (dto.Cep != null)               obra.Cep = dto.Cep;
+        if (dto.Latitude.HasValue)         obra.Latitude = dto.Latitude;
+        if (dto.Longitude.HasValue)        obra.Longitude = dto.Longitude;
+        if (dto.FotoUrl != null)           obra.FotoUrl = dto.FotoUrl;
+
         obra.UpdatedBy = r.UsuarioId;
         obra.UpdatedAt = DateTime.UtcNow;
 
@@ -43,4 +63,3 @@ public class UpdateObraCommandHandler : IRequestHandler<UpdateObraCommand, Unit>
         return Unit.Value;
     }
 }
-

@@ -89,11 +89,11 @@ public class ObrasController : BaseController
     [HttpPost("{id:guid}/fases")]
     public async Task<IActionResult> CreateFase(Guid id, [FromBody] CreateFaseObraRequest req, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateFaseCommand(id, RequireEmpresaId(), req.Nome, req.Ordem, req.Inicio, req.Fim, req.ValorPrevisto, req.FasePaiId), ct)); }
+        try { return Ok(await Mediator.Send(new CreateFaseCommand(id, RequireEmpresaId(), req.Nome, req.Ordem, req.Inicio, req.Fim, req.ValorPrevisto, req.Descricao, req.Cor, req.FasePaiId), ct)); }
         catch (Exception ex) { return HandleException(ex); }
     }
 
     public record UpdateStatusObraRequest(Domain.Enums.StatusObraEnum Status, string? Observacao);
     public record CreateFaseObraRequest(string Nome, int Ordem, DateTime Inicio, DateTime Fim,
-        decimal ValorPrevisto, Guid? FasePaiId = null);
+        decimal ValorPrevisto, string? Descricao = null, string? Cor = null, Guid? FasePaiId = null);
 }

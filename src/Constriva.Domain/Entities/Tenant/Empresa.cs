@@ -43,6 +43,7 @@ public class Empresa : BaseEntity
     public bool ModuloFinanceiro { get; set; } = true;
     public bool ModuloSST { get; set; } = true;
     public bool ModuloGED { get; set; } = true;
+    public bool ModuloClientes { get; set; } = true;
     public bool ModuloRelatorios { get; set; } = true;
 
     public string? ConfiguracoesJson { get; set; }
