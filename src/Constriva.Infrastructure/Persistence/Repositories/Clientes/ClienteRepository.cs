@@ -37,6 +37,12 @@ public class ClienteRepository : TenantRepository<Cliente>, IClienteRepository
     public async Task<int> GetCountByEmpresaAsync(Guid empresaId, CancellationToken ct = default)
         => await _ctx.Clientes.CountAsync(c => c.EmpresaId == empresaId, ct);
 
+    public async Task<IEnumerable<Cliente>> GetAllActiveByEmpresaAsync(Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Clientes
+            .Where(c => c.EmpresaId == empresaId && !c.IsDeleted && c.Status == StatusClienteEnum.Ativo)
+            .OrderBy(c => c.Nome)
+            .ToListAsync(ct);
+
     public async Task<bool> DocumentoExistsAsync(string documento, Guid empresaId, Guid? excludeId, CancellationToken ct = default)
         => await _ctx.Clientes.AnyAsync(c =>
             c.Documento == documento &&

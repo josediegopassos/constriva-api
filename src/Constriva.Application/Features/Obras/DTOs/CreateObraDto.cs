@@ -4,7 +4,7 @@ namespace Constriva.Application.Features.Obras.DTOs;
 
 public record CreateObraDto(
     string Nome, TipoObraEnum Tipo, TipoContratoObraEnum TipoContrato,
-    string? NomeCliente, string? ResponsavelTecnico,
+    Guid? ClienteId, string? NomeCliente, string? ResponsavelTecnico,
     DateTime DataInicioPrevista, DateTime DataFimPrevista,
     decimal ValorContrato,
     string Logradouro, string Numero, string? Complemento, string Bairro,

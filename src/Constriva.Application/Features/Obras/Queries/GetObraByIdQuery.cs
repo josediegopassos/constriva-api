@@ -20,7 +20,7 @@ public class GetObraByIdHandler : IRequestHandler<GetObraByIdQuery, ObraDto?>
 
         return new ObraDto(
             o.Id, o.Codigo, o.Nome, o.Descricao, o.Tipo, o.TipoContrato, o.Status,
-            o.ClienteId, o.NomeCliente, o.ResponsavelTecnico, o.CreaResponsavel,
+            o.ClienteId, o.Cliente?.Nome ?? o.NomeCliente, o.ResponsavelTecnico, o.CreaResponsavel,
             o.NumeroART, o.NumeroRRT, o.NumeroAlvara, o.ValidadeAlvara,
             o.AreaTotal, o.AreaConstruida, o.NumeroAndares, o.NumeroUnidades,
             o.DataInicioPrevista, o.DataFimPrevista, o.DataInicioReal, o.DataFimReal,

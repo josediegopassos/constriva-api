@@ -31,7 +31,7 @@ public class ObraRepository : TenantRepository<Obra>, IObraRepository
         => await _set.FirstOrDefaultAsync(o => o.EmpresaId == empresaId && o.Codigo == codigo, ct);
 
     public async Task<Obra?> GetWithFasesAsync(Guid id, Guid empresaId, CancellationToken ct = default)
-        => await _set.Include(o => o.Fases).ThenInclude(f => f.SubFases)
+        => await _set.Include(o => o.Cliente).Include(o => o.Fases).ThenInclude(f => f.SubFases)
             .FirstOrDefaultAsync(o => o.Id == id && o.EmpresaId == empresaId, ct);
 
     public async Task<IEnumerable<Obra>> GetByUsuarioAsync(Guid usuarioId, Guid empresaId, CancellationToken ct = default)

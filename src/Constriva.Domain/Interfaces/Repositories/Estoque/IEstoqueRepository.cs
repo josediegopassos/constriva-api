@@ -14,4 +14,10 @@ public interface IEstoqueRepository
     Task AddMovimentacaoAsync(MovimentacaoEstoque mov, CancellationToken ct = default);
     Task<Almoxarifado?> GetAlmoxarifadoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
     Task AddAlmoxarifadoAsync(Almoxarifado almoxarifado, CancellationToken ct = default);
+    Task<IEnumerable<GrupoMaterial>> GetGruposAsync(Guid empresaId, CancellationToken ct = default);
+    Task<EstoqueSaldo?> GetSaldoAsync(Guid almoxarifadoId, Guid materialId, Guid empresaId, CancellationToken ct = default);
+    Task AddSaldoAsync(EstoqueSaldo saldo, CancellationToken ct = default);
+    Task AddItemRequisicaoAsync(ItemRequisicao item, CancellationToken ct = default);
+    Task<MovimentacaoEstoque?> GetMovimentacaoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
+    Task SoftDeleteByMaterialIdAsync(Guid materialId, Guid empresaId, CancellationToken ct = default);
 }

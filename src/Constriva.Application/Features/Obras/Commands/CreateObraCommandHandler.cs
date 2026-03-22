@@ -13,8 +13,10 @@ public record CreateObraCommand(Guid EmpresaId, Guid UsuarioId, CreateObraDto Dt
 public class CreateObraCommandHandler : IRequestHandler<CreateObraCommand, ObraResumoDto>
 {
     private readonly IObraRepository _repo;
+    private readonly IClienteRepository _clienteRepo;
     private readonly IUnitOfWork _uow;
-    public CreateObraCommandHandler(IObraRepository repo, IUnitOfWork uow) { _repo = repo; _uow = uow; }
+    public CreateObraCommandHandler(IObraRepository repo, IClienteRepository clienteRepo, IUnitOfWork uow)
+    { _repo = repo; _clienteRepo = clienteRepo; _uow = uow; }
 
     public async Task<ObraResumoDto> Handle(CreateObraCommand r, CancellationToken ct)
     {
@@ -24,11 +26,19 @@ public class CreateObraCommandHandler : IRequestHandler<CreateObraCommand, ObraR
         do { codigo = $"OBR-{seq:D4}"; seq++; }
         while (await _repo.GetByCodigoAsync(r.EmpresaId, codigo, ct) != null);
 
+        string? nomeCliente = r.Dto.NomeCliente;
+        if (r.Dto.ClienteId.HasValue && nomeCliente == null)
+        {
+            var cliente = await _clienteRepo.GetByIdAndEmpresaAsync(r.Dto.ClienteId.Value, r.EmpresaId, ct);
+            nomeCliente = cliente?.Nome;
+        }
+
         var obra = new Obra
         {
             EmpresaId = r.EmpresaId, CreatedBy = r.UsuarioId,
             Codigo = codigo, Nome = r.Dto.Nome, Tipo = r.Dto.Tipo,
-            TipoContrato = r.Dto.TipoContrato, NomeCliente = r.Dto.NomeCliente,
+            TipoContrato = r.Dto.TipoContrato,
+            ClienteId = r.Dto.ClienteId, NomeCliente = nomeCliente,
             ResponsavelTecnico = r.Dto.ResponsavelTecnico, Descricao = r.Dto.Descricao,
             DataInicioPrevista = r.Dto.DataInicioPrevista, DataFimPrevista = r.Dto.DataFimPrevista,
             ValorContrato = r.Dto.ValorContrato,

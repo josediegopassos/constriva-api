@@ -45,16 +45,54 @@ public static class DbSeeder
     // Conta Bancária
     private static readonly Guid IdContaPrincipal = Guid.Parse("50000000-0000-0000-0000-000000000001");
 
-    // Grupos de Materiais
+    // Grupos de Materiais — raízes
     private static readonly Guid IdGrupoConstrucaoCivil = Guid.Parse("60000000-0000-0000-0000-000000000001");
-    private static readonly Guid IdGrupoConcreto        = Guid.Parse("60000000-0000-0000-0000-000000000002");
-    private static readonly Guid IdGrupoAco             = Guid.Parse("60000000-0000-0000-0000-000000000003");
-    private static readonly Guid IdGrupoAlvenaria       = Guid.Parse("60000000-0000-0000-0000-000000000004");
-    private static readonly Guid IdGrupoAcabamentos     = Guid.Parse("60000000-0000-0000-0000-000000000005");
-    private static readonly Guid IdGrupoEletrico        = Guid.Parse("60000000-0000-0000-0000-000000000006");
-    private static readonly Guid IdGrupoHidraulico      = Guid.Parse("60000000-0000-0000-0000-000000000007");
-    private static readonly Guid IdGrupoFerramentas     = Guid.Parse("60000000-0000-0000-0000-000000000008");
-    private static readonly Guid IdGrupoEPI             = Guid.Parse("60000000-0000-0000-0000-000000000009");
+    private static readonly Guid IdGrupoEletrico        = Guid.Parse("60000000-0000-0000-0000-000000000002");
+    private static readonly Guid IdGrupoHidraulico      = Guid.Parse("60000000-0000-0000-0000-000000000003");
+    private static readonly Guid IdGrupoFerramentas     = Guid.Parse("60000000-0000-0000-0000-000000000004");
+    private static readonly Guid IdGrupoEPI             = Guid.Parse("60000000-0000-0000-0000-000000000005");
+    private static readonly Guid IdGrupoTintas          = Guid.Parse("60000000-0000-0000-0000-000000000006");
+    private static readonly Guid IdGrupoMadeiras        = Guid.Parse("60000000-0000-0000-0000-000000000007");
+
+    // Grupos de Materiais — subgrupos de Construção Civil
+    private static readonly Guid IdGrupoConcreto        = Guid.Parse("60000000-0000-0000-0000-000000000010");
+    private static readonly Guid IdGrupoAco             = Guid.Parse("60000000-0000-0000-0000-000000000011");
+    private static readonly Guid IdGrupoAlvenaria       = Guid.Parse("60000000-0000-0000-0000-000000000012");
+    private static readonly Guid IdGrupoAcabamentos     = Guid.Parse("60000000-0000-0000-0000-000000000013");
+    private static readonly Guid IdGrupoEsquadrias      = Guid.Parse("60000000-0000-0000-0000-000000000014");
+    private static readonly Guid IdGrupoImpermeab       = Guid.Parse("60000000-0000-0000-0000-000000000015");
+    private static readonly Guid IdGrupoCobertura       = Guid.Parse("60000000-0000-0000-0000-000000000016");
+
+    // Grupos de Materiais — subgrupos de Elétrico
+    private static readonly Guid IdGrupoCabos           = Guid.Parse("60000000-0000-0000-0000-000000000020");
+    private static readonly Guid IdGrupoIluminacao      = Guid.Parse("60000000-0000-0000-0000-000000000021");
+    private static readonly Guid IdGrupoQuadros         = Guid.Parse("60000000-0000-0000-0000-000000000022");
+
+    // Grupos de Materiais — subgrupos de Hidráulico
+    private static readonly Guid IdGrupoTubulacoes      = Guid.Parse("60000000-0000-0000-0000-000000000030");
+    private static readonly Guid IdGrupoMetais          = Guid.Parse("60000000-0000-0000-0000-000000000031");
+    private static readonly Guid IdGrupoCaixas          = Guid.Parse("60000000-0000-0000-0000-000000000032");
+
+    // Grupos de Materiais — subgrupos de Ferramentas
+    private static readonly Guid IdGrupoFManuais        = Guid.Parse("60000000-0000-0000-0000-000000000040");
+    private static readonly Guid IdGrupoFMaquinas       = Guid.Parse("60000000-0000-0000-0000-000000000041");
+    private static readonly Guid IdGrupoFMedicao        = Guid.Parse("60000000-0000-0000-0000-000000000042");
+
+    // Grupos de Materiais — subgrupos de EPI
+    private static readonly Guid IdGrupoEPICabeca       = Guid.Parse("60000000-0000-0000-0000-000000000050");
+    private static readonly Guid IdGrupoEPIPes          = Guid.Parse("60000000-0000-0000-0000-000000000051");
+    private static readonly Guid IdGrupoEPIMaos         = Guid.Parse("60000000-0000-0000-0000-000000000052");
+    private static readonly Guid IdGrupoEPIVisual       = Guid.Parse("60000000-0000-0000-0000-000000000053");
+    private static readonly Guid IdGrupoEPICorpo        = Guid.Parse("60000000-0000-0000-0000-000000000054");
+
+    // Grupos de Materiais — subgrupos de Tintas
+    private static readonly Guid IdGrupoTintasLat       = Guid.Parse("60000000-0000-0000-0000-000000000060");
+    private static readonly Guid IdGrupoVernizes        = Guid.Parse("60000000-0000-0000-0000-000000000061");
+
+    // Grupos de Materiais — subgrupos de Madeiras
+    private static readonly Guid IdGrupoMadBruta        = Guid.Parse("60000000-0000-0000-0000-000000000070");
+    private static readonly Guid IdGrupoMadComp         = Guid.Parse("60000000-0000-0000-0000-000000000071");
+    private static readonly Guid IdGrupoMadFormas       = Guid.Parse("60000000-0000-0000-0000-000000000072");
 
     // Departamentos
     private static readonly Guid IdDeptEngenharia = Guid.Parse("70000000-0000-0000-0000-000000000001");
@@ -270,18 +308,54 @@ public static class DbSeeder
 
         await ctx.GruposMateriais.AddRangeAsync(new List<GrupoMaterial>
         {
-            // Raízes
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Construção Civil",          CreatedAt = DateTime.UtcNow }, IdGrupoConstrucaoCivil),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Material Elétrico",          CreatedAt = DateTime.UtcNow }, IdGrupoEletrico),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Material Hidráulico",        CreatedAt = DateTime.UtcNow }, IdGrupoHidraulico),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Ferramentas e Equipamentos", CreatedAt = DateTime.UtcNow }, IdGrupoFerramentas),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "EPIs",                       CreatedAt = DateTime.UtcNow }, IdGrupoEPI),
+            // ── Raízes ────────────────────────────────────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Construção Civil",           Descricao = "Materiais de construção em geral",              CreatedAt = DateTime.UtcNow }, IdGrupoConstrucaoCivil),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Material Elétrico",           Descricao = "Materiais e componentes elétricos",             CreatedAt = DateTime.UtcNow }, IdGrupoEletrico),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Material Hidráulico",         Descricao = "Materiais e componentes hidráulicos",           CreatedAt = DateTime.UtcNow }, IdGrupoHidraulico),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Ferramentas e Equipamentos",  Descricao = "Ferramentas, máquinas e equipamentos de obra",  CreatedAt = DateTime.UtcNow }, IdGrupoFerramentas),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "EPIs",                        Descricao = "Equipamentos de Proteção Individual",           CreatedAt = DateTime.UtcNow }, IdGrupoEPI),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Tintas e Revestimentos",      Descricao = "Tintas, vernizes, seladores e massa corrida",   CreatedAt = DateTime.UtcNow }, IdGrupoTintas),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Madeiras e Formas",           Descricao = "Madeiras, compensados e formas para concreto",  CreatedAt = DateTime.UtcNow }, IdGrupoMadeiras),
 
-            // Subgrupos de Construção Civil
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Concreto e Argamassa",     GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoConcreto),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Aço e Ferragem",           GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoAco),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Alvenaria e Revestimento", GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoAlvenaria),
-            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Acabamentos",              GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoAcabamentos),
+            // ── Subgrupos — Construção Civil ──────────────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Concreto e Argamassa",     Descricao = "Cimento, areia, brita, argamassa e aditivos",             GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoConcreto),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Aço e Ferragem",           Descricao = "Vergalhões, telas, arames e grampos",                     GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoAco),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Alvenaria e Revestimento", Descricao = "Blocos, tijolos, cerâmica e azulejo",                     GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoAlvenaria),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Acabamentos",              Descricao = "Pisos, rodapés, soleiras e pastilhas",                    GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoAcabamentos),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Esquadrias",               Descricao = "Portas, janelas, vidros e peitoris",                      GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoEsquadrias),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Impermeabilização",        Descricao = "Mantas, membranas e produtos impermeabilizantes",          GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoImpermeab),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Cobertura",                Descricao = "Telhas, calhas, rufos e fixadores",                       GrupoPaiId = IdGrupoConstrucaoCivil, CreatedAt = DateTime.UtcNow }, IdGrupoCobertura),
+
+            // ── Subgrupos — Material Elétrico ─────────────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Cabos e Fios",             Descricao = "Cabos, fios, eletrodutos e canaletas",                    GrupoPaiId = IdGrupoEletrico, CreatedAt = DateTime.UtcNow }, IdGrupoCabos),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Iluminação",               Descricao = "Luminárias, lâmpadas, spots e arandelas",                 GrupoPaiId = IdGrupoEletrico, CreatedAt = DateTime.UtcNow }, IdGrupoIluminacao),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Quadros e Painéis",        Descricao = "Quadros de distribuição, disjuntores e DPS",              GrupoPaiId = IdGrupoEletrico, CreatedAt = DateTime.UtcNow }, IdGrupoQuadros),
+
+            // ── Subgrupos — Material Hidráulico ───────────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Tubulações e Conexões",    Descricao = "Tubos PVC, CPVC, PPR e conexões diversas",                GrupoPaiId = IdGrupoHidraulico, CreatedAt = DateTime.UtcNow }, IdGrupoTubulacoes),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Metais Sanitários",        Descricao = "Torneiras, registros, chuveiros e acessórios",            GrupoPaiId = IdGrupoHidraulico, CreatedAt = DateTime.UtcNow }, IdGrupoMetais),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Caixas e Reservatórios",   Descricao = "Caixas d'água, válvulas e bombas",                        GrupoPaiId = IdGrupoHidraulico, CreatedAt = DateTime.UtcNow }, IdGrupoCaixas),
+
+            // ── Subgrupos — Ferramentas e Equipamentos ────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Ferramentas Manuais",      Descricao = "Martelos, chaves, alicates, serras e escovas",            GrupoPaiId = IdGrupoFerramentas, CreatedAt = DateTime.UtcNow }, IdGrupoFManuais),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Máquinas e Equipamentos",  Descricao = "Furadeiras, betoneiras, compactadores e guindastes",      GrupoPaiId = IdGrupoFerramentas, CreatedAt = DateTime.UtcNow }, IdGrupoFMaquinas),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Equipamentos de Medição",  Descricao = "Trenas, níveis, teodolitos e receptores GPS",             GrupoPaiId = IdGrupoFerramentas, CreatedAt = DateTime.UtcNow }, IdGrupoFMedicao),
+
+            // ── Subgrupos — EPIs ──────────────────────────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Proteção da Cabeça",       Descricao = "Capacetes, toucas e protetores auriculares",              GrupoPaiId = IdGrupoEPI, CreatedAt = DateTime.UtcNow }, IdGrupoEPICabeca),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Proteção dos Pés",         Descricao = "Botas, botinas e sapatos de segurança",                   GrupoPaiId = IdGrupoEPI, CreatedAt = DateTime.UtcNow }, IdGrupoEPIPes),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Proteção das Mãos",        Descricao = "Luvas de raspa, nitrílica e anticorte",                   GrupoPaiId = IdGrupoEPI, CreatedAt = DateTime.UtcNow }, IdGrupoEPIMaos),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Proteção Visual e Facial", Descricao = "Óculos, protetores faciais e máscaras",                   GrupoPaiId = IdGrupoEPI, CreatedAt = DateTime.UtcNow }, IdGrupoEPIVisual),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Proteção do Corpo",        Descricao = "Cintos de segurança, coletes e macacões",                 GrupoPaiId = IdGrupoEPI, CreatedAt = DateTime.UtcNow }, IdGrupoEPICorpo),
+
+            // ── Subgrupos — Tintas e Revestimentos ───────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Tintas",                   Descricao = "Tinta látex, acrílica, esmalte e epóxi",                  GrupoPaiId = IdGrupoTintas, CreatedAt = DateTime.UtcNow }, IdGrupoTintasLat),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Vernizes e Seladores",     Descricao = "Vernizes, seladores, massa corrida e gesso",              GrupoPaiId = IdGrupoTintas, CreatedAt = DateTime.UtcNow }, IdGrupoVernizes),
+
+            // ── Subgrupos — Madeiras e Formas ─────────────────────────────────
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Madeira Bruta",            Descricao = "Caibros, vigas, tábuas e ripas",                          GrupoPaiId = IdGrupoMadeiras, CreatedAt = DateTime.UtcNow }, IdGrupoMadBruta),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Compensados e MDF",        Descricao = "Compensados, OSB, MDF e eucatex",                         GrupoPaiId = IdGrupoMadeiras, CreatedAt = DateTime.UtcNow }, IdGrupoMadComp),
+            SetId(new GrupoMaterial { EmpresaId = IdEmpresa, Nome = "Formas para Concreto",     Descricao = "Fôrmas metálicas, de madeira e plásticas",                GrupoPaiId = IdGrupoMadeiras, CreatedAt = DateTime.UtcNow }, IdGrupoMadFormas),
         });
     }
 

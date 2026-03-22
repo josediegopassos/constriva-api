@@ -15,6 +15,8 @@ public class GetAlmoxarifadosHandler : IRequestHandler<GetAlmoxarifadosQuery, IE
     public async Task<IEnumerable<AlmoxarifadoDto>> Handle(GetAlmoxarifadosQuery r, CancellationToken ct)
     {
         var items = await _repo.GetAlmoxarifadosAsync(r.EmpresaId, ct);
-        return items.Select(a => new AlmoxarifadoDto(a.Id, a.Nome, a.Descricao ?? "", a.ObraId, a.Principal));
+        return items.Select(a => new AlmoxarifadoDto(
+            a.Id, a.Nome, $"ALM-{a.Id.ToString()[..8].ToUpper()}", a.ObraId,
+            a.Principal, a.Descricao, a.Logradouro, a.Cidade, a.ResponsavelId, a.Ativo));
     }
 }

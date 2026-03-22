@@ -11,8 +11,10 @@ public record UpdateObraCommand(Guid Id, Guid EmpresaId, Guid UsuarioId, UpdateO
 public class UpdateObraCommandHandler : IRequestHandler<UpdateObraCommand, Unit>
 {
     private readonly IObraRepository _repo;
+    private readonly IClienteRepository _clienteRepo;
     private readonly IUnitOfWork _uow;
-    public UpdateObraCommandHandler(IObraRepository repo, IUnitOfWork uow) { _repo = repo; _uow = uow; }
+    public UpdateObraCommandHandler(IObraRepository repo, IClienteRepository clienteRepo, IUnitOfWork uow)
+    { _repo = repo; _clienteRepo = clienteRepo; _uow = uow; }
 
     public async Task<Unit> Handle(UpdateObraCommand r, CancellationToken ct)
     {
@@ -24,8 +26,13 @@ public class UpdateObraCommandHandler : IRequestHandler<UpdateObraCommand, Unit>
         if (dto.Nome != null)              obra.Nome = dto.Nome;
         if (dto.Tipo.HasValue)             obra.Tipo = dto.Tipo.Value;
         if (dto.TipoContrato.HasValue)     obra.TipoContrato = dto.TipoContrato.Value;
-        if (dto.ClienteId.HasValue)        obra.ClienteId = dto.ClienteId;
-        if (dto.NomeCliente != null)       obra.NomeCliente = dto.NomeCliente;
+        if (dto.ClienteId.HasValue)
+        {
+            obra.ClienteId = dto.ClienteId;
+            var cliente = await _clienteRepo.GetByIdAndEmpresaAsync(dto.ClienteId.Value, r.EmpresaId, ct);
+            if (cliente != null) obra.NomeCliente = cliente.Nome;
+        }
+        else if (dto.NomeCliente != null)  obra.NomeCliente = dto.NomeCliente;
         if (dto.ResponsavelTecnico != null) obra.ResponsavelTecnico = dto.ResponsavelTecnico;
         if (dto.CreaResponsavel != null)   obra.CreaResponsavel = dto.CreaResponsavel;
         if (dto.Descricao != null)         obra.Descricao = dto.Descricao;

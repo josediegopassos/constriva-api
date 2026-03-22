@@ -13,7 +13,7 @@ public class MaterialConfiguration : IEntityTypeConfiguration<Material>
         b.Property(e => e.Id).IsRequired();
         b.HasIndex(e => e.Id).IsUnique();
         b.Property(e => e.Codigo).HasMaxLength(50).IsRequired();
-        b.HasIndex(e => new { e.EmpresaId, e.Codigo }).IsUnique();
+        b.HasIndex(e => new { e.EmpresaId, e.Codigo }).IsUnique().HasFilter("\"IsDeleted\" = false");
         b.Property(e => e.Nome).HasMaxLength(300).IsRequired();
         b.Property(e => e.Descricao).HasMaxLength(2000);
         b.Property(e => e.Especificacao).HasMaxLength(2000);

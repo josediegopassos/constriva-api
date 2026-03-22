@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Constriva.Application.Common.Interfaces;
 
 namespace Constriva.API.Controllers;
@@ -35,6 +36,17 @@ public abstract class BaseController : ControllerBase
         UnauthorizedAccessException => Forbid(),
         KeyNotFoundException => NotFound(new { message = ex.Message }),
         InvalidOperationException => BadRequest(new { message = ex.Message }),
-        _ =>                        StatusCode(500, new { message = "Ocorreu um erro interno. Tente novamente." })
+        DbUpdateException dbe => Conflict(new { message = ExtractDbErrorMessage(dbe) }),
+        _ => StatusCode(500, new { message = "Ocorreu um erro interno. Tente novamente." })
     };
+
+    private static string ExtractDbErrorMessage(DbUpdateException ex)
+    {
+        var inner = ex.InnerException?.Message ?? "";
+        if (inner.Contains("23505") || inner.Contains("unique constraint") || inner.Contains("duplicate key"))
+            return "Já existe um registro com esses dados (violação de unicidade).";
+        if (inner.Contains("23503") || inner.Contains("foreign key"))
+            return "Operação inválida: existe um vínculo com outro registro.";
+        return "Erro ao salvar os dados. Verifique as informações e tente novamente.";
+    }
 }

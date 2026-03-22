@@ -26,6 +26,8 @@ public record ClienteDto(
     string? Cep,
     DateTime CreatedAt);
 
+public record ClienteAtivoDto(Guid Id, string Nome);
+
 public record ClienteResumoDto(
     Guid Id,
     string Codigo,

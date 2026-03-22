@@ -9,4 +9,5 @@ public interface IClienteRepository : ITenantRepository<Cliente>
         Guid empresaId, string? search, StatusClienteEnum? status, int page, int pageSize, CancellationToken ct = default);
     Task<int> GetCountByEmpresaAsync(Guid empresaId, CancellationToken ct = default);
     Task<bool> DocumentoExistsAsync(string documento, Guid empresaId, Guid? excludeId, CancellationToken ct = default);
+    Task<IEnumerable<Cliente>> GetAllActiveByEmpresaAsync(Guid empresaId, CancellationToken ct = default);
 }

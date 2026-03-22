@@ -15,11 +15,13 @@ public record DeleteMaterialCommand(Guid Id, Guid EmpresaId) : IRequest<Unit>, I
 public class DeleteMaterialHandler : IRequestHandler<DeleteMaterialCommand, Unit>
 {
     private readonly IMaterialRepository _repo;
+    private readonly IEstoqueRepository _estoqueRepo;
     private readonly IUnitOfWork _uow;
 
-    public DeleteMaterialHandler(IMaterialRepository repo, IUnitOfWork uow)
+    public DeleteMaterialHandler(IMaterialRepository repo, IEstoqueRepository estoqueRepo, IUnitOfWork uow)
     {
         _repo = repo;
+        _estoqueRepo = estoqueRepo;
         _uow = uow;
     }
 
@@ -28,9 +30,12 @@ public class DeleteMaterialHandler : IRequestHandler<DeleteMaterialCommand, Unit
         var material = await _repo.GetByIdAndEmpresaAsync(request.Id, request.EmpresaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Material {request.Id} não encontrado.");
 
+        await _estoqueRepo.SoftDeleteByMaterialIdAsync(request.Id, request.EmpresaId, cancellationToken);
+
         material.Ativo = false;
         material.IsDeleted = true;
         _repo.Update(material);
+
         await _uow.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

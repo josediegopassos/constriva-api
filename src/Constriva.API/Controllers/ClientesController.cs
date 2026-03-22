@@ -28,6 +28,10 @@ public class ClientesController : BaseController
         CancellationToken ct = default)
         => Ok(await Mediator.Send(new GetClientesQuery(RequireEmpresaId(), search, status, page, pageSize), ct));
 
+    [HttpGet("ativos")]
+    public async Task<ActionResult<IEnumerable<ClienteAtivoDto>>> GetAtivos(CancellationToken ct)
+        => Ok(await Mediator.Send(new GetClientesAtivosQuery(RequireEmpresaId()), ct));
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ClienteDto>> GetById(Guid id, CancellationToken ct)
         => OkOrNotFound(await Mediator.Send(new GetClienteByIdQuery(id, RequireEmpresaId()), ct));
