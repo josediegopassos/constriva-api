@@ -60,6 +60,41 @@ public class ObrasController : BaseController
         catch (Exception ex) { return HandleException(ex); }
     }
 
+    [HttpPatch("{id:guid}/aprovar")]
+    public async Task<IActionResult> Aprovar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
+    {
+        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Aprovada, body?.Observacao), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/iniciar")]
+    public async Task<IActionResult> Iniciar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
+    {
+        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.EmAndamento, body?.Observacao), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/paralisar")]
+    public async Task<IActionResult> Paralisar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
+    {
+        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Paralisada, body?.Observacao), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/concluir")]
+    public async Task<IActionResult> Concluir(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
+    {
+        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Concluida, body?.Observacao), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/cancelar")]
+    public async Task<IActionResult> Cancelar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
+    {
+        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Cancelada, body?.Observacao), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
     [HttpPatch("{id:guid}/percentual")]
     public async Task<IActionResult> UpdatePercentual(Guid id, [FromBody] decimal percentual, CancellationToken ct)
     {
@@ -94,6 +129,7 @@ public class ObrasController : BaseController
     }
 
     public record UpdateStatusObraRequest(Domain.Enums.StatusObraEnum Status, string? Observacao);
+    public record ObservacaoRequest(string? Observacao);
     public record CreateFaseObraRequest(string Nome, int Ordem, DateTime Inicio, DateTime Fim,
         decimal ValorPrevisto, string? Descricao = null, string? Cor = null, Guid? FasePaiId = null);
 }
