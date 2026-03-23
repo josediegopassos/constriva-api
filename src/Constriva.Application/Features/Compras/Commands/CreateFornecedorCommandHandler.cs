@@ -1,7 +1,9 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
 using Constriva.Application.Common.Interfaces;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Entities.Compras;
+using Constriva.Domain.Entities.Fornecedores;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Compras.DTOs;
@@ -38,8 +40,12 @@ public class CreateFornecedorHandler : IRequestHandler<CreateFornecedorCommand, 
             Tipo = dto.Tipo,
             Email = dto.Email ?? "",
             Telefone = dto.Telefone,
-            Cidade = dto.Cidade,
-            Estado = dto.Estado,
+            Endereco = new Endereco
+            {
+                EmpresaId = request.EmpresaId,
+                Cidade = dto.Cidade,
+                Estado = dto.Estado
+            },
             Ativo = true
         };
 
@@ -49,6 +55,6 @@ public class CreateFornecedorHandler : IRequestHandler<CreateFornecedorCommand, 
         return new FornecedorDto(
             fornecedor.Id, fornecedor.RazaoSocial, fornecedor.NomeFantasia,
             dto.Cnpj, dto.Cpf, fornecedor.Tipo,
-            fornecedor.Telefone, fornecedor.Email, fornecedor.Cidade, fornecedor.Ativo);
+            fornecedor.Telefone, fornecedor.Email, fornecedor.Endereco?.Cidade, fornecedor.Ativo);
     }
 }

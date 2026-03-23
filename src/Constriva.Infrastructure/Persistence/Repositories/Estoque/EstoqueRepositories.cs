@@ -67,7 +67,7 @@ public class EstoqueRepository : IEstoqueRepository
     }
 
     public async Task<IEnumerable<Almoxarifado>> GetAlmoxarifadosAsync(Guid empresaId, CancellationToken ct = default)
-        => await _ctx.Almoxarifados.Where(a => a.EmpresaId == empresaId && a.Ativo).OrderBy(a => a.Nome).ToListAsync(ct);
+        => await _ctx.Almoxarifados.Include(a => a.Endereco).Where(a => a.EmpresaId == empresaId && a.Ativo).OrderBy(a => a.Nome).ToListAsync(ct);
 
     public async Task<(IEnumerable<RequisicaoMaterial> Items, int Total)> GetRequisicoesPagedAsync(
         Guid empresaId, Guid? obraId, StatusRequisicaoEnum? status, int page, int pageSize, CancellationToken ct = default)
@@ -126,6 +126,10 @@ public class EstoqueRepository : IEstoqueRepository
 
     public async Task<Almoxarifado?> GetAlmoxarifadoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default)
         => await _ctx.Almoxarifados.FirstOrDefaultAsync(a => a.Id == id && a.EmpresaId == empresaId, ct);
+
+    public async Task<Almoxarifado?> GetAlmoxarifadoByIdComEnderecoAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Almoxarifados.Include(a => a.Endereco)
+            .FirstOrDefaultAsync(a => a.Id == id && a.EmpresaId == empresaId, ct);
 
     public async Task AddAlmoxarifadoAsync(Almoxarifado almoxarifado, CancellationToken ct = default)
         => await _ctx.Almoxarifados.AddAsync(almoxarifado, ct);

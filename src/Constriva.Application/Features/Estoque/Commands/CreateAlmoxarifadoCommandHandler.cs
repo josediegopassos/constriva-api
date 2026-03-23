@@ -1,6 +1,7 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
 using Constriva.Application.Common.Interfaces;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Entities.Estoque;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Estoque.DTOs;
@@ -30,8 +31,12 @@ public class CreateAlmoxarifadoHandler : IRequestHandler<CreateAlmoxarifadoComma
             Nome = dto.Nome,
             ObraId = dto.ObraId,
             Descricao = dto.Descricao,
-            Logradouro = dto.Logradouro,
-            Cidade = dto.Cidade,
+            Endereco = new Endereco
+            {
+                EmpresaId = request.EmpresaId,
+                Logradouro = dto.Logradouro,
+                Cidade = dto.Cidade
+            },
             ResponsavelId = dto.ResponsavelId,
             Principal = dto.Principal,
             Ativo = true
@@ -42,7 +47,7 @@ public class CreateAlmoxarifadoHandler : IRequestHandler<CreateAlmoxarifadoComma
 
         var codigo = $"ALM-{almoxarifado.Id.ToString()[..8].ToUpper()}";
         return new AlmoxarifadoDto(almoxarifado.Id, almoxarifado.Nome, codigo, almoxarifado.ObraId,
-            almoxarifado.Principal, almoxarifado.Descricao, almoxarifado.Logradouro,
-            almoxarifado.Cidade, almoxarifado.ResponsavelId, almoxarifado.Ativo);
+            almoxarifado.Principal, almoxarifado.Descricao, almoxarifado.Endereco?.Logradouro,
+            almoxarifado.Endereco?.Cidade, almoxarifado.ResponsavelId, almoxarifado.Ativo);
     }
 }

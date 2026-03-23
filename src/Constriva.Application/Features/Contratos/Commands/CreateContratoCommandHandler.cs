@@ -34,12 +34,20 @@ public class CreateContratoCommandHandler : IRequestHandler<CreateContratoComman
             ObraId = dto.ObraId,
             FornecedorId = dto.FornecedorId,
             Objeto = dto.Objeto,
+            Descricao = dto.Descricao,
             Tipo = dto.Tipo,
-            Status = StatusContratoEnum.Ativo,
+            Status = StatusContratoEnum.Rascunho,
             ValorGlobal = dto.ValorGlobal,
+            PercentualRetencao = dto.PercentualRetencao,
             DataAssinatura = dto.DataAssinatura,
             DataVigenciaInicio = dto.DataVigenciaInicio,
             DataVigenciaFim = dto.DataVigenciaFim,
+            CondicoesPagamento = dto.CondicoesPagamento,
+            DiasParaMedicao = dto.DiasParaMedicao,
+            DiasParaPagamento = dto.DiasParaPagamento,
+            ArquivoUrl = dto.ArquivoUrl,
+            AssinadoPor = dto.AssinadoPor,
+            FiscalId = dto.FiscalId,
             Observacoes = dto.Observacoes
         };
 

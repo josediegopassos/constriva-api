@@ -22,36 +22,459 @@ namespace Constriva.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteConsumoDiario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("TokensInput")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TokensOutput")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TotalRequisicoes")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "Data")
+                        .IsUnique();
+
+                    b.ToTable("AgenteConsumoDiario", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteConsumoMensal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Alerta80Enviado")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Ano")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Mes")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("TokensAvulsosUtilizados")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TokensLimite")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TokensUtilizados")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "Ano", "Mes")
+                        .IsUnique();
+
+                    b.ToTable("AgenteConsumoMensal", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteConsumoUsuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Ano")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Mes")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("TokensUtilizados")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TotalRequisicoes")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "UsuarioId", "Ano", "Mes")
+                        .IsUnique();
+
+                    b.ToTable("AgenteConsumoUsuario", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteCotaAvulsa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ConcedidoEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("ConcedidoPorUsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ExpiraEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Motivo")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<long>("TokensConcedidos")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TokensUtilizados")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AgenteCotasAvulsas", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteEmpresaConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AgenteTierId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DataAtivacao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DataDesativacao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgenteTierId");
+
+                    b.HasIndex("EmpresaId")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AgenteEmpresaConfigs", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteHistorico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Conteudo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SessaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TokensInput")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TokensOutput")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ToolCallsJson")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SessaoId");
+
+                    b.ToTable("AgenteHistorico", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteSessao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativa")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("AtualizadaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AgenteSessoes", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteTier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Descricao")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<long>("TokensMensais")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AgenteTiers", (string)null);
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.Clientes.Cliente", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Bairro")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<string>("Celular")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Cep")
-                        .HasMaxLength(9)
-                        .HasColumnType("character varying(9)");
-
-                    b.Property<string>("Cidade")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Complemento")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -76,9 +499,8 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<Guid>("EmpresaId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Estado")
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)");
+                    b.Property<Guid?>("EnderecoId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("InscricaoEstadual")
                         .HasMaxLength(20)
@@ -91,10 +513,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Logradouro")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -103,10 +521,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<string>("NomeFantasia")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Numero")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("Observacoes")
                         .HasMaxLength(2000)
@@ -134,6 +548,8 @@ namespace Constriva.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EnderecoId");
+
                     b.HasIndex("Id")
                         .IsUnique();
 
@@ -145,6 +561,143 @@ namespace Constriva.Infrastructure.Migrations
                         .HasFilter("\"Documento\" IS NOT NULL AND \"IsDeleted\" = false");
 
                     b.ToTable("Clientes", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Common.Endereco", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bairro")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Cep")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Cidade")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Estado")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<double?>("Latitude")
+                        .HasPrecision(10, 7)
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Logradouro")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<double?>("Longitude")
+                        .HasPrecision(10, 7)
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Numero")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Enderecos", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Common.Notificacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DestinatariosJson")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Lida")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ModuloOrigem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("Prazo")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("ReferenciaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Notificacoes", (string)null);
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.Cotacao", b =>
@@ -225,161 +778,6 @@ namespace Constriva.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Cotacoes", (string)null);
-                });
-
-            modelBuilder.Entity("Constriva.Domain.Entities.Compras.Fornecedor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Bairro")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("BancoAgencia")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("BancoConta")
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<string>("BancoNome")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Celular")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Cep")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("Cidade")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Classificacao")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Complemento")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Contato")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Documento")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<Guid>("EmpresaId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Estado")
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)");
-
-                    b.Property<bool>("Homologado")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("InscricaoEstadual")
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Logradouro")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<string>("NomeFantasia")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Numero")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("PixChave")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
-
-                    b.Property<int?>("Prazo")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("RazaoSocial")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Site")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<string>("Telefone")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<int>("Tipo")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TipoPessoaEnum")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("EmpresaId", "Codigo")
-                        .IsUnique();
-
-                    b.HasIndex("EmpresaId", "Documento")
-                        .IsUnique();
-
-                    b.ToTable("Fornecedores", (string)null);
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.ItemCotacao", b =>
@@ -1910,10 +2308,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Cidade")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
@@ -1933,12 +2327,11 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<Guid>("EmpresaId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("EnderecoId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Logradouro")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -1961,6 +2354,8 @@ namespace Constriva.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -3166,6 +3561,138 @@ namespace Constriva.Infrastructure.Migrations
                     b.ToTable("Transferencias", (string)null);
                 });
 
+            modelBuilder.Entity("Constriva.Domain.Entities.Fornecedores.Fornecedor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("BancoAgencia")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("BancoConta")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("BancoNome")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Celular")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Classificacao")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Contato")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Documento")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EnderecoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Homologado")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("InscricaoEstadual")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("NomeFantasia")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Observacoes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("PixChave")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<int?>("Prazo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RazaoSocial")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Site")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("Telefone")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TipoPessoaEnum")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "Codigo")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "Documento")
+                        .IsUnique();
+
+                    b.ToTable("Fornecedores", (string)null);
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.GED.AcessoDocumento", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4183,21 +4710,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<double?>("AreaTotal")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("Bairro")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Cep")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<Guid?>("ClienteId")
                         .HasColumnType("uuid");
 
@@ -4205,10 +4717,6 @@ namespace Constriva.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Complemento")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("CreaResponsavel")
                         .HasMaxLength(50)
@@ -4245,10 +4753,8 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<Guid>("EmpresaId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)");
+                    b.Property<Guid?>("EnderecoId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("FotoUrl")
                         .HasMaxLength(1000)
@@ -4256,17 +4762,6 @@ namespace Constriva.Infrastructure.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Logradouro")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("double precision");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -4276,11 +4771,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<string>("NomeCliente")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
-
-                    b.Property<string>("Numero")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("NumeroART")
                         .HasMaxLength(50)
@@ -4345,6 +4835,8 @@ namespace Constriva.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
+
+                    b.HasIndex("EnderecoId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6632,10 +7124,6 @@ namespace Constriva.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Bairro")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<string>("BancoAgencia")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
@@ -6659,21 +7147,9 @@ namespace Constriva.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("Cep")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("Cidade")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<string>("Cnh")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Complemento")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Cpf")
                         .IsRequired()
@@ -6716,13 +7192,12 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<Guid>("EmpresaId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("EnderecoId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Escolaridade")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Estado")
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)");
 
                     b.Property<string>("EstadoCivil")
                         .HasMaxLength(20)
@@ -6750,10 +7225,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<int>("JornadaDiaria")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Logradouro")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
                     b.Property<string>("Matricula")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -6779,10 +7250,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<string>("NomeSocial")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Numero")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
 
                     b.Property<Guid?>("ObraAtualId")
                         .HasColumnType("uuid");
@@ -6835,6 +7302,8 @@ namespace Constriva.Infrastructure.Migrations
                     b.HasIndex("CargoId");
 
                     b.HasIndex("DepartamentoId");
+
+                    b.HasIndex("EnderecoId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7909,6 +8378,9 @@ namespace Constriva.Infrastructure.Migrations
                     b.Property<int>("MaxUsuarios")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("ModuloAgente")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("ModuloClientes")
                         .HasColumnType("boolean");
 
@@ -7925,6 +8397,9 @@ namespace Constriva.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("ModuloFinanceiro")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("ModuloFornecedores")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("ModuloGED")
@@ -8362,6 +8837,38 @@ namespace Constriva.Infrastructure.Migrations
                     b.ToTable("UsuarioPermissoes", (string)null);
                 });
 
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteEmpresaConfig", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.Agente.AgenteTier", "Tier")
+                        .WithMany()
+                        .HasForeignKey("AgenteTierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Tier");
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteHistorico", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.Agente.AgenteSessao", "Sessao")
+                        .WithMany("Mensagens")
+                        .HasForeignKey("SessaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sessao");
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Clientes.Cliente", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.Common.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Endereco");
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.ItemCotacao", b =>
                 {
                     b.HasOne("Constriva.Domain.Entities.Compras.Cotacao", "Cotacao")
@@ -8439,7 +8946,7 @@ namespace Constriva.Infrastructure.Migrations
 
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.PedidoCompra", b =>
                 {
-                    b.HasOne("Constriva.Domain.Entities.Compras.Fornecedor", "Fornecedor")
+                    b.HasOne("Constriva.Domain.Entities.Fornecedores.Fornecedor", "Fornecedor")
                         .WithMany("PedidosCompra")
                         .HasForeignKey("FornecedorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -8456,7 +8963,7 @@ namespace Constriva.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Constriva.Domain.Entities.Compras.Fornecedor", "Fornecedor")
+                    b.HasOne("Constriva.Domain.Entities.Fornecedores.Fornecedor", "Fornecedor")
                         .WithMany("Propostas")
                         .HasForeignKey("FornecedorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -8491,7 +8998,7 @@ namespace Constriva.Infrastructure.Migrations
 
             modelBuilder.Entity("Constriva.Domain.Entities.Contratos.Contrato", b =>
                 {
-                    b.HasOne("Constriva.Domain.Entities.Compras.Fornecedor", "Fornecedor")
+                    b.HasOne("Constriva.Domain.Entities.Fornecedores.Fornecedor", "Fornecedor")
                         .WithMany("Contratos")
                         .HasForeignKey("FornecedorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -8612,6 +9119,16 @@ namespace Constriva.Infrastructure.Migrations
                     b.Navigation("AtividadeDestino");
 
                     b.Navigation("AtividadeOrigem");
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Estoque.Almoxarifado", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.Common.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.Estoque.EstoqueSaldo", b =>
@@ -8783,6 +9300,16 @@ namespace Constriva.Infrastructure.Migrations
                     b.Navigation("ContaOrigem");
                 });
 
+            modelBuilder.Entity("Constriva.Domain.Entities.Fornecedores.Fornecedor", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.Common.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Endereco");
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.GED.AcessoDocumento", b =>
                 {
                     b.HasOne("Constriva.Domain.Entities.GED.DocumentoGED", "Documento")
@@ -8947,7 +9474,14 @@ namespace Constriva.Infrastructure.Migrations
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Constriva.Domain.Entities.Common.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Cliente");
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.Obras.ObraAnexo", b =>
@@ -9216,9 +9750,16 @@ namespace Constriva.Infrastructure.Migrations
                         .HasForeignKey("DepartamentoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Constriva.Domain.Entities.Common.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Cargo");
 
                     b.Navigation("Departamento");
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.RH.RegistroPonto", b =>
@@ -9341,6 +9882,11 @@ namespace Constriva.Infrastructure.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteSessao", b =>
+                {
+                    b.Navigation("Mensagens");
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.Clientes.Cliente", b =>
                 {
                     b.Navigation("Obras");
@@ -9349,15 +9895,6 @@ namespace Constriva.Infrastructure.Migrations
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.Cotacao", b =>
                 {
                     b.Navigation("Itens");
-
-                    b.Navigation("Propostas");
-                });
-
-            modelBuilder.Entity("Constriva.Domain.Entities.Compras.Fornecedor", b =>
-                {
-                    b.Navigation("Contratos");
-
-                    b.Navigation("PedidosCompra");
 
                     b.Navigation("Propostas");
                 });
@@ -9468,6 +10005,15 @@ namespace Constriva.Infrastructure.Migrations
             modelBuilder.Entity("Constriva.Domain.Entities.Financeiro.PlanoContas", b =>
                 {
                     b.Navigation("SubContas");
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.Fornecedores.Fornecedor", b =>
+                {
+                    b.Navigation("Contratos");
+
+                    b.Navigation("PedidosCompra");
+
+                    b.Navigation("Propostas");
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.GED.DocumentoGED", b =>

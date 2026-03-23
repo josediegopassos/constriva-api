@@ -20,13 +20,8 @@ public class Cliente : TenantEntity
     public string? Observacoes { get; set; }
 
     // Endereço
-    public string? Logradouro { get; set; }
-    public string? Numero { get; set; }
-    public string? Complemento { get; set; }
-    public string? Bairro { get; set; }
-    public string? Cidade { get; set; }
-    public string? Estado { get; set; }
-    public string? Cep { get; set; }
+    public Guid? EnderecoId { get; set; }
+    public virtual Endereco? Endereco { get; set; }
 
     public virtual ICollection<Obras.Obra> Obras { get; set; } = new List<Obras.Obra>();
 }

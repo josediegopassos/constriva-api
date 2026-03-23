@@ -24,6 +24,10 @@ public class ObraRepository : TenantRepository<Obra>, IObraRepository
 {
     public ObraRepository(AppDbContext ctx) : base(ctx) { }
 
+    public async Task<Obra?> GetByIdComEnderecoAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _set.Include(o => o.Endereco)
+            .FirstOrDefaultAsync(o => o.Id == id && o.EmpresaId == empresaId, ct);
+
     public async Task<IEnumerable<Obra>> GetByStatusAsync(Guid empresaId, StatusObraEnum status, CancellationToken ct = default)
         => await _set.Where(o => o.EmpresaId == empresaId && o.Status == status).ToListAsync(ct);
 
@@ -31,7 +35,7 @@ public class ObraRepository : TenantRepository<Obra>, IObraRepository
         => await _set.FirstOrDefaultAsync(o => o.EmpresaId == empresaId && o.Codigo == codigo, ct);
 
     public async Task<Obra?> GetWithFasesAsync(Guid id, Guid empresaId, CancellationToken ct = default)
-        => await _set.Include(o => o.Cliente).Include(o => o.Fases).ThenInclude(f => f.SubFases)
+        => await _set.Include(o => o.Cliente).Include(o => o.Endereco).Include(o => o.Fases).ThenInclude(f => f.SubFases)
             .FirstOrDefaultAsync(o => o.Id == id && o.EmpresaId == empresaId, ct);
 
     public async Task<IEnumerable<Obra>> GetByUsuarioAsync(Guid usuarioId, Guid empresaId, CancellationToken ct = default)
@@ -53,9 +57,9 @@ public class ObraRepository : TenantRepository<Obra>, IObraRepository
         Guid empresaId, string? search, StatusObraEnum? status, TipoObraEnum? tipo,
         int page, int pageSize, CancellationToken ct = default)
     {
-        var q = _set.Where(o => o.EmpresaId == empresaId && !o.IsDeleted);
+        var q = _set.Include(o => o.Endereco).Where(o => o.EmpresaId == empresaId && !o.IsDeleted);
         if (!string.IsNullOrWhiteSpace(search))
-            q = q.Where(o => o.Nome.Contains(search) || o.Codigo.Contains(search) || o.Cidade.Contains(search));
+            q = q.Where(o => o.Nome.Contains(search) || o.Codigo.Contains(search) || (o.Endereco != null && o.Endereco.Cidade != null && o.Endereco.Cidade.Contains(search)));
         if (status.HasValue) q = q.Where(o => o.Status == status.Value);
         if (tipo.HasValue) q = q.Where(o => o.Tipo == tipo.Value);
         var total = await q.CountAsync(ct);
@@ -79,6 +83,9 @@ public class ObraRepository : TenantRepository<Obra>, IObraRepository
             todas.Any() ? (decimal)todas.Average(o => (double)o.PercentualConcluido) : 0
         );
     }
+
+    public async Task<IEnumerable<Obra>> GetAllByEmpresaComEnderecoAsync(Guid empresaId, CancellationToken ct = default)
+        => await _set.Include(o => o.Endereco).Where(o => o.EmpresaId == empresaId).ToListAsync(ct);
 
     public async Task<IEnumerable<Obra>> GetUltimasObrasAsync(Guid empresaId, int count, CancellationToken ct = default)
         => await _set.Where(o => o.EmpresaId == empresaId && !o.IsDeleted)

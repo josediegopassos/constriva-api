@@ -5,6 +5,7 @@ using Constriva.Application.Common.Interfaces;
 using Constriva.Application.Features.Contratos;
 using Constriva.Application.Features.Contratos.Commands;
 using Constriva.Application.Features.Contratos.DTOs;
+using Constriva.Application.Features.Contratos.Queries;
 using Constriva.Domain.Enums;
 
 namespace Constriva.API.Controllers;
@@ -22,6 +23,14 @@ public sealed class ContratosController : BaseController
         [FromQuery] int page = 1, CancellationToken ct = default)
         => Ok(await Mediator.Send(new GetContratosQuery(RequireEmpresaId(), obraId, status, page), ct));
 
+    [HttpGet("medicoes")]
+    public async Task<ActionResult<IEnumerable<MedicaoGeralDto>>> GetTodasMedicoes(CancellationToken ct)
+        => Ok(await Mediator.Send(new GetTodasMedicoesQuery(RequireEmpresaId()), ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ContratoDetalheDto>> GetById(Guid id, CancellationToken ct)
+        => OkOrNotFound(await Mediator.Send(new GetContratoByIdQuery(id, RequireEmpresaId()), ct));
+
     [HttpPost]
     public async Task<IActionResult> CreateContrato([FromBody] CreateContratoDto dto, CancellationToken ct)
     {
@@ -32,7 +41,35 @@ public sealed class ContratosController : BaseController
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateContrato(Guid id, [FromBody] UpdateContratoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateContratoCommand(id, RequireEmpresaId(), dto.Numero, dto.Objeto, dto.ValorTotal, dto.DataInicio, dto.DataFim, dto.Status.ToString(), dto.Observacoes), ct)); }
+        try { return Ok(await Mediator.Send(new UpdateContratoCommand(id, RequireEmpresaId(), dto), ct)); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/ativar")]
+    public async Task<IActionResult> Ativar(Guid id, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AlterarStatusContratoCommand(id, RequireEmpresaId(), StatusContratoEnum.Ativo), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/suspender")]
+    public async Task<IActionResult> Suspender(Guid id, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AlterarStatusContratoCommand(id, RequireEmpresaId(), StatusContratoEnum.Suspenso), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/encerrar")]
+    public async Task<IActionResult> Encerrar(Guid id, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AlterarStatusContratoCommand(id, RequireEmpresaId(), StatusContratoEnum.Encerrado), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/rescindir")]
+    public async Task<IActionResult> Rescindir(Guid id, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AlterarStatusContratoCommand(id, RequireEmpresaId(), StatusContratoEnum.Rescindido), ct); return NoContent(); }
         catch (Exception ex) { return HandleException(ex); }
     }
 
@@ -67,4 +104,41 @@ public sealed class ContratosController : BaseController
         try { await Mediator.Send(new DeleteMedicaoCommand(medicaoId, RequireEmpresaId()), ct); return NoContent(); }
         catch (Exception ex) { return HandleException(ex); }
     }
+
+    [HttpPatch("{id:guid}/medicoes/{medicaoId:guid}/submeter")]
+    public async Task<IActionResult> SubmeterMedicao(Guid id, Guid medicaoId, CancellationToken ct)
+    {
+        try { await Mediator.Send(new SubmeterMedicaoCommand(medicaoId, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/medicoes/{medicaoId:guid}/analisar")]
+    public async Task<IActionResult> AnalisarMedicao(Guid id, Guid medicaoId, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AnalisarMedicaoCommand(medicaoId, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/medicoes/{medicaoId:guid}/aprovar")]
+    public async Task<IActionResult> AprovarMedicao(Guid id, Guid medicaoId, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AprovarMedicaoCommand(medicaoId, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/medicoes/{medicaoId:guid}/pagar")]
+    public async Task<IActionResult> PagarMedicao(Guid id, Guid medicaoId, CancellationToken ct)
+    {
+        try { await Mediator.Send(new PagarMedicaoCommand(medicaoId, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("{id:guid}/medicoes/{medicaoId:guid}/rejeitar")]
+    public async Task<IActionResult> RejeitarMedicao(Guid id, Guid medicaoId, [FromBody] RejeitarMedicaoRequest body, CancellationToken ct)
+    {
+        try { await Mediator.Send(new RejeitarMedicaoCommand(medicaoId, RequireEmpresaId(), CurrentUser.UserId, body.Motivo), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    public record RejeitarMedicaoRequest(string Motivo);
 }

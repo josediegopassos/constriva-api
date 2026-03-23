@@ -14,7 +14,6 @@ public class AlmoxarifadoConfiguration : IEntityTypeConfiguration<Almoxarifado>
         b.HasIndex(e => e.Id).IsUnique();
         b.Property(e => e.Nome).HasMaxLength(200).IsRequired();
         b.Property(e => e.Descricao).HasMaxLength(500);
-        b.Property(e => e.Logradouro).HasMaxLength(300);
-        b.Property(e => e.Cidade).HasMaxLength(100);
+        b.HasOne(e => e.Endereco).WithMany().HasForeignKey(e => e.EnderecoId).OnDelete(DeleteBehavior.SetNull);
     }
 }

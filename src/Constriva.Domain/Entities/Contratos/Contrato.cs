@@ -1,4 +1,5 @@
 using Constriva.Domain.Entities.Common;
+using Constriva.Domain.Entities.Fornecedores;
 using Constriva.Domain.Enums;
 
 namespace Constriva.Domain.Entities.Contratos;
@@ -31,7 +32,7 @@ public class Contrato : TenantEntity
     public Guid? AssinadoPor { get; set; }
     public Guid? FiscalId { get; set; }
 
-    public virtual Compras.Fornecedor Fornecedor { get; set; } = null!;
+    public virtual Fornecedor Fornecedor { get; set; } = null!;
     public virtual ICollection<AditvoContrato> Aditivos { get; set; } = new List<AditvoContrato>();
     public virtual ICollection<MedicaoContratual> Medicoes { get; set; } = new List<MedicaoContratual>();
     public virtual ICollection<FaturaContrato> Faturas { get; set; } = new List<FaturaContrato>();

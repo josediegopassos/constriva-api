@@ -32,5 +32,5 @@ public class GetClientesHandler : IRequestHandler<GetClientesQuery, PaginatedRes
 
     private static ClienteResumoDto ToResumo(Cliente c) => new(
         c.Id, c.Codigo, c.TipoPessoa, c.Nome, c.NomeFantasia,
-        c.Documento, c.Email, c.Telefone, c.Status, c.Cidade, c.Estado);
+        c.Documento, c.Email, c.Telefone, c.Status, c.Endereco?.Cidade, c.Endereco?.Estado);
 }

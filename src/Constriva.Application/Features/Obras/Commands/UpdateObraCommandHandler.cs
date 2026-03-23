@@ -1,5 +1,6 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Obras.DTOs;
 
@@ -18,7 +19,7 @@ public class UpdateObraCommandHandler : IRequestHandler<UpdateObraCommand, Unit>
 
     public async Task<Unit> Handle(UpdateObraCommand r, CancellationToken ct)
     {
-        var obra = await _repo.GetByIdAndEmpresaAsync(r.Id, r.EmpresaId, ct)
+        var obra = await _repo.GetByIdComEnderecoAsync(r.Id, r.EmpresaId, ct)
             ?? throw new KeyNotFoundException($"Obra {r.Id} não encontrada.");
 
         var dto = r.Dto;
@@ -51,15 +52,20 @@ public class UpdateObraCommandHandler : IRequestHandler<UpdateObraCommand, Unit>
         if (dto.DataFimPrevista.HasValue)  obra.DataFimPrevista = dto.DataFimPrevista.Value;
         if (dto.DataInicioReal.HasValue)   obra.DataInicioReal = dto.DataInicioReal;
         if (dto.DataFimReal.HasValue)      obra.DataFimReal = dto.DataFimReal;
-        if (dto.Logradouro != null)        obra.Logradouro = dto.Logradouro;
-        if (dto.Numero != null)            obra.Numero = dto.Numero;
-        if (dto.Complemento != null)       obra.Complemento = dto.Complemento;
-        if (dto.Bairro != null)            obra.Bairro = dto.Bairro;
-        if (dto.Cidade != null)            obra.Cidade = dto.Cidade;
-        if (dto.Estado != null)            obra.Estado = dto.Estado;
-        if (dto.Cep != null)               obra.Cep = dto.Cep;
-        if (dto.Latitude.HasValue)         obra.Latitude = dto.Latitude;
-        if (dto.Longitude.HasValue)        obra.Longitude = dto.Longitude;
+        bool hasAddressChange = dto.Logradouro != null || dto.Numero != null || dto.Complemento != null || dto.Bairro != null || dto.Cidade != null || dto.Estado != null || dto.Cep != null || dto.Latitude.HasValue || dto.Longitude.HasValue;
+        if (hasAddressChange)
+        {
+            obra.Endereco ??= new Endereco { EmpresaId = r.EmpresaId };
+            if (dto.Logradouro != null)    obra.Endereco.Logradouro = dto.Logradouro;
+            if (dto.Numero != null)        obra.Endereco.Numero = dto.Numero;
+            if (dto.Complemento != null)   obra.Endereco.Complemento = dto.Complemento;
+            if (dto.Bairro != null)        obra.Endereco.Bairro = dto.Bairro;
+            if (dto.Cidade != null)        obra.Endereco.Cidade = dto.Cidade;
+            if (dto.Estado != null)        obra.Endereco.Estado = dto.Estado;
+            if (dto.Cep != null)           obra.Endereco.Cep = dto.Cep;
+            if (dto.Latitude.HasValue)     obra.Endereco.Latitude = dto.Latitude;
+            if (dto.Longitude.HasValue)    obra.Endereco.Longitude = dto.Longitude;
+        }
         if (dto.FotoUrl != null)           obra.FotoUrl = dto.FotoUrl;
 
         obra.UpdatedBy = r.UsuarioId;

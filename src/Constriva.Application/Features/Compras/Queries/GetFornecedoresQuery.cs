@@ -26,7 +26,7 @@ public class GetFornecedoresHandler : IRequestHandler<GetFornecedoresQuery, Pagi
         {
             Items = items.Select(f => new FornecedorDto(
                 f.Id, f.RazaoSocial, f.NomeFantasia, f.Documento, null, f.Tipo,
-                f.Telefone, f.Email, f.Cidade, f.Ativo)),
+                f.Telefone, f.Email, f.Endereco?.Cidade, f.Ativo)),
             TotalCount = total, Page = request.Page, PageSize = request.PageSize
         };
     }

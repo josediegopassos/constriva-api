@@ -17,6 +17,6 @@ public class GetAlmoxarifadosHandler : IRequestHandler<GetAlmoxarifadosQuery, IE
         var items = await _repo.GetAlmoxarifadosAsync(r.EmpresaId, ct);
         return items.Select(a => new AlmoxarifadoDto(
             a.Id, a.Nome, $"ALM-{a.Id.ToString()[..8].ToUpper()}", a.ObraId,
-            a.Principal, a.Descricao, a.Logradouro, a.Cidade, a.ResponsavelId, a.Ativo));
+            a.Principal, a.Descricao, a.Endereco?.Logradouro, a.Endereco?.Cidade, a.ResponsavelId, a.Ativo));
     }
 }

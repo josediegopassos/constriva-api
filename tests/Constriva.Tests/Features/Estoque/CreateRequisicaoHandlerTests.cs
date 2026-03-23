@@ -14,6 +14,7 @@ public class CreateRequisicaoHandlerTests
 {
     private readonly Mock<IEstoqueRepository> _repo;
     private readonly Mock<IObraRepository> _obraRepo;
+    private readonly Mock<IMaterialRepository> _materialRepo;
     private readonly Mock<IUnitOfWork> _uow;
     private readonly CreateRequisicaoHandler _handler;
 
@@ -24,8 +25,9 @@ public class CreateRequisicaoHandlerTests
     {
         _repo = new Mock<IEstoqueRepository>();
         _obraRepo = new Mock<IObraRepository>();
+        _materialRepo = new Mock<IMaterialRepository>();
         _uow = new Mock<IUnitOfWork>();
-        _handler = new CreateRequisicaoHandler(_repo.Object, _obraRepo.Object, _uow.Object);
+        _handler = new CreateRequisicaoHandler(_repo.Object, _obraRepo.Object, _materialRepo.Object, _uow.Object);
     }
 
     [Fact]
@@ -42,7 +44,7 @@ public class CreateRequisicaoHandlerTests
         _uow.Setup(u => u.SaveChangesAsync(default)).ReturnsAsync(1);
 
         var cmd = new CreateRequisicaoCommand(EmpresaId, UserId,
-            new CreateRequisicaoDto(obraId, almoxId, "Cimento Portland"));
+            new CreateRequisicaoDto(obraId, almoxId, "Cimento Portland", null, null, null));
 
         var result = await _handler.Handle(cmd, default);
 
@@ -65,7 +67,7 @@ public class CreateRequisicaoHandlerTests
             .ReturnsAsync((Obra?)null);
 
         var cmd = new CreateRequisicaoCommand(EmpresaId, UserId,
-            new CreateRequisicaoDto(obraId, almoxId, "Material"));
+            new CreateRequisicaoDto(obraId, almoxId, "Material", null, null, null));
 
         var act = async () => await _handler.Handle(cmd, default);
 
@@ -85,7 +87,7 @@ public class CreateRequisicaoHandlerTests
             .ReturnsAsync((Almoxarifado?)null);
 
         var cmd = new CreateRequisicaoCommand(EmpresaId, UserId,
-            new CreateRequisicaoDto(obraId, almoxId, "Material"));
+            new CreateRequisicaoDto(obraId, almoxId, "Material", null, null, null));
 
         var act = async () => await _handler.Handle(cmd, default);
 

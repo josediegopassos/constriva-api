@@ -5,6 +5,7 @@ namespace Constriva.Domain.Interfaces.Repositories;
 
 public interface IObraRepository : ITenantRepository<Obra>
 {
+    Task<Obra?> GetByIdComEnderecoAsync(Guid id, Guid empresaId, CancellationToken ct = default);
     Task<(IEnumerable<Obra> Items, int Total)> GetPagedAsync(
         Guid empresaId, string? search, StatusObraEnum? status, TipoObraEnum? tipo,
         int page, int pageSize, CancellationToken ct = default);
@@ -13,6 +14,7 @@ public interface IObraRepository : ITenantRepository<Obra>
     Task<Obra?> GetByCodigoAsync(Guid empresaId, string codigo, CancellationToken ct = default);
     Task<int> CountByEmpresaAsync(Guid empresaId, StatusObraEnum? status = null, CancellationToken ct = default);
     Task<ObrasDashboardStats> GetDashboardStatsAsync(Guid empresaId, CancellationToken ct = default);
+    Task<IEnumerable<Obra>> GetAllByEmpresaComEnderecoAsync(Guid empresaId, CancellationToken ct = default);
     Task<IEnumerable<Obra>> GetUltimasObrasAsync(Guid empresaId, int count, CancellationToken ct = default);
     Task AddHistoricoAsync(ObraHistorico historico, CancellationToken ct = default);
 }

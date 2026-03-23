@@ -1,4 +1,5 @@
 using Constriva.Domain.Entities.Common;
+using Constriva.Domain.Entities.Fornecedores;
 
 namespace Constriva.Domain.Entities.Compras;
 

@@ -51,7 +51,7 @@ public class UpdateEmpresaHandler : IRequestHandler<UpdateEmpresaCommand, Empres
             new ModulosConfigDto(empresa.ModuloObras, empresa.ModuloEstoque, empresa.ModuloCronograma,
                 empresa.ModuloOrcamento, empresa.ModuloCompras, empresa.ModuloQualidade,
                 empresa.ModuloContratos, empresa.ModuloRH, empresa.ModuloFinanceiro,
-                empresa.ModuloSST, empresa.ModuloGED, empresa.ModuloRelatorios, empresa.ModuloClientes),
+                empresa.ModuloSST, empresa.ModuloGED, empresa.ModuloRelatorios, empresa.ModuloClientes, empresa.ModuloFornecedores, empresa.ModuloAgente),
             0, 0, empresa.CreatedAt);
     }
 }

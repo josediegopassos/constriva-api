@@ -12,6 +12,7 @@ namespace Constriva.Tests.Features.Obras;
 public class UpdateObraHandlerTests
 {
     private readonly Mock<IObraRepository> _obraRepo = new();
+    private readonly Mock<IClienteRepository> _clienteRepo = new();
     private readonly Mock<IUnitOfWork> _uow = new();
     private readonly UpdateObraCommandHandler _handler;
 
@@ -21,7 +22,7 @@ public class UpdateObraHandlerTests
 
     public UpdateObraHandlerTests()
     {
-        _handler = new UpdateObraCommandHandler(_obraRepo.Object, _uow.Object);
+        _handler = new UpdateObraCommandHandler(_obraRepo.Object, _clienteRepo.Object, _uow.Object);
     }
 
     [Fact]
@@ -32,10 +33,9 @@ public class UpdateObraHandlerTests
         _obraRepo.Setup(r => r.Update(It.IsAny<Obra>()));
         _uow.Setup(u => u.SaveChangesAsync(default)).ReturnsAsync(1);
 
-        var dto = new UpdateObraDto("Obra Atualizada", TipoObraEnum.Comercial,
-            null, "Gerente", null, null,
-            "Av. Paulista, 1000", "1", null, "Bela Vista",
-            DateTime.Today, DateTime.Today.AddMonths(24), 10_000_000m, null);
+        var dto = new UpdateObraDto("Obra Atualizada", TipoObraEnum.Comercial, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         var cmd = new UpdateObraCommand(ObraId, EmpresaId, UserId, dto);
 
         await _handler.Handle(cmd, default);
@@ -51,9 +51,9 @@ public class UpdateObraHandlerTests
         _obraRepo.Setup(r => r.GetByIdAndEmpresaAsync(ObraId, EmpresaId, default))
             .ReturnsAsync((Obra?)null);
 
-        var cmd = new UpdateObraCommand(ObraId, EmpresaId, UserId,
-            new UpdateObraDto("Nome", TipoObraEnum.Residencial, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+        var cmd = new UpdateObraCommand(ObraId, EmpresaId, UserId, new UpdateObraDto("Nome", null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _handler.Handle(cmd, default));
     }

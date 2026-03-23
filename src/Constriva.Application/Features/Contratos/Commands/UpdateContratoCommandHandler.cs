@@ -8,11 +8,10 @@ using Constriva.Application.Features.Contratos.DTOs;
 
 namespace Constriva.Application.Features.Contratos.Commands;
 
-public record UpdateContratoCommand(Guid Id, Guid EmpresaId, string Numero, string Objeto,
-    decimal ValorTotal, DateTime DataInicio, DateTime DataFim, string Status, string? Observacoes)
-    : IRequest<ContratoDto>, ITenantRequest { public Guid TenantId => EmpresaId; }
+public record UpdateContratoCommand(Guid Id, Guid EmpresaId, UpdateContratoDto Dto)
+    : IRequest<ContratoDetalheDto>, ITenantRequest { public Guid TenantId => EmpresaId; }
 
-public class UpdateContratoHandler : IRequestHandler<UpdateContratoCommand, ContratoDto>
+public class UpdateContratoHandler : IRequestHandler<UpdateContratoCommand, ContratoDetalheDto>
 {
     private readonly IContratoRepository _repo;
     private readonly IUnitOfWork _uow;
@@ -23,32 +22,48 @@ public class UpdateContratoHandler : IRequestHandler<UpdateContratoCommand, Cont
         _uow = uow;
     }
 
-    public async Task<ContratoDto> Handle(UpdateContratoCommand request, CancellationToken cancellationToken)
+    public async Task<ContratoDetalheDto> Handle(UpdateContratoCommand request, CancellationToken cancellationToken)
     {
         var contrato = await _repo.GetByIdAndEmpresaAsync(request.Id, request.EmpresaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Contrato {request.Id} não encontrado.");
 
-        if (request.DataFim <= request.DataInicio)
+        var dto = request.Dto;
+
+        if (dto.DataVigenciaFim <= dto.DataVigenciaInicio)
             throw new InvalidOperationException("A data de fim deve ser posterior à data de início do contrato.");
 
-        contrato.Objeto = request.Objeto;
-        contrato.ValorGlobal = request.ValorTotal;
-        contrato.DataVigenciaInicio = request.DataInicio;
-        contrato.DataVigenciaFim = request.DataFim;
-        contrato.Observacoes = request.Observacoes;
-        if (!Enum.TryParse<StatusContratoEnum>(request.Status, ignoreCase: true, out var newStatus))
-            throw new InvalidOperationException(
-                $"Status inválido: '{request.Status}'. Valores aceitos: {string.Join(", ", Enum.GetNames<StatusContratoEnum>())}.");
-        contrato.Status = newStatus;
+        contrato.Objeto = dto.Objeto;
+        contrato.Tipo = dto.Tipo;
+        contrato.FornecedorId = dto.FornecedorId;
+        contrato.Descricao = dto.Descricao;
+        contrato.ValorGlobal = dto.ValorGlobal;
+        contrato.PercentualRetencao = dto.PercentualRetencao;
+        contrato.DataAssinatura = dto.DataAssinatura;
+        contrato.DataVigenciaInicio = dto.DataVigenciaInicio;
+        contrato.DataVigenciaFim = dto.DataVigenciaFim;
+        contrato.CondicoesPagamento = dto.CondicoesPagamento;
+        contrato.DiasParaMedicao = dto.DiasParaMedicao;
+        contrato.DiasParaPagamento = dto.DiasParaPagamento;
+        contrato.ArquivoUrl = dto.ArquivoUrl;
+        contrato.AssinadoPor = dto.AssinadoPor;
+        contrato.FiscalId = dto.FiscalId;
+        contrato.Observacoes = dto.Observacoes;
+        contrato.Status = StatusContratoEnum.Rascunho;
 
         _repo.Update(contrato);
         await _uow.SaveChangesAsync(cancellationToken);
 
-        return new ContratoDto(
-            contrato.Id, contrato.Numero, contrato.Objeto, contrato.Tipo, contrato.Status,
+        return new ContratoDetalheDto(
+            contrato.Id, contrato.Numero, contrato.Objeto, contrato.Descricao,
+            contrato.Tipo, contrato.Status,
             contrato.ObraId, contrato.FornecedorId, null,
-            contrato.ValorGlobal, contrato.ValorMedidoAcumulado, 0,
+            contrato.ValorGlobal, contrato.ValorAditivos, contrato.ValorTotal,
+            contrato.ValorMedidoAcumulado, contrato.ValorPagoAcumulado,
+            contrato.PercentualRetencao, contrato.ValorRetencao,
+            contrato.CondicoesPagamento, contrato.DiasParaMedicao, contrato.DiasParaPagamento,
             contrato.DataAssinatura, contrato.DataVigenciaInicio, contrato.DataVigenciaFim,
+            contrato.DataEncerramento,
+            contrato.ArquivoUrl, contrato.AssinadoPor, contrato.FiscalId,
             contrato.Observacoes, contrato.CreatedAt);
     }
 }

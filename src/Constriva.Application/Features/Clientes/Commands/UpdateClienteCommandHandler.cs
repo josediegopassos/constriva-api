@@ -1,5 +1,6 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Clientes.DTOs;
 
@@ -18,7 +19,7 @@ public class UpdateClienteCommandHandler : IRequestHandler<UpdateClienteCommand,
 
     public async Task<Unit> Handle(UpdateClienteCommand r, CancellationToken ct)
     {
-        var cliente = await _repo.GetByIdAndEmpresaAsync(r.Id, r.EmpresaId, ct)
+        var cliente = await _repo.GetByIdComEnderecoAsync(r.Id, r.EmpresaId, ct)
             ?? throw new KeyNotFoundException($"Cliente {r.Id} não encontrado.");
 
         var dto = r.Dto;
@@ -41,13 +42,18 @@ public class UpdateClienteCommandHandler : IRequestHandler<UpdateClienteCommand,
         if (dto.Site != null)              cliente.Site = dto.Site;
         if (dto.Status.HasValue)           cliente.Status = dto.Status.Value;
         if (dto.Observacoes != null)       cliente.Observacoes = dto.Observacoes;
-        if (dto.Logradouro != null)        cliente.Logradouro = dto.Logradouro;
-        if (dto.Numero != null)            cliente.Numero = dto.Numero;
-        if (dto.Complemento != null)       cliente.Complemento = dto.Complemento;
-        if (dto.Bairro != null)            cliente.Bairro = dto.Bairro;
-        if (dto.Cidade != null)            cliente.Cidade = dto.Cidade;
-        if (dto.Estado != null)            cliente.Estado = dto.Estado;
-        if (dto.Cep != null)               cliente.Cep = dto.Cep;
+        bool hasAddressChange = dto.Logradouro != null || dto.Numero != null || dto.Complemento != null || dto.Bairro != null || dto.Cidade != null || dto.Estado != null || dto.Cep != null;
+        if (hasAddressChange)
+        {
+            cliente.Endereco ??= new Endereco { EmpresaId = r.EmpresaId };
+            if (dto.Logradouro != null)    cliente.Endereco.Logradouro = dto.Logradouro;
+            if (dto.Numero != null)        cliente.Endereco.Numero = dto.Numero;
+            if (dto.Complemento != null)   cliente.Endereco.Complemento = dto.Complemento;
+            if (dto.Bairro != null)        cliente.Endereco.Bairro = dto.Bairro;
+            if (dto.Cidade != null)        cliente.Endereco.Cidade = dto.Cidade;
+            if (dto.Estado != null)        cliente.Endereco.Estado = dto.Estado;
+            if (dto.Cep != null)           cliente.Endereco.Cep = dto.Cep;
+        }
 
         cliente.UpdatedBy = r.UsuarioId;
         cliente.UpdatedAt = DateTime.UtcNow;

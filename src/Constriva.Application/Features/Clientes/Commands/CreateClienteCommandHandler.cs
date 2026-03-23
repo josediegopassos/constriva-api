@@ -1,6 +1,7 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
 using Constriva.Domain.Entities.Clientes;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Clientes.DTOs;
 
@@ -41,13 +42,17 @@ public class CreateClienteCommandHandler : IRequestHandler<CreateClienteCommand,
             Celular = r.Dto.Celular,
             Site = r.Dto.Site,
             Observacoes = r.Dto.Observacoes,
-            Logradouro = r.Dto.Logradouro,
-            Numero = r.Dto.Numero,
-            Complemento = r.Dto.Complemento,
-            Bairro = r.Dto.Bairro,
-            Cidade = r.Dto.Cidade,
-            Estado = r.Dto.Estado,
-            Cep = r.Dto.Cep,
+            Endereco = new Endereco
+            {
+                EmpresaId = r.EmpresaId,
+                Logradouro = r.Dto.Logradouro,
+                Numero = r.Dto.Numero,
+                Complemento = r.Dto.Complemento,
+                Bairro = r.Dto.Bairro,
+                Cidade = r.Dto.Cidade,
+                Estado = r.Dto.Estado,
+                Cep = r.Dto.Cep
+            },
         };
 
         await _repo.AddAsync(cliente, ct);
@@ -58,5 +63,5 @@ public class CreateClienteCommandHandler : IRequestHandler<CreateClienteCommand,
 
     internal static ClienteResumoDto ToResumo(Cliente c) => new(
         c.Id, c.Codigo, c.TipoPessoa, c.Nome, c.NomeFantasia,
-        c.Documento, c.Email, c.Telefone, c.Status, c.Cidade, c.Estado);
+        c.Documento, c.Email, c.Telefone, c.Status, c.Endereco?.Cidade, c.Endereco?.Estado);
 }

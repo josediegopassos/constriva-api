@@ -1,5 +1,6 @@
 using MediatR;
 using Constriva.Application.Common.Behaviors;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Entities.Obras;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;
@@ -43,9 +44,19 @@ public class CreateObraCommandHandler : IRequestHandler<CreateObraCommand, ObraR
             DataInicioPrevista = r.Dto.DataInicioPrevista, DataFimPrevista = r.Dto.DataFimPrevista,
             ValorContrato = r.Dto.ValorContrato,
             ValorOrcado = r.Dto.ValorOrcado,
-            Logradouro = r.Dto.Logradouro, Numero = r.Dto.Numero,
-            Complemento = r.Dto.Complemento, Bairro = r.Dto.Bairro,
-            Cidade = r.Dto.Cidade, Estado = r.Dto.Estado, Cep = r.Dto.Cep,
+            Endereco = new Endereco
+            {
+                EmpresaId = r.EmpresaId,
+                Logradouro = r.Dto.Logradouro,
+                Numero = r.Dto.Numero,
+                Complemento = r.Dto.Complemento,
+                Bairro = r.Dto.Bairro,
+                Cidade = r.Dto.Cidade,
+                Estado = r.Dto.Estado,
+                Cep = r.Dto.Cep,
+                Latitude = r.Dto.Latitude,
+                Longitude = r.Dto.Longitude
+            },
             Observacoes = r.Dto.Observacoes,
             CreaResponsavel = r.Dto.CreaResponsavel,
             NumeroART = r.Dto.NumeroART,
@@ -56,8 +67,6 @@ public class CreateObraCommandHandler : IRequestHandler<CreateObraCommand, ObraR
             AreaConstruida = r.Dto.AreaConstruida,
             NumeroAndares = r.Dto.NumeroAndares,
             NumeroUnidades = r.Dto.NumeroUnidades,
-            Latitude = r.Dto.Latitude,
-            Longitude = r.Dto.Longitude,
             Status = StatusObraEnum.Orcamento
         };
 
@@ -65,7 +74,7 @@ public class CreateObraCommandHandler : IRequestHandler<CreateObraCommand, ObraR
         await _uow.SaveChangesAsync(ct);
 
         return new ObraResumoDto(obra.Id, obra.Codigo, obra.Nome, obra.Tipo,
-            obra.Status, obra.Status.ToString(), obra.Cidade, obra.Estado,
+            obra.Status, obra.Status.ToString(), obra.Endereco?.Cidade, obra.Endereco?.Estado,
             obra.DataInicioPrevista, obra.DataFimPrevista,
             obra.ValorContrato, obra.PercentualConcluido, false, null);
     }

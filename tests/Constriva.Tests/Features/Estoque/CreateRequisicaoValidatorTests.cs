@@ -13,7 +13,7 @@ public class CreateRequisicaoValidatorTests
     public void Validate_DevePassar_ComDadosValidos()
     {
         var cmd = new CreateRequisicaoCommand(Guid.NewGuid(), Guid.NewGuid(),
-            new CreateRequisicaoDto(Guid.NewGuid(), Guid.NewGuid(), "Material para fundação"));
+            new CreateRequisicaoDto(Guid.NewGuid(), Guid.NewGuid(), "Material para fundação", null, null, null));
 
         var result = _validator.Validate(cmd);
         result.IsValid.Should().BeTrue();
@@ -23,7 +23,7 @@ public class CreateRequisicaoValidatorTests
     public void Validate_DeveFalhar_QuandoMotivoVazio()
     {
         var cmd = new CreateRequisicaoCommand(Guid.NewGuid(), Guid.NewGuid(),
-            new CreateRequisicaoDto(Guid.NewGuid(), Guid.NewGuid(), ""));
+            new CreateRequisicaoDto(Guid.NewGuid(), Guid.NewGuid(), "", null, null, null));
 
         var result = _validator.Validate(cmd);
         result.IsValid.Should().BeFalse();
@@ -34,7 +34,7 @@ public class CreateRequisicaoValidatorTests
     public void Validate_DeveFalhar_QuandoObraIdVazio()
     {
         var cmd = new CreateRequisicaoCommand(Guid.NewGuid(), Guid.NewGuid(),
-            new CreateRequisicaoDto(Guid.Empty, Guid.NewGuid(), "Motivo válido"));
+            new CreateRequisicaoDto(Guid.Empty, Guid.NewGuid(), "Motivo válido", null, null, null));
 
         var result = _validator.Validate(cmd);
         result.IsValid.Should().BeFalse();
@@ -45,7 +45,7 @@ public class CreateRequisicaoValidatorTests
     {
         var motivo = new string('A', 501);
         var cmd = new CreateRequisicaoCommand(Guid.NewGuid(), Guid.NewGuid(),
-            new CreateRequisicaoDto(Guid.NewGuid(), Guid.NewGuid(), motivo));
+            new CreateRequisicaoDto(Guid.NewGuid(), Guid.NewGuid(), motivo, null, null, null));
 
         var result = _validator.Validate(cmd);
         result.IsValid.Should().BeFalse();

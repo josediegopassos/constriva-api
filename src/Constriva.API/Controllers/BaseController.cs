@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Constriva.Application.Common.Interfaces;
+using Constriva.Application.Features.Agente.Exceptions;
 
 namespace Constriva.API.Controllers;
 
@@ -36,6 +37,7 @@ public abstract class BaseController : ControllerBase
         UnauthorizedAccessException => Forbid(),
         KeyNotFoundException => NotFound(new { message = ex.Message }),
         InvalidOperationException => BadRequest(new { message = ex.Message }),
+        CotaExcedidaException cota => StatusCode(402, new { message = cota.Message, percentualUsado = cota.PercentualUsado, tokensRestantes = cota.TokensRestantes }),
         DbUpdateException dbe => Conflict(new { message = ExtractDbErrorMessage(dbe) }),
         _ => StatusCode(500, new { message = "Ocorreu um erro interno. Tente novamente." })
     };

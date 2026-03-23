@@ -13,6 +13,7 @@ public interface IEstoqueRepository
     Task AddRequisicaoAsync(RequisicaoMaterial req, CancellationToken ct = default);
     Task AddMovimentacaoAsync(MovimentacaoEstoque mov, CancellationToken ct = default);
     Task<Almoxarifado?> GetAlmoxarifadoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
+    Task<Almoxarifado?> GetAlmoxarifadoByIdComEnderecoAsync(Guid id, Guid empresaId, CancellationToken ct = default);
     Task AddAlmoxarifadoAsync(Almoxarifado almoxarifado, CancellationToken ct = default);
     Task<IEnumerable<GrupoMaterial>> GetGruposAsync(Guid empresaId, CancellationToken ct = default);
     Task<EstoqueSaldo?> GetSaldoAsync(Guid almoxarifadoId, Guid materialId, Guid empresaId, CancellationToken ct = default);

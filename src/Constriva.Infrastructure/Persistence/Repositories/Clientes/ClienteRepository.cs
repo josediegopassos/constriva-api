@@ -13,10 +13,14 @@ public class ClienteRepository : TenantRepository<Cliente>, IClienteRepository
         => await _ctx.Clientes
             .FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId && !c.IsDeleted, ct);
 
+    public async Task<Cliente?> GetByIdComEnderecoAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Clientes.Include(c => c.Endereco)
+            .FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId && !c.IsDeleted, ct);
+
     public async Task<(IEnumerable<Cliente> Items, int Total)> GetPagedAsync(
         Guid empresaId, string? search, StatusClienteEnum? status, int page, int pageSize, CancellationToken ct = default)
     {
-        var q = _ctx.Clientes.Where(c => c.EmpresaId == empresaId && !c.IsDeleted);
+        var q = _ctx.Clientes.Include(c => c.Endereco).Where(c => c.EmpresaId == empresaId && !c.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(search))
             q = q.Where(c => c.Nome.Contains(search) ||

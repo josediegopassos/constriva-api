@@ -9,12 +9,14 @@ using Constriva.Domain.Entities.Cronograma;
 using Constriva.Domain.Entities.Orcamento;
 using OrcamentoEntity = Constriva.Domain.Entities.Orcamento.Orcamento;
 using Constriva.Domain.Entities.Compras;
+using Constriva.Domain.Entities.Fornecedores;
 using Constriva.Domain.Entities.Contratos;
 using Constriva.Domain.Entities.RH;
 using Constriva.Domain.Entities.Financeiro;
 using Constriva.Domain.Entities.Qualidade;
 using Constriva.Domain.Entities.SST;
 using Constriva.Domain.Entities.GED;
+using Constriva.Domain.Entities.Agente;
 using Constriva.Application.Common.Interfaces;
 using MediatR;
 
@@ -31,6 +33,9 @@ public class AppDbContext : DbContext
         _currentUser = currentUser;
         _mediator = mediator;
     }
+
+    // ── Common ────────────────────────────────────────────────────────────
+    public DbSet<Endereco> Enderecos => Set<Endereco>();
 
     // ── Tenant ────────────────────────────────────────────────────────────
     public DbSet<Empresa> Empresas => Set<Empresa>();
@@ -147,6 +152,17 @@ public class AppDbContext : DbContext
     public DbSet<EPI> EPIs => Set<EPI>();
     public DbSet<DocumentoPCM> DocumentosPCM => Set<DocumentoPCM>();
     public DbSet<IndicadorSST> IndicadoresSST => Set<IndicadorSST>();
+
+    // ── Agente IA ────────────────────────────────────────────────────────
+    public DbSet<AgenteTier> AgenteTiers => Set<AgenteTier>();
+    public DbSet<AgenteEmpresaConfig> AgenteEmpresaConfigs => Set<AgenteEmpresaConfig>();
+    public DbSet<AgenteSessao> AgenteSessoes => Set<AgenteSessao>();
+    public DbSet<AgenteHistorico> AgenteHistoricos => Set<AgenteHistorico>();
+    public DbSet<AgenteConsumoMensal> AgenteConsumoMensal => Set<AgenteConsumoMensal>();
+    public DbSet<AgenteConsumoDiario> AgenteConsumoDiario => Set<AgenteConsumoDiario>();
+    public DbSet<AgenteConsumoUsuario> AgenteConsumoUsuario => Set<AgenteConsumoUsuario>();
+    public DbSet<AgenteCotaAvulsa> AgenteCotasAvulsas => Set<AgenteCotaAvulsa>();
+    public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
 
     // ── GED ───────────────────────────────────────────────────────────────
     public DbSet<PastaDocumento> PastasDocumentos => Set<PastaDocumento>();

@@ -94,7 +94,7 @@ public class CreateEmpresaCommandHandler : IRequestHandler<CreateEmpresaCommand,
             empresa.Status, empresa.Plano, null,
             empresa.MaxUsuarios, empresa.MaxObras, empresa.Status == StatusEmpresaEnum.Ativa,
             empresa.Cidade, empresa.Estado,
-            new ModulosConfigDto(true, true, true, true, true, true, true, true, true, true, true, true, true),
+            new ModulosConfigDto(true, true, true, true, true, true, true, true, true, true, true, true, true, true, false),
             0, 0, empresa.CreatedAt);
     }
 }

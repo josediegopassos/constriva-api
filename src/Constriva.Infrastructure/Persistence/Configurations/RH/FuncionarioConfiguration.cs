@@ -34,13 +34,7 @@ public class FuncionarioConfiguration : IEntityTypeConfiguration<Funcionario>
         b.Property(e => e.Escolaridade).HasMaxLength(50);
         b.Property(e => e.Naturalidade).HasMaxLength(100);
         b.Property(e => e.Nacionalidade).HasMaxLength(100);
-        b.Property(e => e.Logradouro).HasMaxLength(300);
-        b.Property(e => e.Numero).HasMaxLength(20);
-        b.Property(e => e.Complemento).HasMaxLength(100);
-        b.Property(e => e.Bairro).HasMaxLength(100);
-        b.Property(e => e.Cidade).HasMaxLength(100);
-        b.Property(e => e.Estado).HasMaxLength(2);
-        b.Property(e => e.Cep).HasMaxLength(10);
+        b.HasOne(e => e.Endereco).WithMany().HasForeignKey(e => e.EnderecoId).OnDelete(DeleteBehavior.SetNull);
         b.Property(e => e.TipoContratacaoEnum).HasConversion<int>();
         b.Property(e => e.Status).HasConversion<int>();
         b.Property(e => e.MotivoDemissao).HasMaxLength(500);

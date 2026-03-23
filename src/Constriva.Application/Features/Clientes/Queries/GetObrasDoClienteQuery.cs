@@ -22,7 +22,7 @@ public class GetObrasDoClienteHandler : IRequestHandler<GetObrasDoClienteQuery, 
             .Where(o => o.ClienteId == r.ClienteId)
             .Select(o => new ObraResumoDto(
                 o.Id, o.Codigo, o.Nome, o.Tipo, o.Status, o.Status.ToString(),
-                o.Cidade, o.Estado, o.DataInicioPrevista, o.DataFimPrevista,
+                o.Endereco?.Cidade, o.Endereco?.Estado, o.DataInicioPrevista, o.DataFimPrevista,
                 o.ValorContrato, o.PercentualConcluido,
                 o.Status == StatusObraEnum.EmAndamento && o.DataFimPrevista < hoje,
                 o.FotoUrl));

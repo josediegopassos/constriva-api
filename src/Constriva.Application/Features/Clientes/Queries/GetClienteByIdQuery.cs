@@ -15,7 +15,7 @@ public class GetClienteByIdHandler : IRequestHandler<GetClienteByIdQuery, Client
 
     public async Task<ClienteDto?> Handle(GetClienteByIdQuery r, CancellationToken ct)
     {
-        var c = await _repo.GetByIdAndEmpresaAsync(r.Id, r.EmpresaId, ct);
+        var c = await _repo.GetByIdComEnderecoAsync(r.Id, r.EmpresaId, ct);
         if (c == null || c.IsDeleted) return null;
 
         return new ClienteDto(
@@ -23,7 +23,7 @@ public class GetClienteByIdHandler : IRequestHandler<GetClienteByIdQuery, Client
             c.Documento, c.InscricaoEstadual, c.InscricaoMunicipal,
             c.Email, c.Telefone, c.Celular, c.Site,
             c.Status, c.Observacoes,
-            c.Logradouro, c.Numero, c.Complemento, c.Bairro, c.Cidade, c.Estado, c.Cep,
+            c.Endereco?.Logradouro, c.Endereco?.Numero, c.Endereco?.Complemento, c.Endereco?.Bairro, c.Endereco?.Cidade, c.Endereco?.Estado, c.Endereco?.Cep,
             c.CreatedAt);
     }
 }

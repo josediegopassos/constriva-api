@@ -31,13 +31,7 @@ public class ObraConfiguration : IEntityTypeConfiguration<Obra>
         b.Property(e => e.PercentualConcluido).HasPrecision(5, 2);
         b.Property(e => e.FotoUrl).HasMaxLength(1000);
         b.Property(e => e.Observacoes).HasMaxLength(2000);
-        b.Property(e => e.Logradouro).HasMaxLength(300);
-        b.Property(e => e.Numero).HasMaxLength(20);
-        b.Property(e => e.Complemento).HasMaxLength(100);
-        b.Property(e => e.Bairro).HasMaxLength(100);
-        b.Property(e => e.Cidade).HasMaxLength(100);
-        b.Property(e => e.Estado).HasMaxLength(2);
-        b.Property(e => e.Cep).HasMaxLength(10);
+        b.HasOne(e => e.Endereco).WithMany().HasForeignKey(e => e.EnderecoId).OnDelete(DeleteBehavior.SetNull);
         b.HasMany(e => e.Fases).WithOne(f => f.Obra).HasForeignKey(f => f.ObraId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(e => e.Anexos).WithOne(a => a.Obra).HasForeignKey(a => a.ObraId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(e => e.Historicos).WithOne(h => h.Obra).HasForeignKey(h => h.ObraId).OnDelete(DeleteBehavior.Cascade);

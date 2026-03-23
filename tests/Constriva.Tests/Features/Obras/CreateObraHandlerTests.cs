@@ -12,6 +12,7 @@ namespace Constriva.Tests.Features.Obras;
 public class CreateObraHandlerTests
 {
     private readonly Mock<IObraRepository> _obraRepo = new();
+    private readonly Mock<IClienteRepository> _clienteRepo = new();
     private readonly Mock<IUnitOfWork> _uow = new();
     private readonly CreateObraCommandHandler _handler;
 
@@ -20,12 +21,12 @@ public class CreateObraHandlerTests
 
     public CreateObraHandlerTests()
     {
-        _handler = new CreateObraCommandHandler(_obraRepo.Object, _uow.Object);
+        _handler = new CreateObraCommandHandler(_obraRepo.Object, _clienteRepo.Object, _uow.Object);
     }
 
     private static CreateObraDto DefaultDto() => new(
         "Residencial Vista Mar", TipoObraEnum.Residencial, TipoContratoObraEnum.Empreitada,
-        null, "João Responsável",
+        null, null, "João Responsável",
         DateTime.Today, DateTime.Today.AddMonths(12),
         5_000_000m,
         "Rua das Flores, 100", "1000", null, "Centro",

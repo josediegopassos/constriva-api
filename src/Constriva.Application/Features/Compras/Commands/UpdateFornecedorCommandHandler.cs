@@ -2,7 +2,9 @@ using FluentValidation;
 using MediatR;
 using Constriva.Application.Common.Behaviors;
 using Constriva.Application.Common.Interfaces;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Entities.Compras;
+using Constriva.Domain.Entities.Fornecedores;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.Compras.DTOs;
@@ -27,7 +29,7 @@ public class UpdateFornecedorHandler : IRequestHandler<UpdateFornecedorCommand, 
 
     public async Task<FornecedorDto> Handle(UpdateFornecedorCommand request, CancellationToken cancellationToken)
     {
-        var fornecedor = await _repo.GetByIdAndEmpresaAsync(request.Id, request.EmpresaId, cancellationToken)
+        var fornecedor = await _repo.GetByIdComEnderecoAsync(request.Id, request.EmpresaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Fornecedor {request.Id} não encontrado.");
 
         fornecedor.RazaoSocial = request.RazaoSocial;
@@ -35,7 +37,11 @@ public class UpdateFornecedorHandler : IRequestHandler<UpdateFornecedorCommand, 
         if (request.CNPJ != null) fornecedor.Documento = request.CNPJ;
         if (request.Email != null) fornecedor.Email = request.Email;
         if (request.Telefone != null) fornecedor.Telefone = request.Telefone;
-        if (request.Endereco != null) fornecedor.Logradouro = request.Endereco;
+        if (request.Endereco != null)
+        {
+            fornecedor.Endereco ??= new Endereco { EmpresaId = request.EmpresaId };
+            fornecedor.Endereco.Logradouro = request.Endereco;
+        }
         if (Enum.TryParse<TipoFornecedorEnum>(request.Tipo, out var tipo)) fornecedor.Tipo = tipo;
 
         _repo.Update(fornecedor);
@@ -46,6 +52,6 @@ public class UpdateFornecedorHandler : IRequestHandler<UpdateFornecedorCommand, 
         return new FornecedorDto(
             fornecedor.Id, fornecedor.RazaoSocial, fornecedor.NomeFantasia ?? fornecedor.RazaoSocial,
             cnpj, cpf, fornecedor.Tipo,
-            fornecedor.Telefone, fornecedor.Email, fornecedor.Cidade, fornecedor.Ativo);
+            fornecedor.Telefone, fornecedor.Email, fornecedor.Endereco?.Cidade, fornecedor.Ativo);
     }
 }

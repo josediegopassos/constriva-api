@@ -85,6 +85,26 @@ public static class InfrastructureServiceExtensions
         // Repositories - Relatórios
         services.AddScoped<IRelatoriosRepository, RelatoriosRepository>();
 
+        // Repositories - Agente
+        services.AddScoped<IAgenteRepository, AgenteRepository>();
+
+        // Services - Agente
+        services.AddScoped<Constriva.Application.Features.Agente.Services.IAgentService, AgentService>();
+        services.AddScoped<Constriva.Application.Features.Agente.Services.IConstrivaToolsService, ConstrivaToolsService>();
+        services.AddScoped<Constriva.Application.Features.Agente.Services.IAgenteTokenService, AgenteTokenService>();
+
+        // OpenAI
+        services.Configure<Constriva.Application.Features.Agente.Settings.OpenAISettings>(
+            configuration.GetSection("OpenAI"));
+        services.AddHttpClient("OpenAI", client =>
+        {
+            var baseUrl = configuration["OpenAI:BaseUrl"] ?? "https://api.openai.com";
+            client.BaseAddress = new Uri(baseUrl);
+            var apiKey = configuration["OpenAI:ApiKey"];
+            if (!string.IsNullOrEmpty(apiKey))
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+        });
+
         // Services
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<ICurrentUser, CurrentUserService>();

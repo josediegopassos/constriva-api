@@ -17,14 +17,14 @@ public class GetObrasDashboardHandler : IRequestHandler<GetObrasDashboardQuery, 
 
     public async Task<ObrasDashboardDto> Handle(GetObrasDashboardQuery r, CancellationToken ct)
     {
-        var todas = await _repo.GetAllByEmpresaAsync(r.EmpresaId, ct);
+        var todas = await _repo.GetAllByEmpresaComEnderecoAsync(r.EmpresaId, ct);
         var ativas = todas.Where(o => !o.IsDeleted).ToList();
         var hoje = DateTime.Today;
 
         var ultimas = ativas.OrderByDescending(o => o.CreatedAt).Take(5)
             .Select(o => new ObraResumoDto(
                 o.Id, o.Codigo, o.Nome, o.Tipo, o.Status, o.Status.ToString(),
-                o.Cidade, o.Estado, o.DataInicioPrevista, o.DataFimPrevista,
+                o.Endereco?.Cidade, o.Endereco?.Estado, o.DataInicioPrevista, o.DataFimPrevista,
                 o.ValorContrato, o.PercentualConcluido,
                 o.Status == StatusObraEnum.EmAndamento && o.DataFimPrevista < hoje,
                 o.FotoUrl));

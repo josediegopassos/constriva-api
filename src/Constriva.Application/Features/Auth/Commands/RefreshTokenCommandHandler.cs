@@ -70,7 +70,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
                 empresa.ModuloObras, empresa.ModuloEstoque, empresa.ModuloCronograma,
                 empresa.ModuloOrcamento, empresa.ModuloCompras, empresa.ModuloQualidade,
                 empresa.ModuloContratos, empresa.ModuloRH, empresa.ModuloFinanceiro,
-                empresa.ModuloSST, empresa.ModuloGED, empresa.ModuloRelatorios, empresa.ModuloClientes),
+                empresa.ModuloSST, empresa.ModuloGED, empresa.ModuloRelatorios, empresa.ModuloClientes, empresa.ModuloFornecedores, empresa.ModuloAgente),
             permissoes.Select(p => new PermissaoDto(p.Modulo, p.PodeVisualizar, p.PodeCriar, p.PodeEditar, p.PodeDeletar, p.PodeAprovar, p.PodeExportar, p.PodeAdministrar)));
 
         return new AuthResponseDto(accessToken, refreshToken, expiresAt, usuarioDto);

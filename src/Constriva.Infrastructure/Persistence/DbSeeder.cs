@@ -7,6 +7,7 @@ using Constriva.Domain.Entities.Estoque;
 using Constriva.Domain.Entities.Financeiro;
 using Constriva.Domain.Entities.RH;
 using Constriva.Domain.Entities.SST;
+using Constriva.Domain.Entities.Agente;
 using Constriva.Domain.Enums;
 
 namespace Constriva.Infrastructure.Persistence;
@@ -21,6 +22,10 @@ public static class DbSeeder
     }
 
     // ── IDs fixos para idempotência ────────────────────────────────────────────
+    private static readonly Guid IdTierBasico       = Guid.Parse("a0000000-0000-0000-0000-000000000001");
+    private static readonly Guid IdTierProfissional = Guid.Parse("a0000000-0000-0000-0000-000000000002");
+    private static readonly Guid IdTierIlimitado    = Guid.Parse("a0000000-0000-0000-0000-000000000003");
+
     private static readonly Guid IdEmpresa      = Guid.Parse("10000000-0000-0000-0000-000000000001");
     private static readonly Guid IdSuperAdmin   = Guid.Parse("20000000-0000-0000-0000-000000000001");
     private static readonly Guid IdAdminEmpresa = Guid.Parse("20000000-0000-0000-0000-000000000002");
@@ -157,6 +162,7 @@ public static class DbSeeder
             await SeedDepartamentos(ctx);
             await SeedCargos(ctx);
             await SeedEPIs(ctx);
+            await SeedAgenteTiers(ctx);
 
             await ctx.SaveChangesAsync();
             logger.LogInformation("Seed concluído com sucesso.");
@@ -415,5 +421,15 @@ public static class DbSeeder
             SetId(new EPI { EmpresaId = IdEmpresa, Codigo = "EPI-007", Nome = "Colete Refletivo",      Tipo = TipoEPIEnum.Corpo,        Descricao = "Colete de alta visibilidade",      VidaUtilMeses = 12,  EstoqueMinimo = 5,  Ativo = true, CreatedAt = DateTime.UtcNow }, IdEpiColete),
             SetId(new EPI { EmpresaId = IdEmpresa, Codigo = "EPI-008", Nome = "Máscara de Proteção",   Tipo = TipoEPIEnum.Respiratorio, Descricao = "Respirador semifacial PFF2/N95",   VidaUtilMeses = 1,   EstoqueMinimo = 20, Ativo = true, CreatedAt = DateTime.UtcNow }, IdEpiMascara),
         });
+    }
+
+    // ── Agente Tiers ─────────────────────────────────────────────────────────
+    private static async Task SeedAgenteTiers(AppDbContext ctx)
+    {
+        await ctx.AgenteTiers.AddRangeAsync(
+            SetId(new AgenteTier { Nome = "Básico",        TokensMensais = 100000,  Descricao = "100 mil tokens/mês",             Ativo = true, CreatedAt = DateTime.UtcNow }, IdTierBasico),
+            SetId(new AgenteTier { Nome = "Profissional",  TokensMensais = 500000,  Descricao = "500 mil tokens/mês",             Ativo = true, CreatedAt = DateTime.UtcNow }, IdTierProfissional),
+            SetId(new AgenteTier { Nome = "Ilimitado",     TokensMensais = -1,      Descricao = "Sem limite de tokens por mês",   Ativo = true, CreatedAt = DateTime.UtcNow }, IdTierIlimitado)
+        );
     }
 }

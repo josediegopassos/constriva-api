@@ -39,6 +39,8 @@ public class UpdateModulosHandler : IRequestHandler<UpdateModulosCommand, bool>
         empresa.ModuloSST = dto.SST;
         empresa.ModuloGED = dto.GED;
         empresa.ModuloClientes = dto.Clientes;
+        empresa.ModuloFornecedores = dto.Fornecedores;
+        empresa.ModuloAgente = dto.Agente;
         empresa.ModuloRelatorios = dto.Relatorios;
 
         _repo.Update(empresa);

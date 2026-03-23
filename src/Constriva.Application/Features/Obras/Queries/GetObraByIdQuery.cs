@@ -25,8 +25,8 @@ public class GetObraByIdHandler : IRequestHandler<GetObraByIdQuery, ObraDto?>
             o.AreaTotal, o.AreaConstruida, o.NumeroAndares, o.NumeroUnidades,
             o.DataInicioPrevista, o.DataFimPrevista, o.DataInicioReal, o.DataFimReal,
             o.ValorContrato, o.ValorOrcado, o.ValorRealizado, o.PercentualConcluido,
-            o.Logradouro, o.Numero, o.Complemento, o.Bairro, o.Cidade, o.Estado, o.Cep,
-            o.Latitude, o.Longitude, o.Observacoes, o.FotoUrl, o.CreatedAt,
+            o.Endereco?.Logradouro, o.Endereco?.Numero, o.Endereco?.Complemento, o.Endereco?.Bairro, o.Endereco?.Cidade, o.Endereco?.Estado, o.Endereco?.Cep,
+            o.Endereco?.Latitude, o.Endereco?.Longitude, o.Observacoes, o.FotoUrl, o.CreatedAt,
             o.Fases.Where(f => !f.IsDeleted).OrderBy(f => f.Ordem)
                 .Select(f => new FaseObraDto(
                     f.Id, f.Nome, f.Descricao, f.Ordem, f.Status,

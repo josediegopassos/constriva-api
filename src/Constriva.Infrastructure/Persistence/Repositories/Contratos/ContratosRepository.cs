@@ -24,6 +24,10 @@ public class ContratoRepository : TenantRepository<Contrato>, IContratoRepositor
 {
     public ContratoRepository(AppDbContext ctx) : base(ctx) { }
 
+    public async Task<Contrato?> GetByIdComDetalhesAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Contratos.Include(c => c.Fornecedor)
+            .FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId, ct);
+
     public async Task<(IEnumerable<Contrato> Items, int Total)> GetPagedAsync(
         Guid empresaId, Guid? obraId, StatusContratoEnum? status, int page, int pageSize, CancellationToken ct = default)
     {
@@ -44,6 +48,13 @@ public class ContratoRepository : TenantRepository<Contrato>, IContratoRepositor
         => await _ctx.MedicoesContratuais
             .Where(m => m.ContratoId == contratoId && m.EmpresaId == empresaId && !m.IsDeleted)
             .OrderByDescending(m => m.Periodo).ToListAsync(ct);
+
+    public async Task<IEnumerable<MedicaoContratual>> GetTodasMedicoesAsync(Guid empresaId, CancellationToken ct = default)
+        => await _ctx.MedicoesContratuais
+            .Include(m => m.Contrato).ThenInclude(c => c.Fornecedor)
+            .Where(m => m.EmpresaId == empresaId && !m.IsDeleted)
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync(ct);
 
     public async Task AddMedicaoAsync(MedicaoContratual medicao, CancellationToken ct = default)
         => await _ctx.MedicoesContratuais.AddAsync(medicao, ct);
