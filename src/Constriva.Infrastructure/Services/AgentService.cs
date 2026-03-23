@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Constriva.Application.Features.Agente.DTOs;
 using Constriva.Application.Features.Agente.Services;
@@ -19,6 +20,7 @@ public class AgentService : IAgentService
     private readonly IAgenteTokenService _tokenService;
     private readonly IConstrivaToolsService _toolsService;
     private readonly IUnitOfWork _uow;
+    private readonly Microsoft.Extensions.Logging.ILogger<AgentService> _logger;
 
     private static readonly JsonSerializerOptions _jsonOpts = new()
     {
@@ -33,7 +35,8 @@ public class AgentService : IAgentService
         IAgenteRepository repo,
         IAgenteTokenService tokenService,
         IConstrivaToolsService toolsService,
-        IUnitOfWork uow)
+        IUnitOfWork uow,
+        Microsoft.Extensions.Logging.ILogger<AgentService> logger)
     {
         _httpClientFactory = httpClientFactory;
         _settings = settings.Value;
@@ -41,6 +44,7 @@ public class AgentService : IAgentService
         _tokenService = tokenService;
         _toolsService = toolsService;
         _uow = uow;
+        _logger = logger;
     }
 
     public async Task<ChatResponseDto> ChatAsync(Guid empresaId, Guid usuarioId, ChatRequestDto request, CancellationToken ct)
@@ -72,8 +76,8 @@ public class AgentService : IAgentService
         // 3. Load last 10 messages from session
         var historicoMensagens = (await _repo.GetUltimasMensagensAsync(sessao.Id, 10, ct)).ToList();
 
-        // 4. Build messages array
-        var messages = new List<object>();
+        // 4. Build messages array (all Dictionary for consistent serialization)
+        var messages = new List<Dictionary<string, object>>();
 
         // System prompt
         var systemPrompt = $"""
@@ -86,40 +90,28 @@ public class AgentService : IAgentService
             Data atual: {DateTime.UtcNow:yyyy-MM-dd}
             """;
 
-        messages.Add(new { role = "system", content = systemPrompt });
+        messages.Add(new Dictionary<string, object> { ["role"] = "system", ["content"] = systemPrompt });
 
-        // Loaded history
-        foreach (var msg in historicoMensagens)
+        // Loaded history — resiliente: se falhar, continua sem histórico
+        try
         {
-            var role = msg.Role switch
+            foreach (var msg in historicoMensagens)
             {
-                RoleAgenteEnum.User => "user",
-                RoleAgenteEnum.Assistant => "assistant",
-                RoleAgenteEnum.Tool => "tool",
-                RoleAgenteEnum.System => "system",
-                _ => "user"
-            };
-
-            if (msg.Role == RoleAgenteEnum.Assistant && !string.IsNullOrEmpty(msg.ToolCallsJson))
-            {
-                // Assistant message with tool_calls
-                var toolCalls = JsonSerializer.Deserialize<JsonElement>(msg.ToolCallsJson);
-                messages.Add(new { role = "assistant", content = msg.Conteudo, tool_calls = toolCalls });
+                if (msg.Role == RoleAgenteEnum.User && !string.IsNullOrEmpty(msg.Conteudo))
+                    messages.Add(new Dictionary<string, object> { ["role"] = "user", ["content"] = msg.Conteudo });
+                else if (msg.Role == RoleAgenteEnum.Assistant && string.IsNullOrEmpty(msg.ToolCallsJson) && !string.IsNullOrEmpty(msg.Conteudo))
+                    messages.Add(new Dictionary<string, object> { ["role"] = "assistant", ["content"] = msg.Conteudo });
             }
-            else if (msg.Role == RoleAgenteEnum.Tool)
-            {
-                // Tool response - parse to extract tool_call_id
-                var toolData = JsonSerializer.Deserialize<ToolResultData>(msg.ToolCallsJson ?? "{}", _jsonOpts);
-                messages.Add(new { role = "tool", content = msg.Conteudo, tool_call_id = toolData?.ToolCallId ?? "" });
-            }
-            else
-            {
-                messages.Add(new { role, content = msg.Conteudo });
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "[AGENTE] Falha ao carregar histórico da sessão {SessaoId}. Continuando sem histórico.", sessao.Id);
+            messages.Clear();
+            messages.Add(new Dictionary<string, object> { ["role"] = "system", ["content"] = systemPrompt });
         }
 
         // New user message
-        messages.Add(new { role = "user", content = request.Mensagem });
+        messages.Add(new Dictionary<string, object> { ["role"] = "user", ["content"] = request.Mensagem });
 
         // 5. Save user message to AgenteHistorico
         var userHistorico = new AgenteHistorico
@@ -141,22 +133,68 @@ public class AgentService : IAgentService
         var totalTokensOutput = 0;
         string? assistantResponse = null;
 
+        try
+        {
         for (var iteration = 0; iteration < 5; iteration++)
         {
-            var requestBody = new
+            // Build JSON manually to avoid naming policy mangling dictionary keys
+            var messagesArray = new System.Text.Json.Nodes.JsonArray();
+            foreach (var msg in messages)
             {
-                model = "gpt-4o-mini",
-                max_tokens = 800,
-                messages,
-                tools
+                var node = new System.Text.Json.Nodes.JsonObject();
+                foreach (var kv in msg)
+                {
+                    if (kv.Value is JsonElement je)
+                        node[kv.Key] = System.Text.Json.Nodes.JsonNode.Parse(je.GetRawText());
+                    else if (kv.Value is string s)
+                        node[kv.Key] = s;
+                    else if (kv.Value != null)
+                        node[kv.Key] = System.Text.Json.Nodes.JsonNode.Parse(JsonSerializer.Serialize(kv.Value));
+                }
+                messagesArray.Add(node);
+            }
+
+            var requestObj = new System.Text.Json.Nodes.JsonObject
+            {
+                ["model"] = "gpt-4o-mini",
+                ["max_tokens"] = 800,
+                ["messages"] = messagesArray,
+                ["tools"] = System.Text.Json.Nodes.JsonNode.Parse(JsonSerializer.Serialize(tools)),
+                ["parallel_tool_calls"] = false
             };
 
-            var requestJson = JsonSerializer.Serialize(requestBody, _jsonOpts);
+            var requestJson = requestObj.ToJsonString();
+            _logger.LogInformation("[AGENTE] Iteration {Iter}, Messages count: {Count}", iteration, messages.Count);
+            _logger.LogDebug("[AGENTE] Request JSON: {Json}", requestJson);
             var httpContent = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
 
             var url = $"{_settings.BaseUrl.TrimEnd('/')}/v1/chat/completions";
             var httpResponse = await client.PostAsync(url, httpContent, ct);
-            httpResponse.EnsureSuccessStatusCode();
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                var errorBody = await httpResponse.Content.ReadAsStringAsync(ct);
+                var statusCode = (int)httpResponse.StatusCode;
+                var errorDetail = "";
+                try
+                {
+                    using var errDoc = JsonDocument.Parse(errorBody);
+                    if (errDoc.RootElement.TryGetProperty("error", out var errObj) &&
+                        errObj.TryGetProperty("message", out var errMsg))
+                        errorDetail = errMsg.GetString() ?? "";
+                }
+                catch { /* ignore parse errors */ }
+
+                var msg = statusCode switch
+                {
+                    400 => $"Requisição inválida para a OpenAI: {errorDetail}",
+                    401 => "Chave da API OpenAI inválida ou não configurada.",
+                    429 => "Limite de requisições da OpenAI atingido. Tente novamente em alguns segundos.",
+                    500 or 502 or 503 => "Serviço da OpenAI temporariamente indisponível. Tente novamente.",
+                    _ => $"Erro na comunicação com a OpenAI (HTTP {statusCode}): {errorDetail}"
+                };
+                throw new InvalidOperationException(msg);
+            }
 
             var responseJson = await httpResponse.Content.ReadAsStringAsync(ct);
             using var responseDoc = JsonDocument.Parse(responseJson);
@@ -182,13 +220,12 @@ public class AgentService : IAgentService
                     ? ac.GetString() : null;
 
                 // Add the assistant message with tool_calls to the messages
-                var assistantMsg = JsonSerializer.Deserialize<JsonElement>(
-                    JsonSerializer.Serialize(new
-                    {
-                        role = "assistant",
-                        content = assistantContent,
-                        tool_calls = JsonSerializer.Deserialize<JsonElement>(toolCallsElement.GetRawText())
-                    }, _jsonOpts));
+                var assistantMsg = new Dictionary<string, object>
+                {
+                    ["role"] = "assistant",
+                    ["tool_calls"] = JsonSerializer.Deserialize<JsonElement>(toolCallsElement.GetRawText())
+                };
+                if (assistantContent != null) assistantMsg["content"] = assistantContent;
                 messages.Add(assistantMsg);
 
                 // Save assistant tool_calls message to historico
@@ -236,7 +273,12 @@ public class AgentService : IAgentService
                     await _repo.AddHistoricoAsync(toolResultHistorico, ct);
 
                     // Add tool result to messages
-                    messages.Add(new { role = "tool", content = toolResult, tool_call_id = toolCallId });
+                    messages.Add(new Dictionary<string, object>
+                    {
+                        ["role"] = "tool",
+                        ["content"] = toolResult,
+                        ["tool_call_id"] = toolCallId
+                    });
                 }
 
                 await _uow.SaveChangesAsync(ct);
@@ -248,6 +290,17 @@ public class AgentService : IAgentService
                 ? contentProp.GetString()
                 : "Desculpe, não consegui gerar uma resposta.";
             break;
+        }
+
+        } // end try
+        catch (InvalidOperationException)
+        {
+            throw; // erros de cota e OpenAI já tratados pelo HandleException
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[AGENTE] Erro no loop de chat para empresa {EmpresaId}", empresaId);
+            assistantResponse = "Desculpe, ocorreu um erro ao processar sua solicitação. Tente novamente.";
         }
 
         assistantResponse ??= "Desculpe, o número máximo de iterações foi atingido.";
@@ -283,7 +336,9 @@ public class AgentService : IAgentService
 
     private class ToolResultData
     {
+        [JsonPropertyName("tool_call_id")]
         public string ToolCallId { get; set; } = "";
+        [JsonPropertyName("tool_name")]
         public string ToolName { get; set; } = "";
     }
 }

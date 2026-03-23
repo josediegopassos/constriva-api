@@ -20,8 +20,14 @@ public class AgenteController : BaseController
     [HttpPost("chat")]
     public async Task<IActionResult> Chat([FromBody] ChatRequestDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new ChatCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try 
+        { 
+            return Ok(await Mediator.Send(new ChatCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct)); 
+        }
+        catch (Exception ex) 
+        { 
+            return HandleException(ex); 
+        }
     }
 
     [HttpGet("sessoes")]

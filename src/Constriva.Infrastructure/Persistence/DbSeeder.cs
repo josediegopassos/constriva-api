@@ -144,6 +144,9 @@ public static class DbSeeder
         {
             await ctx.Database.MigrateAsync();
 
+            // Seed idempotente — roda sempre
+            await SeedAgenteTiers(ctx, logger);
+
             if (await ctx.Usuarios.AnyAsync(u => u.IsSuperAdmin))
             {
                 logger.LogInformation("Banco já possui dados. Seed ignorado.");
@@ -162,7 +165,6 @@ public static class DbSeeder
             await SeedDepartamentos(ctx);
             await SeedCargos(ctx);
             await SeedEPIs(ctx);
-            await SeedAgenteTiers(ctx);
 
             await ctx.SaveChangesAsync();
             logger.LogInformation("Seed concluído com sucesso.");
@@ -423,13 +425,17 @@ public static class DbSeeder
         });
     }
 
-    // ── Agente Tiers ─────────────────────────────────────────────────────────
-    private static async Task SeedAgenteTiers(AppDbContext ctx)
+    // ── Agente Tiers (idempotente) ──────────────────────────────────────────
+    private static async Task SeedAgenteTiers(AppDbContext ctx, ILogger logger)
     {
+        if (await ctx.AgenteTiers.AnyAsync()) return;
+
+        logger.LogInformation("Inserindo tiers do módulo Agente...");
         await ctx.AgenteTiers.AddRangeAsync(
             SetId(new AgenteTier { Nome = "Básico",        TokensMensais = 100000,  Descricao = "100 mil tokens/mês",             Ativo = true, CreatedAt = DateTime.UtcNow }, IdTierBasico),
             SetId(new AgenteTier { Nome = "Profissional",  TokensMensais = 500000,  Descricao = "500 mil tokens/mês",             Ativo = true, CreatedAt = DateTime.UtcNow }, IdTierProfissional),
             SetId(new AgenteTier { Nome = "Ilimitado",     TokensMensais = -1,      Descricao = "Sem limite de tokens por mês",   Ativo = true, CreatedAt = DateTime.UtcNow }, IdTierIlimitado)
         );
+        await ctx.SaveChangesAsync();
     }
 }
