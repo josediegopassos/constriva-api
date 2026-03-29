@@ -15,6 +15,7 @@ public class CronogramaObra : TenantEntity
     public Guid? VersaoBaseadaEm { get; set; }
     public string? Observacoes { get; set; }
 
+    public virtual Obras.Obra Obra { get; set; } = null!;
     public virtual ICollection<AtividadeCronograma> Atividades { get; set; } = new List<AtividadeCronograma>();
     public virtual ICollection<CurvaSPonto> CurvaS { get; set; } = new List<CurvaSPonto>();
 }

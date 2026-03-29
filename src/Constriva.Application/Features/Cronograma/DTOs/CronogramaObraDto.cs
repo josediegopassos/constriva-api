@@ -1,7 +1,7 @@
 namespace Constriva.Application.Features.Cronograma.DTOs;
 
 public record CronogramaObraDto(
-    Guid Id, Guid ObraId, string ObraNome,
+    Guid Id, Guid ObraId, string Nome, string ObraNome,
     DateTime DataInicio, DateTime DataFim,
     decimal PercentualPrevisto, decimal PercentualRealizado,
     IEnumerable<AtividadeDto> Atividades

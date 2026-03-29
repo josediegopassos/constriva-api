@@ -29,7 +29,6 @@ public class CreateAtividadeCommandHandler : IRequestHandler<CreateAtividadeComm
 
         var dto = request.Dto;
 
-        // Respeita Dto.Ordem quando explicitamente informado (> 0); caso contrário, auto-incrementa.
         int ordem;
         if (dto.Ordem > 0)
         {
@@ -43,38 +42,44 @@ public class CreateAtividadeCommandHandler : IRequestHandler<CreateAtividadeComm
 
         var atividade = new AtividadeCronograma
         {
-            CronogramaId = cronograma.Id,
-            EmpresaId = request.EmpresaId,
-            Codigo = ordem.ToString("D3"),
-            Nome = dto.Nome,
-            Descricao = dto.Descricao,
-            Ordem = ordem,
+            CronogramaId        = cronograma.Id,
+            EmpresaId           = request.EmpresaId,
+            Codigo              = ordem.ToString("D3"),
+            Nome                = dto.Nome,
+            Descricao           = dto.Descricao,
+            Ordem               = ordem,
+            Nivel               = dto.Nivel,
+            AtividadePaiId      = dto.AtividadePaiId,
+            FaseObraId          = dto.FaseObraId,
+            EAgrupadoa          = dto.EAgrupadora,
+            EMarcador           = dto.EMarcador,
             DataInicioPlanejada = dto.DataInicioPrevista,
-            DataFimPlanejada = dto.DataFimPrevista,
-            DuracaoDias = (int)dto.DuracaoDias,
+            DataFimPlanejada    = dto.DataFimPrevista,
+            DuracaoDias         = dto.DuracaoDias > 0
+                ? (int)dto.DuracaoDias
+                : (int)(dto.DataFimPrevista - dto.DataInicioPrevista).TotalDays,
+            CustoOrcado         = dto.CustoOrcado,
+            ResponsavelId       = dto.ResponsavelId,
+            Cor                 = dto.Cor,
+            Observacoes         = dto.Observacoes,
             PercentualConcluido = 0,
-            Status = StatusAtividadeEnum.NaoIniciada
+            Status              = StatusAtividadeEnum.NaoIniciada
         };
 
         await _repo.AddAtividadeAsync(atividade, cancellationToken);
-        // Após AddAtividadeAsync o Id está disponível (atribuído pelo EF ou pelo construtor da entidade)
 
         var predecessorasIds = new List<Guid>();
         if (dto.Predecessoras != null && dto.Predecessoras.Any())
         {
             foreach (var predecessoraId in dto.Predecessoras.Distinct())
             {
-                // Valida existência e pertença à empresa
                 var predecessora = await _repo.GetAtividadeByIdAsync(predecessoraId, request.EmpresaId, cancellationToken)
                     ?? throw new KeyNotFoundException($"Atividade predecessora {predecessoraId} não encontrada.");
 
-                // Valida pertença ao mesmo cronograma
                 if (predecessora.CronogramaId != cronograma.Id)
                     throw new InvalidOperationException(
                         $"A atividade predecessora {predecessoraId} pertence a um cronograma diferente.");
 
-                // Nota: para uma NOVA atividade sem sucessoras, não é possível introduzir ciclo.
-                // Detecção completa de ciclos é aplicável em UpdatePredecessoras (atividade existente).
                 atividade.Predecessoras.Add(new VinculoAtividade
                 {
                     EmpresaId = request.EmpresaId,
@@ -92,7 +97,8 @@ public class CreateAtividadeCommandHandler : IRequestHandler<CreateAtividadeComm
         return new AtividadeDto(
             atividade.Id, atividade.Nome, atividade.Descricao, atividade.Ordem,
             atividade.DataInicioPlanejada, atividade.DataFimPlanejada,
-            null, null, 0, StatusAtividadeEnum.NaoIniciada, false,
+            atividade.DataInicioReal, atividade.DataFimReal,
+            atividade.PercentualConcluido, atividade.Status, atividade.NoCaminhosCritico,
             predecessorasIds);
     }
 }

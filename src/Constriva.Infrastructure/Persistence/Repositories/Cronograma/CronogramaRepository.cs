@@ -30,8 +30,32 @@ public class CronogramaRepository : ICronogramaRepository
 
     public async Task<CronogramaObra?> GetWithAtividadesAsync(Guid obraId, Guid empresaId, CancellationToken ct = default)
         => await _ctx.Cronogramas
+            .Include(c => c.Obra)
             .Include(c => c.Atividades.Where(a => !a.IsDeleted))
+                .ThenInclude(a => a.Predecessoras)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(c => c.ObraId == obraId && c.EmpresaId == empresaId && c.Ativo && !c.IsDeleted, ct);
+
+    public async Task<IEnumerable<CronogramaObra>> GetAllWithAtividadesAsync(Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Cronogramas
+            .Include(c => c.Obra)
+            .Include(c => c.Atividades.Where(a => !a.IsDeleted))
+                .ThenInclude(a => a.Predecessoras)
+            .AsSplitQuery()
+            .Where(c => c.EmpresaId == empresaId && c.Ativo && !c.IsDeleted)
+            .ToListAsync(ct);
+
+    public async Task<CronogramaObra?> GetByIdDetalhadoAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Cronogramas
+            .Include(c => c.Obra)
+            .Include(c => c.Atividades.Where(a => !a.IsDeleted))
+                .ThenInclude(a => a.Predecessoras)
+            .Include(c => c.Atividades.Where(a => !a.IsDeleted))
+                .ThenInclude(a => a.Sucessoras)
+            .Include(c => c.Atividades.Where(a => !a.IsDeleted))
+                .ThenInclude(a => a.Recursos)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId && !c.IsDeleted, ct);
 
     public async Task AddCronogramaAsync(CronogramaObra cronograma, CancellationToken ct = default)
         => await _ctx.Cronogramas.AddAsync(cronograma, ct);
@@ -47,6 +71,15 @@ public class CronogramaRepository : ICronogramaRepository
 
     public async Task<IEnumerable<CurvaSPonto>> GetCurvaSAsync(Guid cronogramaId, Guid empresaId, CancellationToken ct = default)
         => await _ctx.CurvaSPontos.Where(p => p.CronogramaId == cronogramaId && p.EmpresaId == empresaId).OrderBy(p => p.DataReferencia).ToListAsync(ct);
+
+    public async Task RemoveCurvaSAsync(Guid cronogramaId, Guid empresaId, CancellationToken ct = default)
+    {
+        var pontos = await _ctx.CurvaSPontos.Where(p => p.CronogramaId == cronogramaId && p.EmpresaId == empresaId).ToListAsync(ct);
+        _ctx.CurvaSPontos.RemoveRange(pontos);
+    }
+
+    public async Task AddCurvaSRangeAsync(IEnumerable<CurvaSPonto> pontos, CancellationToken ct = default)
+        => await _ctx.CurvaSPontos.AddRangeAsync(pontos, ct);
 
     public async Task<IEnumerable<VinculoAtividade>> GetVinculosAsync(Guid cronogramaId, CancellationToken ct = default)
         => await _ctx.VinculosAtividades

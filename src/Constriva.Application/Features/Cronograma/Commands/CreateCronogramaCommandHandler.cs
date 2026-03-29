@@ -14,7 +14,9 @@ public record CreateCronogramaCommand(
     DateTime DataInicio,
     DateTime DataFim,
     string? Descricao = null,
-    string? Observacoes = null)
+    string? Observacoes = null,
+    bool ELinhaDBase = false,
+    Guid? VersaoBaseadaEm = null)
     : IRequest<CronogramaObraDto>, ITenantRequest;
 
 public class CreateCronogramaCommandHandler : IRequestHandler<CreateCronogramaCommand, CronogramaObraDto>
@@ -36,22 +38,24 @@ public class CreateCronogramaCommandHandler : IRequestHandler<CreateCronogramaCo
 
         var cronograma = new CronogramaObra
         {
-            ObraId      = request.ObraId,
-            EmpresaId   = request.EmpresaId,
-            Nome        = request.Nome,
-            DataInicio  = request.DataInicio,
-            DataFim     = request.DataFim,
-            Descricao   = request.Descricao,
-            Observacoes = request.Observacoes,
-            Versao      = 1,
-            Ativo       = true
+            ObraId          = request.ObraId,
+            EmpresaId       = request.EmpresaId,
+            Nome            = request.Nome,
+            DataInicio      = request.DataInicio,
+            DataFim         = request.DataFim,
+            Descricao       = request.Descricao,
+            Observacoes     = request.Observacoes,
+            ELinhaDBase     = request.ELinhaDBase,
+            VersaoBaseadaEm = request.VersaoBaseadaEm,
+            Versao          = 1,
+            Ativo           = true
         };
 
         await _repo.AddCronogramaAsync(cronograma, cancellationToken);
         await _uow.SaveChangesAsync(cancellationToken);
 
         return new CronogramaObraDto(
-            cronograma.Id, cronograma.ObraId, cronograma.Nome,
+            cronograma.Id, cronograma.ObraId, cronograma.Nome, "",
             cronograma.DataInicio, cronograma.DataFim,
             0m, 0m, []);
     }

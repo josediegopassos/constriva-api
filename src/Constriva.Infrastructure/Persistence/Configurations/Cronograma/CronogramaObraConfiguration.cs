@@ -15,6 +15,7 @@ public class CronogramaObraConfiguration : IEntityTypeConfiguration<CronogramaOb
         b.Property(e => e.Nome).HasMaxLength(200).IsRequired();
         b.Property(e => e.Descricao).HasMaxLength(1000);
         b.Property(e => e.Observacoes).HasMaxLength(2000);
+        b.HasOne(e => e.Obra).WithMany().HasForeignKey(e => e.ObraId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(e => e.Atividades).WithOne(a => a.Cronograma).HasForeignKey(a => a.CronogramaId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(e => e.CurvaS).WithOne(c => c.Cronograma).HasForeignKey(c => c.CronogramaId).OnDelete(DeleteBehavior.Cascade);
     }

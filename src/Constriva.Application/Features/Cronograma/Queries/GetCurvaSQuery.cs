@@ -14,9 +14,55 @@ public class GetCurvaSHandler : IRequestHandler<GetCurvaSQuery, IEnumerable<Curv
 
     public async Task<IEnumerable<CurvaSPontoDto>> Handle(GetCurvaSQuery request, CancellationToken ct)
     {
-        var crono = await _repo.GetByObraAsync(request.ObraId, request.EmpresaId, ct);
+        var crono = await _repo.GetWithAtividadesAsync(request.ObraId, request.EmpresaId, ct);
         if (crono == null) return [];
-        var pontos = await _repo.GetCurvaSAsync(crono.Id, request.EmpresaId, ct);
-        return pontos.Select(p => new CurvaSPontoDto(p.DataReferencia, p.PercentualPrevisto, p.PercentualRealizado));
+
+        var atividades = crono.Atividades.Where(a => !a.IsDeleted).ToList();
+        if (atividades.Count == 0) return [];
+
+        var dataInicio = crono.DataInicio.Date;
+        var dataFim = crono.DataFim.Date;
+        var hoje = DateTime.Today;
+        var totalAtividades = (decimal)atividades.Count;
+
+        var inicioReal = atividades
+            .Where(a => a.DataInicioReal.HasValue)
+            .Select(a => a.DataInicioReal!.Value.Date)
+            .DefaultIfEmpty(dataInicio)
+            .Min();
+        var inicioEfetivo = inicioReal < dataInicio ? inicioReal : dataInicio;
+
+        var datas = new SortedSet<DateTime>();
+        var dataAtual = inicioEfetivo;
+        while (dataAtual <= dataFim)
+        {
+            datas.Add(dataAtual);
+            var proxima = dataAtual.AddDays(7);
+            dataAtual = proxima > dataFim && dataAtual < dataFim ? dataFim : proxima;
+        }
+        if (hoje >= inicioEfetivo && hoje <= dataFim)
+            datas.Add(hoje);
+
+        var pontos = new List<CurvaSPontoDto>();
+
+        foreach (var data in datas)
+        {
+            var previsto = atividades.Count(a => a.DataFimPlanejada.Date <= data) / totalAtividades * 100m;
+
+            decimal realizado = 0m;
+            if (data <= hoje)
+            {
+                realizado = atividades
+                    .Where(a => (a.DataInicioReal?.Date ?? a.DataInicioPlanejada.Date) <= data)
+                    .Sum(a => a.PercentualConcluido) / totalAtividades;
+            }
+
+            pontos.Add(new CurvaSPontoDto(
+                data,
+                Math.Round(previsto, 2),
+                Math.Round(realizado, 2)));
+        }
+
+        return pontos;
     }
 }

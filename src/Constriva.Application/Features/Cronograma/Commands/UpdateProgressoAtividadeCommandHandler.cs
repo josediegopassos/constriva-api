@@ -10,7 +10,7 @@ using Constriva.Application.Features.Cronograma.DTOs;
 
 namespace Constriva.Application.Features.Cronograma.Commands;
 
-public record UpdateProgressoAtividadeCommand(Guid Id, Guid EmpresaId, decimal Percentual)
+public record UpdateProgressoAtividadeCommand(Guid Id, Guid EmpresaId, decimal Percentual, string? Observacao = null)
     : IRequest<Unit>, ITenantRequest;
 
 public class UpdateProgressoAtividadeCommandHandler : IRequestHandler<UpdateProgressoAtividadeCommand, Unit>
@@ -44,6 +44,8 @@ public class UpdateProgressoAtividadeCommandHandler : IRequestHandler<UpdateProg
             atividade.DataInicioReal = DateTime.Today;
         if (request.Percentual >= 100 && atividade.DataFimReal == null)
             atividade.DataFimReal = DateTime.Today;
+
+        atividade.Observacoes = request.Observacao ?? atividade.Observacoes;
 
         await _uow.SaveChangesAsync(cancellationToken);
         return Unit.Value;
