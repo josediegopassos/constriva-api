@@ -71,6 +71,10 @@ namespace Constriva.API.Controllers
         public async Task<ActionResult<EVMDto>> GetEVM(Guid obraId, CancellationToken ct)
             => Ok(await Mediator.Send(new GetEVMQuery(obraId, RequireEmpresaId()), ct));
 
+        [HttpGet("{id:guid}/evm/cronograma")]
+        public async Task<ActionResult<EVMDto>> GetEVMByCronograma(Guid id, CancellationToken ct)
+            => Ok(await Mediator.Send(new GetEVMByCronogramaQuery(id, RequireEmpresaId()), ct));
+
         [HttpPut("atividades/{id:guid}")]
         public async Task<IActionResult> UpdateAtividade(Guid id, [FromBody] UpdateAtividadeDto dto, CancellationToken ct)
         {
@@ -82,6 +86,13 @@ namespace Constriva.API.Controllers
         public async Task<IActionResult> DeleteAtividade(Guid id, CancellationToken ct)
         {
             try { await Mediator.Send(new DeleteAtividadeCommand(id, RequireEmpresaId()), ct); return NoContent(); }
+            catch (Exception ex) { return HandleException(ex); }
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteCronograma(Guid id, CancellationToken ct)
+        {
+            try { await Mediator.Send(new DeleteCronogramaCommand(id, RequireEmpresaId()), ct); return NoContent(); }
             catch (Exception ex) { return HandleException(ex); }
         }
     }

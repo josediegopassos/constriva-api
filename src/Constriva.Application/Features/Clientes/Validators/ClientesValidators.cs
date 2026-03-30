@@ -12,12 +12,12 @@ public class CreateClienteCommandValidator : AbstractValidator<CreateClienteComm
         RuleFor(x => x.Dto.Email).EmailAddress().MaximumLength(200)
             .When(x => x.Dto.Email != null)
             .WithMessage("E-mail inválido.");
-        RuleFor(x => x.Dto.Estado).Length(2).Matches("^[A-Z]{2}$")
+        RuleFor(x => x.Dto.Endereco!.Estado).Length(2).Matches("^[A-Z]{2}$")
             .WithMessage("Estado deve ser a sigla com 2 letras maiúsculas.")
-            .When(x => x.Dto.Estado != null);
-        RuleFor(x => x.Dto.Cep).Matches(@"^\d{5}-?\d{3}$")
+            .When(x => x.Dto.Endereco?.Estado != null);
+        RuleFor(x => x.Dto.Endereco!.Cep).Matches(@"^\d{5}-?\d{3}$")
             .WithMessage("CEP inválido.")
-            .When(x => x.Dto.Cep != null);
+            .When(x => x.Dto.Endereco?.Cep != null);
     }
 }
 
@@ -30,11 +30,11 @@ public class UpdateClienteCommandValidator : AbstractValidator<UpdateClienteComm
         RuleFor(x => x.Dto.Email).EmailAddress().MaximumLength(200)
             .When(x => x.Dto.Email != null)
             .WithMessage("E-mail inválido.");
-        RuleFor(x => x.Dto.Estado).Length(2).Matches("^[A-Z]{2}$")
+        RuleFor(x => x.Dto.Endereco!.Estado).Length(2).Matches("^[A-Z]{2}$")
             .WithMessage("Estado deve ser a sigla com 2 letras maiúsculas.")
-            .When(x => x.Dto.Estado != null);
-        RuleFor(x => x.Dto.Cep).Matches(@"^\d{5}-?\d{3}$")
+            .When(x => x.Dto.Endereco?.Estado != null);
+        RuleFor(x => x.Dto.Endereco!.Cep).Matches(@"^\d{5}-?\d{3}$")
             .WithMessage("CEP inválido.")
-            .When(x => x.Dto.Cep != null);
+            .When(x => x.Dto.Endereco?.Cep != null);
     }
 }

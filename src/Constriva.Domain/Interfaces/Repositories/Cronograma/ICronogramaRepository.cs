@@ -8,6 +8,7 @@ public interface ICronogramaRepository
     Task<CronogramaObra?> GetWithAtividadesAsync(Guid obraId, Guid empresaId, CancellationToken ct = default);
     Task<IEnumerable<CronogramaObra>> GetAllWithAtividadesAsync(Guid empresaId, CancellationToken ct = default);
     Task<CronogramaObra?> GetByIdDetalhadoAsync(Guid id, Guid empresaId, CancellationToken ct = default);
+    Task<CronogramaObra?> GetByIdAndEmpresaAsync(Guid id, Guid empresaId, CancellationToken ct = default);
     Task AddCronogramaAsync(CronogramaObra cronograma, CancellationToken ct = default);
     Task<AtividadeCronograma?> GetAtividadeByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
     Task AddAtividadeAsync(AtividadeCronograma atividade, CancellationToken ct = default);

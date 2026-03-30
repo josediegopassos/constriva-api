@@ -38,6 +38,7 @@ public class Funcionario : TenantEntity
     public Guid? CargoId { get; set; }
     public Guid? DepartamentoId { get; set; }
     public Guid? ObraAtualId { get; set; }
+    public virtual Obras.Obra? ObraAtual { get; set; }
     public DateTime DataAdmissao { get; set; }
     public DateTime? DataDemissao { get; set; }
     public string? MotivoDemissao { get; set; }
@@ -47,10 +48,8 @@ public class Funcionario : TenantEntity
     public int JornadaDiaria { get; set; } = 8;
 
     // Dados bancários
-    public string? BancoNome { get; set; }
-    public string? BancoAgencia { get; set; }
-    public string? BancoConta { get; set; }
-    public string? PixChave { get; set; }
+    public Guid? DadosBancariosId { get; set; }
+    public virtual DadosBancarios? DadosBancarios { get; set; }
 
     public virtual Cargo? Cargo { get; set; }
     public virtual Departamento? Departamento { get; set; }

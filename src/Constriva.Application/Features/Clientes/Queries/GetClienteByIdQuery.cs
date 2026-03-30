@@ -18,12 +18,16 @@ public class GetClienteByIdHandler : IRequestHandler<GetClienteByIdQuery, Client
         var c = await _repo.GetByIdComEnderecoAsync(r.Id, r.EmpresaId, ct);
         if (c == null || c.IsDeleted) return null;
 
+        var endereco = c.Endereco != null
+            ? new EnderecoDto(c.Endereco.Logradouro, c.Endereco.Numero, c.Endereco.Complemento, c.Endereco.Bairro, c.Endereco.Cidade, c.Endereco.Estado, c.Endereco.Cep)
+            : null;
+
         return new ClienteDto(
             c.Id, c.Codigo, c.TipoPessoa, c.Nome, c.NomeFantasia,
             c.Documento, c.InscricaoEstadual, c.InscricaoMunicipal,
             c.Email, c.Telefone, c.Celular, c.Site,
             c.Status, c.Observacoes,
-            c.Endereco?.Logradouro, c.Endereco?.Numero, c.Endereco?.Complemento, c.Endereco?.Bairro, c.Endereco?.Cidade, c.Endereco?.Estado, c.Endereco?.Cep,
+            endereco,
             c.CreatedAt);
     }
 }

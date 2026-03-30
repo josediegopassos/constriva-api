@@ -1,3 +1,41 @@
+using Constriva.Application.Features.Clientes.DTOs;
+using Constriva.Domain.Enums;
+
 namespace Constriva.Application.Features.RH.DTOs;
 
-public record UpdateFuncionarioDto(string Nome, string Cargo, string? Departamento, decimal SalarioBase, string? Telefone, string? Email, bool Ativo, Guid? ObraId);
+public record UpdateFuncionarioDto(
+    string? Nome = null,
+    string? NomeSocial = null,
+    DateTime? DataNascimento = null,
+    string? Cpf = null,
+    string? Rg = null,
+    string? OrgaoExpedidor = null,
+    string? Cnh = null,
+    string? CategoriaCnh = null,
+    DateTime? ValidadeCnh = null,
+    string? CtpsNumero = null,
+    string? CtpsSerie = null,
+    string? Pis = null,
+    string? Email = null,
+    string? Telefone = null,
+    string? Celular = null,
+    string? FotoUrl = null,
+    string? Genero = null,
+    string? EstadoCivil = null,
+    string? Escolaridade = null,
+    string? Naturalidade = null,
+    string? Nacionalidade = null,
+    TipoContratacaoEnum? TipoContratacao = null,
+    Guid? CargoId = null,
+    Guid? DepartamentoId = null,
+    Guid? ObraId = null,
+    DateTime? DataAdmissao = null,
+    DateTime? DataDemissao = null,
+    string? MotivoDemissao = null,
+    decimal? SalarioBase = null,
+    decimal? HoraExtra50 = null,
+    decimal? HoraExtra100 = null,
+    int? JornadaDiaria = null,
+    StatusFuncionarioEnum? Status = null,
+    EnderecoDto? Endereco = null,
+    DadosBancariosDto? DadosBancarios = null);

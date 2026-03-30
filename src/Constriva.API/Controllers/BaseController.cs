@@ -38,17 +38,17 @@ public abstract class BaseController : ControllerBase
         KeyNotFoundException => NotFound(new { message = ex.Message }),
         InvalidOperationException => BadRequest(new { message = ex.Message }),
         CotaExcedidaException cota => StatusCode(402, new { message = cota.Message, percentualUsado = cota.PercentualUsado, tokensRestantes = cota.TokensRestantes }),
-        DbUpdateException dbe => Conflict(new { message = ExtractDbErrorMessage(dbe) }),
-        _ => StatusCode(500, new { message = "Ocorreu um erro interno. Tente novamente." })
+        DbUpdateException dbe => Conflict(new { message = ExtractDbErrorMessage(dbe), detail = dbe.ToString() }),
+        _ => StatusCode(500, new { message = ex.Message, type = ex.GetType().Name, detail = ex.ToString() })
     };
 
     private static string ExtractDbErrorMessage(DbUpdateException ex)
     {
-        var inner = ex.InnerException?.Message ?? "";
+        var inner = ex.InnerException?.Message ?? ex.Message;
         if (inner.Contains("23505") || inner.Contains("unique constraint") || inner.Contains("duplicate key"))
-            return "Já existe um registro com esses dados (violação de unicidade).";
+            return $"Já existe um registro com esses dados (violação de unicidade). Detalhe: {inner}";
         if (inner.Contains("23503") || inner.Contains("foreign key"))
-            return "Operação inválida: existe um vínculo com outro registro.";
-        return "Erro ao salvar os dados. Verifique as informações e tente novamente.";
+            return $"Operação inválida: existe um vínculo com outro registro. Detalhe: {inner}";
+        return $"Erro ao salvar os dados. Detalhe: {inner}";
     }
 }

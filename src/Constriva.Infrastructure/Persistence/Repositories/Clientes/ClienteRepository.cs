@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Constriva.Domain.Entities.Clientes;
+using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;
 
@@ -39,7 +40,7 @@ public class ClienteRepository : TenantRepository<Cliente>, IClienteRepository
     }
 
     public async Task<int> GetCountByEmpresaAsync(Guid empresaId, CancellationToken ct = default)
-        => await _ctx.Clientes.CountAsync(c => c.EmpresaId == empresaId, ct);
+        => await _ctx.Clientes.IgnoreQueryFilters().CountAsync(c => c.EmpresaId == empresaId, ct);
 
     public async Task<IEnumerable<Cliente>> GetAllActiveByEmpresaAsync(Guid empresaId, CancellationToken ct = default)
         => await _ctx.Clientes
@@ -53,4 +54,7 @@ public class ClienteRepository : TenantRepository<Cliente>, IClienteRepository
             c.EmpresaId == empresaId &&
             !c.IsDeleted &&
             (excludeId == null || c.Id != excludeId), ct);
+
+    public async Task AddEnderecoAsync(Endereco endereco, CancellationToken ct = default)
+        => await _ctx.Enderecos.AddAsync(endereco, ct);
 }

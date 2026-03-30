@@ -2,6 +2,15 @@ using Constriva.Domain.Enums;
 
 namespace Constriva.Application.Features.Clientes.DTOs;
 
+public record EnderecoDto(
+    string? Logradouro,
+    string? Numero,
+    string? Complemento,
+    string? Bairro,
+    string? Cidade,
+    string? Estado,
+    string? Cep);
+
 public record ClienteDto(
     Guid Id,
     string Codigo,
@@ -17,16 +26,12 @@ public record ClienteDto(
     string? Site,
     StatusClienteEnum Status,
     string? Observacoes,
-    string? Logradouro,
-    string? Numero,
-    string? Complemento,
-    string? Bairro,
-    string? Cidade,
-    string? Estado,
-    string? Cep,
+    EnderecoDto? Endereco,
     DateTime CreatedAt);
 
 public record ClienteAtivoDto(Guid Id, string Nome);
+
+public record AlterarStatusClienteDto(StatusClienteEnum Status);
 
 public record ClienteResumoDto(
     Guid Id,

@@ -31,18 +31,10 @@ public class GerarFolhaPagamentoCommandHandler : IRequestHandler<GerarFolhaPagam
         var folha = await _repo.GerarFolhaAsync(request.EmpresaId, request.Competencia, request.FuncionarioId, cancellationToken);
         await _uow.SaveChangesAsync(cancellationToken);
 
-        var folhaFunc = request.FuncionarioId.HasValue
-            ? folha.Funcionarios.FirstOrDefault(f => f.FuncionarioId == request.FuncionarioId)
-            : folha.Funcionarios.FirstOrDefault();
-
-        if (folhaFunc != null)
-            return new FolhaPagamentoDto(
-                folha.Id, folha.Competencia, folhaFunc.FuncionarioId, "",
-                folhaFunc.SalarioBruto, folhaFunc.TotalProventos - folhaFunc.SalarioBruto,
-                folhaFunc.TotalDescontos, folhaFunc.SalarioLiquido);
-
         return new FolhaPagamentoDto(
-            folha.Id, folha.Competencia, Guid.Empty, "Total",
-            folha.ValorTotalBruto, 0, folha.ValorTotalDescontos, folha.ValorTotalLiquido);
+            folha.Id, folha.Competencia, folha.DataInicio, folha.DataFim,
+            folha.Status, folha.TotalFuncionarios,
+            folha.ValorTotalBruto, folha.ValorTotalDescontos, folha.ValorTotalLiquido,
+            folha.AprovadoPor, folha.DataAprovacao, folha.DataPagamento);
     }
 }

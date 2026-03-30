@@ -9,6 +9,7 @@ public class Departamento : TenantEntity
     public Guid? GestorId { get; set; }
     public Guid? DepartamentoPaiId { get; set; }
     public bool Ativo { get; set; } = true;
+    public virtual Funcionario? Gestor { get; set; }
     public virtual Departamento? DepartamentoPai { get; set; }
     public virtual ICollection<Funcionario> Funcionarios { get; set; } = new List<Funcionario>();
 }

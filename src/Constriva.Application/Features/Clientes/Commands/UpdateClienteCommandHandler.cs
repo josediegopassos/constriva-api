@@ -42,23 +42,28 @@ public class UpdateClienteCommandHandler : IRequestHandler<UpdateClienteCommand,
         if (dto.Site != null)              cliente.Site = dto.Site;
         if (dto.Status.HasValue)           cliente.Status = dto.Status.Value;
         if (dto.Observacoes != null)       cliente.Observacoes = dto.Observacoes;
-        bool hasAddressChange = dto.Logradouro != null || dto.Numero != null || dto.Complemento != null || dto.Bairro != null || dto.Cidade != null || dto.Estado != null || dto.Cep != null;
-        if (hasAddressChange)
+
+        if (dto.Endereco != null)
         {
-            cliente.Endereco ??= new Endereco { EmpresaId = r.EmpresaId };
-            if (dto.Logradouro != null)    cliente.Endereco.Logradouro = dto.Logradouro;
-            if (dto.Numero != null)        cliente.Endereco.Numero = dto.Numero;
-            if (dto.Complemento != null)   cliente.Endereco.Complemento = dto.Complemento;
-            if (dto.Bairro != null)        cliente.Endereco.Bairro = dto.Bairro;
-            if (dto.Cidade != null)        cliente.Endereco.Cidade = dto.Cidade;
-            if (dto.Estado != null)        cliente.Endereco.Estado = dto.Estado;
-            if (dto.Cep != null)           cliente.Endereco.Cep = dto.Cep;
+            if (cliente.Endereco == null)
+            {
+                var endereco = new Endereco { EmpresaId = r.EmpresaId };
+                await _repo.AddEnderecoAsync(endereco, ct);
+                cliente.EnderecoId = endereco.Id;
+                cliente.Endereco = endereco;
+            }
+            if (dto.Endereco.Logradouro != null)    cliente.Endereco.Logradouro = dto.Endereco.Logradouro;
+            if (dto.Endereco.Numero != null)        cliente.Endereco.Numero = dto.Endereco.Numero;
+            if (dto.Endereco.Complemento != null)   cliente.Endereco.Complemento = dto.Endereco.Complemento;
+            if (dto.Endereco.Bairro != null)        cliente.Endereco.Bairro = dto.Endereco.Bairro;
+            if (dto.Endereco.Cidade != null)        cliente.Endereco.Cidade = dto.Endereco.Cidade;
+            if (dto.Endereco.Estado != null)        cliente.Endereco.Estado = dto.Endereco.Estado;
+            if (dto.Endereco.Cep != null)           cliente.Endereco.Cep = dto.Endereco.Cep;
         }
 
         cliente.UpdatedBy = r.UsuarioId;
         cliente.UpdatedAt = DateTime.UtcNow;
 
-        _repo.Update(cliente);
         await _uow.SaveChangesAsync(ct);
         return Unit.Value;
     }

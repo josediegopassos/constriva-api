@@ -14,10 +14,4 @@ public record CreateClienteDto(
     string? Celular = null,
     string? Site = null,
     string? Observacoes = null,
-    string? Logradouro = null,
-    string? Numero = null,
-    string? Complemento = null,
-    string? Bairro = null,
-    string? Cidade = null,
-    string? Estado = null,
-    string? Cep = null);
+    EnderecoDto? Endereco = null);

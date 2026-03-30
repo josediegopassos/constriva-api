@@ -28,6 +28,9 @@ public class CronogramaRepository : ICronogramaRepository
     public async Task<CronogramaObra?> GetByObraAsync(Guid obraId, Guid empresaId, CancellationToken ct = default)
         => await _ctx.Cronogramas.FirstOrDefaultAsync(c => c.ObraId == obraId && c.EmpresaId == empresaId && c.Ativo && !c.IsDeleted, ct);
 
+    public async Task<CronogramaObra?> GetByIdAndEmpresaAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.Cronogramas.FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId && !c.IsDeleted, ct);
+
     public async Task<CronogramaObra?> GetWithAtividadesAsync(Guid obraId, Guid empresaId, CancellationToken ct = default)
         => await _ctx.Cronogramas
             .Include(c => c.Obra)

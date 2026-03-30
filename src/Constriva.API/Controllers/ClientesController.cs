@@ -61,6 +61,13 @@ public class ClientesController : BaseController
         catch (Exception ex) { return HandleException(ex); }
     }
 
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> AlterarStatus(Guid id, [FromBody] AlterarStatusClienteDto dto, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AlterarStatusClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto.Status), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
     [HttpGet("{id:guid}/obras")]
     public async Task<ActionResult<IEnumerable<ObraResumoDto>>> GetObras(Guid id, CancellationToken ct)
         => Ok(await Mediator.Send(new GetObrasDoClienteQuery(id, RequireEmpresaId()), ct));

@@ -25,9 +25,10 @@ public class GetFuncionariosHandler : IRequestHandler<GetFuncionariosQuery, Pagi
         return new PaginatedResult<FuncionarioDto>
         {
             Items = items.Select(f => new FuncionarioDto(
-                f.Id, f.Nome, f.Cpf, f.Email, f.Telefone,
+                f.Id, f.Matricula, f.Nome, f.NomeSocial, f.Cpf, f.Email, f.Telefone,
                 f.CargoId, f.Cargo?.Nome, f.DepartamentoId, f.Departamento?.Nome,
-                f.DataAdmissao, f.SalarioBase, f.Status)),
+                f.ObraAtualId, f.ObraAtual?.Nome,
+                f.TipoContratacaoEnum, f.DataAdmissao, f.SalarioBase, f.Status)),
             TotalCount = total, Page = r.Page, PageSize = r.PageSize
         };
     }

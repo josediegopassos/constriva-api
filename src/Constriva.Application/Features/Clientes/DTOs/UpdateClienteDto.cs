@@ -15,10 +15,4 @@ public record UpdateClienteDto(
     string? Site = null,
     StatusClienteEnum? Status = null,
     string? Observacoes = null,
-    string? Logradouro = null,
-    string? Numero = null,
-    string? Complemento = null,
-    string? Bairro = null,
-    string? Cidade = null,
-    string? Estado = null,
-    string? Cep = null);
+    EnderecoDto? Endereco = null);

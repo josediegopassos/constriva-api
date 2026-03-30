@@ -17,7 +17,9 @@ public class GetFolhasHandler : IRequestHandler<GetFolhasQuery, IEnumerable<Folh
     {
         var items = await _repo.GetFolhasAsync(r.EmpresaId, r.Competencia, ct);
         return items.Select(f => new FolhaPagamentoDto(
-            f.Id, f.Competencia, Guid.Empty, "",
-            f.ValorTotalBruto, 0m, f.ValorTotalDescontos, f.ValorTotalLiquido));
+            f.Id, f.Competencia, f.DataInicio, f.DataFim,
+            f.Status, f.TotalFuncionarios,
+            f.ValorTotalBruto, f.ValorTotalDescontos, f.ValorTotalLiquido,
+            f.AprovadoPor, f.DataAprovacao, f.DataPagamento));
     }
 }

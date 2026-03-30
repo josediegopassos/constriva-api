@@ -42,17 +42,17 @@ public class CreateClienteCommandHandler : IRequestHandler<CreateClienteCommand,
             Celular = r.Dto.Celular,
             Site = r.Dto.Site,
             Observacoes = r.Dto.Observacoes,
-            Endereco = new Endereco
+            Endereco = r.Dto.Endereco != null ? new Endereco
             {
                 EmpresaId = r.EmpresaId,
-                Logradouro = r.Dto.Logradouro,
-                Numero = r.Dto.Numero,
-                Complemento = r.Dto.Complemento,
-                Bairro = r.Dto.Bairro,
-                Cidade = r.Dto.Cidade,
-                Estado = r.Dto.Estado,
-                Cep = r.Dto.Cep
-            },
+                Logradouro = r.Dto.Endereco.Logradouro,
+                Numero = r.Dto.Endereco.Numero,
+                Complemento = r.Dto.Endereco.Complemento,
+                Bairro = r.Dto.Endereco.Bairro,
+                Cidade = r.Dto.Endereco.Cidade,
+                Estado = r.Dto.Endereco.Estado,
+                Cep = r.Dto.Endereco.Cep
+            } : null,
         };
 
         await _repo.AddAsync(cliente, ct);

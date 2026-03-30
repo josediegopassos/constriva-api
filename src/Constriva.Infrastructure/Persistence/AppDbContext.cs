@@ -35,6 +35,7 @@ public class AppDbContext : DbContext
     }
 
     // ── Common ────────────────────────────────────────────────────────────
+    public DbSet<Banco> Bancos => Set<Banco>();
     public DbSet<Endereco> Enderecos => Set<Endereco>();
 
     // ── Tenant ────────────────────────────────────────────────────────────
@@ -119,6 +120,7 @@ public class AppDbContext : DbContext
     public DbSet<TreinamentoFuncionario> TreinamentosFuncionarios => Set<TreinamentoFuncionario>();
     public DbSet<EPIFuncionario> EPIsFuncionarios => Set<EPIFuncionario>();
     public DbSet<DocumentoFuncionario> DocumentosFuncionarios => Set<DocumentoFuncionario>();
+    public DbSet<DadosBancarios> DadosBancarios => Set<DadosBancarios>();
 
     // ── Financeiro ────────────────────────────────────────────────────────
     public DbSet<CentroCusto> CentrosCusto => Set<CentroCusto>();

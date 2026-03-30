@@ -41,11 +41,9 @@ public class FuncionarioConfiguration : IEntityTypeConfiguration<Funcionario>
         b.Property(e => e.SalarioBase).HasPrecision(18, 2);
         b.Property(e => e.HoraExtra50).HasPrecision(18, 2);
         b.Property(e => e.HoraExtra100).HasPrecision(18, 2);
-        b.Property(e => e.BancoNome).HasMaxLength(100);
-        b.Property(e => e.BancoAgencia).HasMaxLength(20);
-        b.Property(e => e.BancoConta).HasMaxLength(30);
-        b.Property(e => e.PixChave).HasMaxLength(150);
+        b.HasOne(e => e.DadosBancarios).WithMany().HasForeignKey(e => e.DadosBancariosId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(e => e.Cargo).WithMany(c => c.Funcionarios).HasForeignKey(e => e.CargoId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne(e => e.Departamento).WithMany(d => d.Funcionarios).HasForeignKey(e => e.DepartamentoId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne(e => e.ObraAtual).WithMany().HasForeignKey(e => e.ObraAtualId).OnDelete(DeleteBehavior.SetNull);
     }
 }

@@ -15,6 +15,6 @@ public class GetCargosHandler : IRequestHandler<GetCargosQuery, IEnumerable<Carg
     public async Task<IEnumerable<CargoDto>> Handle(GetCargosQuery r, CancellationToken ct)
     {
         var items = await _repo.GetCargosAsync(r.EmpresaId, ct);
-        return items.Select(c => new CargoDto(c.Id, c.Nome, c.Descricao, c.SalarioBase, c.SalarioMaximo));
+        return items.Select(c => new CargoDto(c.Id, c.Codigo, c.Nome, c.CBO, c.Descricao, c.SalarioBase, c.SalarioMaximo, c.Ativo));
     }
 }
