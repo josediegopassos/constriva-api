@@ -107,6 +107,19 @@ public class OrcamentosController : OrcamentoBaseController
         return NoContent();
     }
 
+    // ─── Status ─────────────────────────────────────────────────────────────────
+
+    /// <summary>Altera o status de um orçamento</summary>
+    [HttpPatch("{id}/status")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> AlterarStatus(Guid id, [FromBody] AlterarStatusOrcamentoDto dto, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AlterarStatusOrcamentoCommand(id, EmpresaId, CurrentUser.UserId, dto.Status, dto.Observacao), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
     // ─── Workflow de Aprovação ─────────────────────────────────────────────────
 
     /// <summary>Envia um orçamento para revisão</summary>

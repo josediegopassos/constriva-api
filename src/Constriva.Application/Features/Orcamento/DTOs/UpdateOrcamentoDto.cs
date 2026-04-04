@@ -5,6 +5,7 @@ public record UpdateOrcamentoDto(
     decimal BDI,
     DateTime DataReferencia,
     string? Descricao = null,
+    string? Observacoes = null,
     string? BaseOrcamentaria = null,
     string? Localidade = null,
     decimal BDIDetalhadoAdministracao = 0,

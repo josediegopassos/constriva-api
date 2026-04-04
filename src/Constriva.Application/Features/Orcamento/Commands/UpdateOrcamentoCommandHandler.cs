@@ -36,8 +36,17 @@ public class UpdateOrcamentoHandler : IRequestHandler<UpdateOrcamentoCommand, Or
         orcamento.BDI = dto.BDI;
         orcamento.DataReferencia = dto.DataReferencia;
         orcamento.Descricao = dto.Descricao;
+        orcamento.Observacoes = dto.Observacoes;
         orcamento.BaseOrcamentaria = dto.BaseOrcamentaria;
         orcamento.Localidade = dto.Localidade;
+        orcamento.BDIDetalhado_Administracao = dto.BDIDetalhadoAdministracao;
+        orcamento.BDIDetalhado_Seguro = dto.BDIDetalhadoSeguro;
+        orcamento.BDIDetalhado_Risco = dto.BDIDetalhadoRisco;
+        orcamento.BDIDetalhado_Financeiro = dto.BDIDetalhadoFinanceiro;
+        orcamento.BDIDetalhado_Lucro = dto.BDIDetalhadoLucro;
+        orcamento.BDIDetalhado_Tributos = dto.BDIDetalhadoTributos;
+        orcamento.EncargosHoristas = dto.EncargosHoristas;
+        orcamento.EncargosMensalistas = dto.EncargosMensalistas;
 
         _repo.Update(orcamento);
         await _uow.SaveChangesAsync(ct);

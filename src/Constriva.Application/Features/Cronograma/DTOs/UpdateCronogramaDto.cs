@@ -7,4 +7,6 @@ public record UpdateCronogramaDto(
     string? Descricao = null,
     string? Observacoes = null,
     bool ELinhaDBase = false,
-    bool Ativo = true);
+    bool Ativo = true,
+    int? Versao = null,
+    Guid? VersaoBaseadaEm = null);

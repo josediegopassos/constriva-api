@@ -43,8 +43,17 @@ public class CreateOrcamentoHandler : IRequestHandler<CreateOrcamentoCommand, Or
             BDI = dto.BDI,
             DataReferencia = dto.DataReferencia,
             Descricao = dto.Descricao,
+            Observacoes = dto.Observacoes,
             BaseOrcamentaria = dto.BaseOrcamentaria,
-            Localidade = dto.Localidade
+            Localidade = dto.Localidade,
+            BDIDetalhado_Administracao = dto.BDIDetalhadoAdministracao,
+            BDIDetalhado_Seguro = dto.BDIDetalhadoSeguro,
+            BDIDetalhado_Risco = dto.BDIDetalhadoRisco,
+            BDIDetalhado_Financeiro = dto.BDIDetalhadoFinanceiro,
+            BDIDetalhado_Lucro = dto.BDIDetalhadoLucro,
+            BDIDetalhado_Tributos = dto.BDIDetalhadoTributos,
+            EncargosHoristas = dto.EncargosHoristas,
+            EncargosMensalistas = dto.EncargosMensalistas
         };
 
         await _repo.AddAsync(orcamento, ct);

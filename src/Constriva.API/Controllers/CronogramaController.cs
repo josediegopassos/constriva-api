@@ -34,7 +34,7 @@ namespace Constriva.API.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCronograma(Guid id, [FromBody] UpdateCronogramaDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdateCronogramaCommand(id, RequireEmpresaId(), dto.Nome, dto.DataInicio, dto.DataFim, dto.Descricao, dto.Observacoes, dto.ELinhaDBase, dto.Ativo), ct)); }
+            try { return Ok(await Mediator.Send(new UpdateCronogramaCommand(id, RequireEmpresaId(), dto), ct)); }
             catch (Exception ex) { return HandleException(ex); }
         }
 

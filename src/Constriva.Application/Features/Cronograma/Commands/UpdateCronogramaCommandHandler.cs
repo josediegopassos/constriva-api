@@ -9,13 +9,7 @@ namespace Constriva.Application.Features.Cronograma.Commands;
 public record UpdateCronogramaCommand(
     Guid Id,
     Guid EmpresaId,
-    string Nome,
-    DateTime DataInicio,
-    DateTime DataFim,
-    string? Descricao,
-    string? Observacoes,
-    bool ELinhaDBase,
-    bool Ativo)
+    UpdateCronogramaDto Dto)
     : IRequest<CronogramaObraDto>, ITenantRequest;
 
 public class UpdateCronogramaCommandHandler : IRequestHandler<UpdateCronogramaCommand, CronogramaObraDto>
@@ -34,13 +28,16 @@ public class UpdateCronogramaCommandHandler : IRequestHandler<UpdateCronogramaCo
         var cronograma = await _repo.GetByIdDetalhadoAsync(request.Id, request.EmpresaId, cancellationToken)
             ?? throw new KeyNotFoundException("Cronograma não encontrado.");
 
-        cronograma.Nome        = request.Nome;
-        cronograma.DataInicio  = request.DataInicio;
-        cronograma.DataFim     = request.DataFim;
-        cronograma.Descricao   = request.Descricao;
-        cronograma.Observacoes = request.Observacoes;
-        cronograma.ELinhaDBase = request.ELinhaDBase;
-        cronograma.Ativo       = request.Ativo;
+        var dto = request.Dto;
+        cronograma.Nome        = dto.Nome;
+        cronograma.DataInicio  = dto.DataInicio;
+        cronograma.DataFim     = dto.DataFim;
+        cronograma.Descricao   = dto.Descricao;
+        cronograma.Observacoes = dto.Observacoes;
+        cronograma.ELinhaDBase = dto.ELinhaDBase;
+        cronograma.Ativo       = dto.Ativo;
+        if (dto.Versao.HasValue)           cronograma.Versao = dto.Versao.Value;
+        if (dto.VersaoBaseadaEm.HasValue)  cronograma.VersaoBaseadaEm = dto.VersaoBaseadaEm;
 
         await _uow.SaveChangesAsync(cancellationToken);
 
