@@ -4,17 +4,20 @@ using System.Collections.Generic;
 using Constriva.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Constriva.Infrastructure.Migrations
+namespace Constriva.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260405045636_ItemCotacaoMaterialIdNullable")]
+    partial class ItemCotacaoMaterialIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1899,60 +1902,6 @@ namespace Constriva.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Cotacoes", (string)null);
-                });
-
-            modelBuilder.Entity("Constriva.Domain.Entities.Compras.FornecedorCotacao", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ConvidadoEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid>("CotacaoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("EmpresaId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("FornecedorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("RespondeuEm")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CotacaoId");
-
-                    b.HasIndex("FornecedorId");
-
-                    b.ToTable("FornecedoresCotacao");
                 });
 
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.ItemCotacao", b =>
@@ -10378,25 +10327,6 @@ namespace Constriva.Infrastructure.Migrations
                     b.Navigation("Endereco");
                 });
 
-            modelBuilder.Entity("Constriva.Domain.Entities.Compras.FornecedorCotacao", b =>
-                {
-                    b.HasOne("Constriva.Domain.Entities.Compras.Cotacao", "Cotacao")
-                        .WithMany("FornecedoresConvidados")
-                        .HasForeignKey("CotacaoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Constriva.Domain.Entities.Fornecedores.Fornecedor", "Fornecedor")
-                        .WithMany()
-                        .HasForeignKey("FornecedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cotacao");
-
-                    b.Navigation("Fornecedor");
-                });
-
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.ItemCotacao", b =>
                 {
                     b.HasOne("Constriva.Domain.Entities.Compras.Cotacao", "Cotacao")
@@ -11482,8 +11412,6 @@ namespace Constriva.Infrastructure.Migrations
 
             modelBuilder.Entity("Constriva.Domain.Entities.Compras.Cotacao", b =>
                 {
-                    b.Navigation("FornecedoresConvidados");
-
                     b.Navigation("Itens");
 
                     b.Navigation("Propostas");

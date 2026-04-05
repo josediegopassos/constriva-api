@@ -1,7 +1,5 @@
-using FluentValidation;
 using MediatR;
 using Constriva.Application.Common.Behaviors;
-using Constriva.Application.Common.Interfaces;
 using Constriva.Domain.Entities.Compras;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;
@@ -9,9 +7,8 @@ using Constriva.Application.Features.Compras.DTOs;
 
 namespace Constriva.Application.Features.Compras.Commands;
 
-public record UpdatePedidoCompraCommand(Guid Id, Guid EmpresaId, Guid? FornecedorId,
-    DateTime? DataEntregaPrevista, string? Observacoes)
-    : IRequest<PedidoCompraDto>, ITenantRequest { public Guid TenantId => EmpresaId; }
+public record UpdatePedidoCompraCommand(Guid Id, Guid EmpresaId, UpdatePedidoDto Dto)
+    : IRequest<PedidoCompraDto>, ITenantRequest;
 
 public class UpdatePedidoCompraHandler : IRequestHandler<UpdatePedidoCompraCommand, PedidoCompraDto>
 {
@@ -24,25 +21,48 @@ public class UpdatePedidoCompraHandler : IRequestHandler<UpdatePedidoCompraComma
         _uow = uow;
     }
 
-    public async Task<PedidoCompraDto> Handle(UpdatePedidoCompraCommand request, CancellationToken cancellationToken)
+    public async Task<PedidoCompraDto> Handle(UpdatePedidoCompraCommand request, CancellationToken ct)
     {
-        var pedido = await _repo.GetPedidoByIdAsync(request.Id, request.EmpresaId, cancellationToken)
+        var pedido = await _repo.GetPedidoByIdAsync(request.Id, request.EmpresaId, ct)
             ?? throw new KeyNotFoundException($"Pedido {request.Id} não encontrado.");
 
         if (pedido.Status != StatusPedidoCompraEnum.Rascunho)
             throw new InvalidOperationException(
                 $"Pedido no status '{pedido.Status}' não pode ser editado. Apenas rascunhos podem ser alterados.");
 
-        if (request.FornecedorId.HasValue) pedido.FornecedorId = request.FornecedorId.Value;
-        if (request.DataEntregaPrevista.HasValue) pedido.DataEntregaPrevista = request.DataEntregaPrevista;
-        if (request.Observacoes != null) pedido.Observacoes = request.Observacoes;
+        var dto = request.Dto;
 
-        await _uow.SaveChangesAsync(cancellationToken);
+        if (dto.ObraId.HasValue) pedido.ObraId = dto.ObraId.Value;
+        if (dto.FornecedorId.HasValue) pedido.FornecedorId = dto.FornecedorId.Value;
+        if (dto.AlmoxarifadoId.HasValue) pedido.AlmoxarifadoId = dto.AlmoxarifadoId;
+        if (dto.DataEntregaPrevista.HasValue) pedido.DataEntregaPrevista = dto.DataEntregaPrevista;
+        if (dto.FormaPagamento.HasValue) pedido.FormaPagamento = dto.FormaPagamento;
+        if (dto.CondicoesPagamento is not null) pedido.CondicoesPagamento = dto.CondicoesPagamento;
+        if (dto.LocalEntrega is not null) pedido.LocalEntrega = dto.LocalEntrega;
+        if (dto.ValorFrete.HasValue) pedido.ValorFrete = dto.ValorFrete.Value;
+        if (dto.ValorDesconto.HasValue) pedido.ValorDesconto = dto.ValorDesconto.Value;
+        if (dto.Observacoes is not null) pedido.Observacoes = dto.Observacoes;
 
-        var itensDto = pedido.Itens.Select(i => new ItemPedidoDto(i.Id, i.Descricao, i.UnidadeMedida, i.QuantidadePedida, i.PrecoUnitario, i.ValorTotal));
-        return new PedidoCompraDto(
-            pedido.Id, pedido.Numero, pedido.ObraId == Guid.Empty ? null : pedido.ObraId,
-            null, pedido.FornecedorId, null, pedido.Status,
-            pedido.ValorTotal, pedido.DataPedido, pedido.Observacoes, itensDto);
+        // Atualizar itens se enviados
+        if (dto.Itens is not null)
+        {
+            await _repo.ReplaceItensPedidoAsync(pedido.Id, request.EmpresaId, dto.Itens.Select(i => new ItemPedidoCompra
+            {
+                EmpresaId = request.EmpresaId,
+                PedidoId = pedido.Id,
+                MaterialId = i.MaterialId,
+                Descricao = i.Descricao,
+                UnidadeMedida = i.UnidadeMedida,
+                QuantidadePedida = i.Quantidade,
+                PrecoUnitario = i.PrecoUnitario
+            }).ToList(), ct);
+        }
+
+        // Recalcular valor total via SQL para evitar problemas com change tracker
+        await _repo.UpdatePedidoAsync(pedido, ct);
+
+        // Recarregar para retornar dados atualizados
+        var atualizado = await _repo.GetPedidoByIdAsync(request.Id, request.EmpresaId, ct);
+        return PedidoCompraMapper.ToDto(atualizado!);
     }
 }

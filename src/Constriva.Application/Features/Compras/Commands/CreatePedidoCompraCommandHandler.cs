@@ -54,14 +54,22 @@ public class CreatePedidoCompraHandler : IRequestHandler<CreatePedidoCompraComma
             EmpresaId = request.EmpresaId,
             ObraId = dto.ObraId.Value,
             FornecedorId = dto.FornecedorId.Value,
+            CotacaoId = dto.CotacaoId,
+            AlmoxarifadoId = dto.AlmoxarifadoId,
             Numero = numero,
             Status = StatusPedidoCompraEnum.Rascunho,
             DataPedido = DateTime.UtcNow,
+            DataEntregaPrevista = dto.DataEntregaPrevista,
+            FormaPagamento = dto.FormaPagamento,
+            CondicoesPagamento = dto.CondicoesPagamento,
+            LocalEntrega = dto.LocalEntrega,
+            ValorFrete = dto.ValorFrete,
+            ValorDesconto = dto.ValorDesconto,
             Observacoes = dto.Observacoes,
             CriadoPor = request.UsuarioId
         };
 
-        foreach (var item in dto.Itens)
+        foreach (var item in dto.Itens ?? Enumerable.Empty<CreateItemPedidoDto>())
         {
             // MaterialId é opcional: itens podem ser criados por descrição livre.
             // Quando informado, valida existência e pertença ao tenant.
@@ -89,10 +97,6 @@ public class CreatePedidoCompraHandler : IRequestHandler<CreatePedidoCompraComma
         await _repo.AddPedidoAsync(pedido, cancellationToken);
         await _uow.SaveChangesAsync(cancellationToken);
 
-        var itensDto = pedido.Itens.Select(i => new ItemPedidoDto(i.Id, i.Descricao, i.UnidadeMedida, i.QuantidadePedida, i.PrecoUnitario, i.ValorTotal));
-        return new PedidoCompraDto(
-            pedido.Id, pedido.Numero, pedido.ObraId, null,
-            pedido.FornecedorId, null, pedido.Status, pedido.ValorTotal,
-            pedido.DataPedido, pedido.Observacoes, itensDto);
+        return PedidoCompraMapper.ToDto(pedido);
     }
 }

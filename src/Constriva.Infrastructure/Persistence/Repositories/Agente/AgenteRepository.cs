@@ -85,6 +85,15 @@ public class AgenteRepository : IAgenteRepository
             .ToListAsync(ct);
     }
 
+    public async Task<IEnumerable<AgenteConsumoDiario>> GetConsumoDiarioPorMesAsync(Guid empresaId, int ano, int mes, CancellationToken ct = default)
+    {
+        var primeiroDia = new DateTime(ano, mes, 1);
+        var ultimoDia = primeiroDia.AddMonths(1);
+        return await _ctx.AgenteConsumoDiario
+            .Where(c => c.EmpresaId == empresaId && c.Data >= primeiroDia && c.Data < ultimoDia && !c.IsDeleted)
+            .ToListAsync(ct);
+    }
+
     // ─── Consumo por usuário ────────────────────────────────────────────────────
     public async Task<AgenteConsumoUsuario?> GetConsumoUsuarioAsync(Guid empresaId, Guid usuarioId, int ano, int mes, CancellationToken ct = default)
         => await _ctx.AgenteConsumoUsuario

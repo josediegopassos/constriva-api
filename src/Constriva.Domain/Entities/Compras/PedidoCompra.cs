@@ -15,6 +15,7 @@ public class PedidoCompra : TenantEntity
     public DateTime DataPedido { get; set; } = DateTime.UtcNow;
     public DateTime? DataEntregaPrevista { get; set; }
     public DateTime? DataEntregaReal { get; set; }
+    public FormaPagamentoEnum? FormaPagamento { get; set; }
     public string? CondicoesPagamento { get; set; }
     public string? LocalEntrega { get; set; }
     public string? Observacoes { get; set; }
@@ -26,6 +27,7 @@ public class PedidoCompra : TenantEntity
     public string? MotivoRejeicao { get; set; }
     public Guid CriadoPor { get; set; }
 
+    public virtual Obras.Obra Obra { get; set; } = null!;
     public virtual Fornecedor Fornecedor { get; set; } = null!;
     public virtual ICollection<ItemPedidoCompra> Itens { get; set; } = new List<ItemPedidoCompra>();
     public virtual ICollection<RecebimentoCompra> Recebimentos { get; set; } = new List<RecebimentoCompra>();

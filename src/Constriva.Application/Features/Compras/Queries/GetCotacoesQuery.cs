@@ -16,6 +16,6 @@ public class GetCotacoesHandler : IRequestHandler<GetCotacoesQuery, IEnumerable<
     public async Task<IEnumerable<CotacaoDto>> Handle(GetCotacoesQuery request, CancellationToken ct)
     {
         var cotacoes = await _repo.GetCotacoesAsync(request.EmpresaId, request.ObraId, ct);
-        return cotacoes.Select(c => new CotacaoDto(c.Id, c.Numero, c.ObraId, c.DataLimiteResposta ?? DateTime.MinValue, 0m, c.Status));
+        return cotacoes.Select(CotacaoMapper.ToDto);
     }
 }

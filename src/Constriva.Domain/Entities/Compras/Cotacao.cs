@@ -17,6 +17,9 @@ public class Cotacao : TenantEntity
     public Guid CriadoPor { get; set; }
     public Guid? FornecedorVencedorId { get; set; }
 
+    public virtual Obras.Obra Obra { get; set; } = null!;
+    public virtual Fornecedores.Fornecedor? FornecedorVencedor { get; set; }
     public virtual ICollection<ItemCotacao> Itens { get; set; } = new List<ItemCotacao>();
+    public virtual ICollection<FornecedorCotacao> FornecedoresConvidados { get; set; } = new List<FornecedorCotacao>();
     public virtual ICollection<PropostaCotacao> Propostas { get; set; } = new List<PropostaCotacao>();
 }

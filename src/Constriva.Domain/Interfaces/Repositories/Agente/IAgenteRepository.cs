@@ -29,6 +29,7 @@ public interface IAgenteRepository
     Task<AgenteConsumoDiario?> GetConsumoDiarioAsync(Guid empresaId, DateTime data, CancellationToken ct = default);
     Task AddConsumoDiarioAsync(AgenteConsumoDiario consumo, CancellationToken ct = default);
     Task<IEnumerable<AgenteConsumoDiario>> GetConsumoDiarioUltimos30DiasAsync(Guid empresaId, CancellationToken ct = default);
+    Task<IEnumerable<AgenteConsumoDiario>> GetConsumoDiarioPorMesAsync(Guid empresaId, int ano, int mes, CancellationToken ct = default);
 
     // Consumo por usuário
     Task<AgenteConsumoUsuario?> GetConsumoUsuarioAsync(Guid empresaId, Guid usuarioId, int ano, int mes, CancellationToken ct = default);

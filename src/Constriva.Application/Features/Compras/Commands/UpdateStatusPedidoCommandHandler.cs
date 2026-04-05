@@ -9,6 +9,8 @@ using Constriva.Application.Features.Compras.DTOs;
 
 namespace Constriva.Application.Features.Compras.Commands;
 
+public record UpdateStatusPedidoRequest(StatusPedidoCompraEnum Status);
+
 public record UpdateStatusPedidoCommand(Guid Id, Guid EmpresaId, StatusPedidoCompraEnum Status)
     : IRequest<Unit>, ITenantRequest;
 

@@ -30,10 +30,5 @@ public class GetPedidosCompraHandler : IRequestHandler<GetPedidosCompraQuery, Pa
         };
     }
 
-    private static PedidoCompraDto MapPedido(PedidoCompra p) => new(
-        p.Id, p.Numero, p.ObraId, null, p.FornecedorId, null, p.Status,
-        p.Itens?.Sum(i => i.QuantidadePedida * i.PrecoUnitario) ?? 0,
-        p.CreatedAt, p.Observacoes,
-        p.Itens?.Select(i => new ItemPedidoDto(i.Id, i.Descricao, i.UnidadeMedida,
-            i.QuantidadePedida, i.PrecoUnitario, i.QuantidadePedida * i.PrecoUnitario)) ?? []);
+    private static PedidoCompraDto MapPedido(PedidoCompra p) => PedidoCompraMapper.ToDto(p);
 }

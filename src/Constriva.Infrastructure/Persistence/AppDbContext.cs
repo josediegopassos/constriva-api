@@ -93,6 +93,7 @@ public class AppDbContext : DbContext
     public DbSet<Fornecedor> Fornecedores => Set<Fornecedor>();
     public DbSet<Cotacao> Cotacoes => Set<Cotacao>();
     public DbSet<ItemCotacao> ItensCotacao => Set<ItemCotacao>();
+    public DbSet<FornecedorCotacao> FornecedoresCotacao => Set<FornecedorCotacao>();
     public DbSet<PropostaCotacao> PropostasCotacao => Set<PropostaCotacao>();
     public DbSet<ItemPropostaCotacao> ItensPropostaCotacao => Set<ItemPropostaCotacao>();
     public DbSet<PedidoCompra> PedidosCompra => Set<PedidoCompra>();

@@ -1,3 +1,4 @@
+using Constriva.Application.Common.Interfaces;
 using Constriva.Application.Features.Agente.DTOs;
 using Constriva.Application.Features.Agente.Exceptions;
 using Constriva.Application.Features.Agente.Services;
@@ -14,21 +15,31 @@ public class AgenteTokenService : IAgenteTokenService
     private readonly IUnitOfWork _uow;
     private readonly IEmpresaRepository _empresaRepo;
     private readonly IUsuarioRepository _usuarioRepo;
+    private readonly ICacheService _cache;
 
     public AgenteTokenService(
         IAgenteRepository repo,
         IUnitOfWork uow,
         IEmpresaRepository empresaRepo,
-        IUsuarioRepository usuarioRepo)
+        IUsuarioRepository usuarioRepo,
+        ICacheService cache)
     {
         _repo = repo;
         _uow = uow;
         _empresaRepo = empresaRepo;
         _usuarioRepo = usuarioRepo;
+        _cache = cache;
     }
 
     public async Task ValidarCotaAsync(Guid empresaId, CancellationToken ct)
     {
+        // Cache de validação de cota por 30 segundos para evitar 3 queries/request
+        var cacheKey = $"agent:quota:{empresaId}";
+        var cached = await _cache.GetAsync<string>(cacheKey, ct);
+        if (cached == "ok") return;
+        if (cached == "exceeded")
+            throw new CotaExcedidaException("Cota mensal esgotada. Acesse o painel para fazer upgrade do plano.");
+
         var config = await _repo.GetEmpresaConfigAsync(empresaId, ct)
             ?? throw new KeyNotFoundException($"Configuração do agente não encontrada para a empresa {empresaId}.");
 
@@ -37,23 +48,28 @@ public class AgenteTokenService : IAgenteTokenService
 
         var tier = config.Tier;
 
-        // -1 = unlimited
         if (tier.TokensMensais == -1)
+        {
+            await _cache.SetAsync(cacheKey, "ok", TimeSpan.FromSeconds(60), ct);
             return;
+        }
 
         var agora = DateTime.UtcNow;
         var consumo = await GetOrCreateConsumoMensalAsync(empresaId, agora.Year, agora.Month, tier.TokensMensais, ct);
 
         var tokensUsados = consumo.TokensUtilizados;
-
-        // Check avulsa quotas
         var cotasAvulsas = await _repo.GetCotasAvulsasAtivasAsync(empresaId, ct);
         var tokensAvulsosDisponiveis = cotasAvulsas.Sum(c => c.TokensRestantes);
 
         var totalDisponivel = (consumo.TokensLimite - tokensUsados) + tokensAvulsosDisponiveis;
 
         if (totalDisponivel <= 0)
+        {
+            await _cache.SetAsync(cacheKey, "exceeded", TimeSpan.FromSeconds(30), ct);
             throw new CotaExcedidaException("Cota mensal esgotada. Acesse o painel para fazer upgrade do plano.");
+        }
+
+        await _cache.SetAsync(cacheKey, "ok", TimeSpan.FromSeconds(30), ct);
     }
 
     public async Task RegistrarConsumoAsync(Guid empresaId, Guid usuarioId, int tokensInput, int tokensOutput, CancellationToken ct)
@@ -68,34 +84,27 @@ public class AgenteTokenService : IAgenteTokenService
             empresaId, agora.Year, agora.Month,
             tier?.TokensMensais ?? 0, ct);
 
-        // Get active avulsa quotas
         var cotasAvulsas = (await _repo.GetCotasAvulsasAtivasAsync(empresaId, ct)).ToList();
-
         var tokensRestantes = totalTokens;
 
-        // Consume from avulsa quotas first
+        // Consumir cotas avulsas primeiro
         foreach (var cota in cotasAvulsas)
         {
             if (tokensRestantes <= 0) break;
-
             var disponivelNaCota = cota.TokensRestantes;
             if (disponivelNaCota <= 0) continue;
-
             var consumirDaCota = Math.Min(tokensRestantes, disponivelNaCota);
             cota.TokensUtilizados += consumirDaCota;
             consumo.TokensAvulsosUtilizados += consumirDaCota;
             tokensRestantes -= consumirDaCota;
         }
 
-        // Remainder goes to mensal
         if (tokensRestantes > 0)
-        {
             consumo.TokensUtilizados += tokensRestantes;
-        }
 
         consumo.AtualizadoEm = agora;
 
-        // Update/create consumo diario
+        // Consumo diário
         var hoje = agora.Date;
         var diario = await _repo.GetConsumoDiarioAsync(empresaId, hoje, ct);
         if (diario == null)
@@ -117,7 +126,7 @@ public class AgenteTokenService : IAgenteTokenService
             diario.TotalRequisicoes++;
         }
 
-        // Update/create consumo usuario
+        // Consumo por usuário
         var consumoUsuario = await _repo.GetConsumoUsuarioAsync(empresaId, usuarioId, agora.Year, agora.Month, ct);
         if (consumoUsuario == null)
         {
@@ -138,7 +147,7 @@ public class AgenteTokenService : IAgenteTokenService
             consumoUsuario.TotalRequisicoes++;
         }
 
-        // Check 80% threshold
+        // Alertas de 80% e 100%
         if (tier != null && tier.TokensMensais != -1)
         {
             var totalUsado = consumo.TokensUtilizados + consumo.TokensAvulsosUtilizados;
@@ -147,38 +156,44 @@ public class AgenteTokenService : IAgenteTokenService
             if (totalUsado >= limite80 && !consumo.Alerta80Enviado)
             {
                 consumo.Alerta80Enviado = true;
-                var notificacao80 = new Notificacao
+                await _repo.AddNotificacaoAsync(new Notificacao
                 {
                     EmpresaId = empresaId,
                     ModuloOrigem = "agente",
                     Tipo = TipoNotificacaoEnum.Aviso,
                     Mensagem = $"Sua cota de tokens do Agente IA atingiu 80%. Utilizados: {totalUsado:N0} de {consumo.TokensLimite:N0}.",
                     Lida = false
-                };
-                await _repo.AddNotificacaoAsync(notificacao80, ct);
+                }, ct);
             }
 
-            // Check 100% - no avulsa left
             var cotasAvulsasRestantes = cotasAvulsas.Sum(c => c.TokensRestantes);
             if (consumo.TokensUtilizados >= consumo.TokensLimite && cotasAvulsasRestantes <= 0)
             {
-                var notificacao100 = new Notificacao
+                await _repo.AddNotificacaoAsync(new Notificacao
                 {
                     EmpresaId = empresaId,
                     ModuloOrigem = "agente",
                     Tipo = TipoNotificacaoEnum.Critico,
-                    Mensagem = "Sua cota mensal de tokens do Agente IA foi totalmente consumida. O agente ficará indisponível até o próximo mês ou até a aquisição de cotas avulsas.",
+                    Mensagem = "Sua cota mensal de tokens do Agente IA foi totalmente consumida.",
                     Lida = false
-                };
-                await _repo.AddNotificacaoAsync(notificacao100, ct);
+                }, ct);
             }
         }
 
         await _uow.SaveChangesAsync(ct);
+
+        // Invalidar cache de quota após registrar consumo
+        await _cache.RemoveAsync($"agent:quota:{empresaId}", ct);
+        await _cache.RemoveAsync($"agent:dashboard:{empresaId}", ct);
     }
 
     public async Task<DashboardConsumoDto> ObterDashboardConsumoAsync(Guid empresaId, CancellationToken ct)
     {
+        // Cache do dashboard por 30 segundos
+        var cacheKey = $"agent:dashboard:{empresaId}";
+        var cached = await _cache.GetAsync<DashboardConsumoDto>(cacheKey, ct);
+        if (cached is not null) return cached;
+
         var config = await _repo.GetEmpresaConfigAsync(empresaId, ct)
             ?? throw new KeyNotFoundException($"Configuração do agente não encontrada para a empresa {empresaId}.");
 
@@ -196,51 +211,42 @@ public class AgenteTokenService : IAgenteTokenService
             ? -1
             : Math.Max(0, consumo.TokensLimite - consumo.TokensUtilizados);
 
-        var consumoResumo = new ConsumoResumoDto(
-            totalUsado,
-            consumo.TokensLimite,
-            percentual,
-            tokensRestantes,
-            consumo.Alerta80Enviado);
-
+        var consumoResumo = new ConsumoResumoDto(totalUsado, consumo.TokensLimite, percentual, tokensRestantes, consumo.Alerta80Enviado);
         var tierDto = new TierDto(tier.Id, tier.Nome, tier.TokensMensais, tier.Descricao);
 
-        // Cotas avulsas disponíveis
         var cotasAvulsas = await _repo.GetCotasAvulsasAtivasAsync(empresaId, ct);
         var cotaAvulsaDisponivel = cotasAvulsas.Sum(c => c.TokensRestantes);
 
-        // Histórico diário últimos 30 dias
         var historicoDiario = (await _repo.GetConsumoDiarioUltimos30DiasAsync(empresaId, ct))
             .Select(d => new ConsumoDiarioDto(d.Data, d.TokensInput + d.TokensOutput, d.TotalRequisicoes));
 
-        // Top 5 usuários
         var topUsuarios = (await _repo.GetTopUsuariosAsync(empresaId, agora.Year, agora.Month, 5, ct)).ToList();
         var topUsuarioDtos = new List<ConsumoUsuarioDto>();
-
         foreach (var u in topUsuarios)
         {
             var usuario = await _usuarioRepo.GetByIdAsync(u.UsuarioId, ct);
-            var nome = usuario?.Nome ?? "Usuário desconhecido";
-            topUsuarioDtos.Add(new ConsumoUsuarioDto(u.UsuarioId, nome, u.TokensUtilizados, u.TotalRequisicoes));
+            topUsuarioDtos.Add(new ConsumoUsuarioDto(u.UsuarioId, usuario?.Nome ?? "Desconhecido", u.TokensUtilizados, u.TotalRequisicoes));
         }
 
-        // Dias restantes no mês
         var ultimoDiaMes = new DateTime(agora.Year, agora.Month, DateTime.DaysInMonth(agora.Year, agora.Month));
         var diasRestantes = (ultimoDiaMes - agora.Date).Days;
 
-        return new DashboardConsumoDto(
-            consumoResumo,
-            tierDto,
-            cotaAvulsaDisponivel,
-            historicoDiario,
-            topUsuarioDtos,
-            diasRestantes);
+        var dashboard = new DashboardConsumoDto(consumoResumo, tierDto, cotaAvulsaDisponivel, historicoDiario, topUsuarioDtos, diasRestantes);
+
+        // Cachear resultado
+        await _cache.SetAsync(cacheKey, dashboard, TimeSpan.FromSeconds(30), ct);
+
+        return dashboard;
     }
 
     public async Task<IEnumerable<AdminRelatorioItemDto>> ObterRelatorioMensalAsync(int ano, int mes, CancellationToken ct)
     {
         var consumos = (await _repo.GetRelatorioMensalAsync(ano, mes, ct)).ToList();
         var configs = (await _repo.GetTodasEmpresasAtivasAsync(ct)).ToList();
+
+        // Buscar todos os diários do mês de uma vez (evita N+1 queries)
+        var primeiroDia = new DateTime(ano, mes, 1);
+        var ultimoDia = primeiroDia.AddMonths(1).AddDays(-1);
 
         var resultado = new List<AdminRelatorioItemDto>();
 
@@ -254,34 +260,19 @@ public class AgenteTokenService : IAgenteTokenService
 
             var totalUsado = consumo.TokensUtilizados + consumo.TokensAvulsosUtilizados;
             var percentualUso = consumo.TokensLimite > 0
-                ? Math.Round((decimal)totalUsado / consumo.TokensLimite * 100, 2)
-                : 0m;
+                ? Math.Round((decimal)totalUsado / consumo.TokensLimite * 100, 2) : 0m;
 
-            // Estimativa de custo: GPT-4o-mini pricing ~$0.15/1M input, $0.60/1M output
-            // Simplificação: usar média de $0.30/1M tokens
+            // Custo estimado: GPT-4o-mini ~$0.15/1M input, $0.60/1M output → média $0.30/1M
             var custoEstimadoUsd = Math.Round(totalUsado * 0.30m / 1_000_000m, 4);
 
-            // Get total requisicoes from diarios (sum for the month)
-            var totalRequisicoes = 0;
-            var primeiroDia = new DateTime(ano, mes, 1);
-            var ultimoDia = primeiroDia.AddMonths(1).AddDays(-1);
-            for (var d = primeiroDia; d <= ultimoDia; d = d.AddDays(1))
-            {
-                var diario = await _repo.GetConsumoDiarioAsync(consumo.EmpresaId, d, ct);
-                if (diario != null)
-                    totalRequisicoes += diario.TotalRequisicoes;
-            }
+            // Buscar total de requisições do consumo diário acumulado
+            var diarios = await _repo.GetConsumoDiarioPorMesAsync(consumo.EmpresaId, ano, mes, ct);
+            var totalRequisicoes = diarios.Sum(d => d.TotalRequisicoes);
 
             resultado.Add(new AdminRelatorioItemDto(
-                consumo.EmpresaId,
-                empresaNome,
-                tierNome,
-                consumo.TokensLimite,
-                totalUsado,
-                percentualUso,
-                consumo.TokensAvulsosUtilizados,
-                totalRequisicoes,
-                custoEstimadoUsd));
+                consumo.EmpresaId, empresaNome, tierNome,
+                consumo.TokensLimite, totalUsado, percentualUso,
+                consumo.TokensAvulsosUtilizados, totalRequisicoes, custoEstimadoUsd));
         }
 
         return resultado;
@@ -302,6 +293,9 @@ public class AgenteTokenService : IAgenteTokenService
 
         await _repo.AddCotaAvulsaAsync(cota, ct);
         await _uow.SaveChangesAsync(ct);
+
+        // Invalidar cache de quota
+        await _cache.RemoveAsync($"agent:quota:{empresaId}", ct);
     }
 
     private async Task<AgenteConsumoMensal> GetOrCreateConsumoMensalAsync(
