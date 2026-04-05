@@ -8,6 +8,7 @@ public static class CotacaoMapper
         c.Id, c.Numero, c.Titulo, c.ObraId, c.Obra?.Nome, c.Status,
         c.DataAbertura, c.DataFechamento, c.DataLimiteResposta,
         c.Observacoes, c.CondicoesGerais, c.FornecedorVencedorId,
+        c.FornecedorVencedor?.NomeFantasia ?? c.FornecedorVencedor?.RazaoSocial,
         c.FornecedoresConvidados?.Count(f => !f.IsDeleted) ?? 0,
         c.Propostas?.Count(p => !p.IsDeleted) ?? 0,
         c.CreatedAt,

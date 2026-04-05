@@ -15,6 +15,7 @@ public record CotacaoDto(
     string? Observacoes,
     string? CondicoesGerais,
     Guid? FornecedorVencedorId,
+    string? FornecedorVencedorNome,
     int TotalFornecedoresConvidados,
     int TotalPropostasRecebidas,
     DateTime CreatedAt,

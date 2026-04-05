@@ -94,13 +94,13 @@ public class ComprasRepository : IComprasRepository
 
     public async Task<IEnumerable<Cotacao>> GetCotacoesAsync(Guid empresaId, Guid? obraId, CancellationToken ct = default)
     {
-        var q = _ctx.Cotacoes.Include(c => c.Obra).Include(c => c.FornecedoresConvidados).Include(c => c.Propostas).Where(c => c.EmpresaId == empresaId && !c.IsDeleted);
+        var q = _ctx.Cotacoes.Include(c => c.Obra).Include(c => c.FornecedorVencedor).Include(c => c.FornecedoresConvidados).Include(c => c.Propostas).Where(c => c.EmpresaId == empresaId && !c.IsDeleted);
         if (obraId.HasValue) q = q.Where(c => c.ObraId == obraId);
         return await q.OrderByDescending(c => c.DataAbertura).Take(50).ToListAsync(ct);
     }
 
     public async Task<Cotacao?> GetCotacaoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default)
-        => await _ctx.Cotacoes.Include(c => c.Obra).Include(c => c.Itens).Include(c => c.FornecedoresConvidados).Include(c => c.Propostas).FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId, ct);
+        => await _ctx.Cotacoes.Include(c => c.Obra).Include(c => c.FornecedorVencedor).Include(c => c.Itens).Include(c => c.FornecedoresConvidados).Include(c => c.Propostas).FirstOrDefaultAsync(c => c.Id == id && c.EmpresaId == empresaId, ct);
 
     public async Task AddCotacaoAsync(Cotacao cotacao, CancellationToken ct = default)
         => await _ctx.Cotacoes.AddAsync(cotacao, ct);
