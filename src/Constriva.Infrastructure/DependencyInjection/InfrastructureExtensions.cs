@@ -24,9 +24,14 @@ public static class InfrastructureServiceExtensions
         // Npgsql: aceitar DateTime com Kind=Unspecified tratando como UTC
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+        // Npgsql: habilitar serialização dinâmica de JSON (List<string> → jsonb)
+        var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(configuration.GetConnectionString("DefaultConnection"));
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+
         // DbContext
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+            options.UseNpgsql(dataSource,
                 npg => npg.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
 
         // Repositories - Base
@@ -85,6 +90,9 @@ public static class InfrastructureServiceExtensions
         // Repositories - Relatórios
         services.AddScoped<IRelatoriosRepository, RelatoriosRepository>();
 
+        // Repositories - Lens
+        services.AddScoped<IDocumentoLensRepository, DocumentoLensRepository>();
+
         // Repositories - Agente
         services.AddScoped<IAgenteRepository, AgenteRepository>();
 
@@ -104,6 +112,9 @@ public static class InfrastructureServiceExtensions
             if (!string.IsNullOrEmpty(apiKey))
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
         });
+
+        // Services - Lens
+        services.AddScoped<Constriva.Application.Features.Lens.Interfaces.ILensLogService, LensLogService>();
 
         // Services
         services.AddScoped<IJwtService, JwtService>();

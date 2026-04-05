@@ -1,0 +1,177 @@
+name: constriva-api
+
+networks:
+  constriva-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    external: true
+    name: constriva_postgres-data
+  redis-data:
+    external: true
+    name: constriva_redis-data
+  minio-data:
+    external: true
+    name: constriva_minio-data
+  rabbitmq-data:
+  mongodb-data:
+  seq-data:
+
+services:
+
+  # ─────────────────────── BANCO DE DADOS ───────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: constriva-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ConstrivaDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ConstrivaDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - constriva-net
+
+  # ─────────────────────── CACHE ───────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: constriva-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --requirepass redis123
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis123", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - constriva-net
+
+  # ─────────────────────── OBJECT STORAGE ───────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: constriva-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minio123456
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - constriva-net
+
+  # ─────────────────────── MENSAGERIA ───────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: constriva-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: constriva
+      RABBITMQ_DEFAULT_PASS: constriva
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - constriva-net
+
+  # ─────────────────────── MONGODB (LENS LOGS) ───────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: constriva-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: constriva_lens_logs
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - constriva-net
+
+  # ─────────────────────── LOGGING ───────────────────────
+  seq:
+    image: datalust/seq:latest
+    container_name: constriva-seq
+    restart: unless-stopped
+    ports:
+      - "5341:5341"
+      - "8080:80"
+    environment:
+      ACCEPT_EULA: "Y"
+    volumes:
+      - seq-data:/data
+    networks:
+      - constriva-net
+
+  # ─────────────────────── CONSTRIVA LENS (OCR) ───────────────────────
+  constriva-lens:
+    build:
+      context: ../constriva-lens
+      dockerfile: Dockerfile
+    container_name: constriva-lens
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    env_file:
+      - ../constriva-lens/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - constriva-net
+
+  # ─────────────────────── PGADMIN ───────────────────────
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: constriva-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@constriva.com.br
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - constriva-net

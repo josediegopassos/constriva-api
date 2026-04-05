@@ -341,6 +341,19 @@ public abstract class OrcamentoBaseController : ControllerBase
         Mediator = mediator;
         CurrentUser = currentUser;
     }
+
+    protected ActionResult HandleException(Exception ex) => ex switch
+    {
+        FluentValidation.ValidationException ve => BadRequest(new
+        {
+            message = "Validação falhou.",
+            errors = ve.Errors.Select(e => new { field = e.PropertyName, error = e.ErrorMessage })
+        }),
+        UnauthorizedAccessException => Forbid(),
+        KeyNotFoundException => NotFound(new { message = ex.Message }),
+        InvalidOperationException => BadRequest(new { message = ex.Message }),
+        _ => StatusCode(500, new { message = ex.Message })
+    };
 }
 
 // ─── Request/Response Models ──────────────────────────────────────────────────

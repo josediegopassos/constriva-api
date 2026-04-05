@@ -6,6 +6,7 @@ COPY ["src/Constriva.API/Constriva.API.csproj", "src/Constriva.API/"]
 COPY ["src/Constriva.Application/Constriva.Application.csproj", "src/Constriva.Application/"]
 COPY ["src/Constriva.Domain/Constriva.Domain.csproj", "src/Constriva.Domain/"]
 COPY ["src/Constriva.Infrastructure/Constriva.Infrastructure.csproj", "src/Constriva.Infrastructure/"]
+COPY ["src/Constriva.Messaging.Contracts/Constriva.Messaging.Contracts.csproj", "src/Constriva.Messaging.Contracts/"]
 
 # Restore
 RUN dotnet restore "src/Constriva.API/Constriva.API.csproj"

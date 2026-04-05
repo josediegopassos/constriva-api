@@ -46,6 +46,7 @@ public class Empresa : BaseEntity
     public bool ModuloClientes { get; set; } = true;
     public bool ModuloFornecedores { get; set; } = true;
     public bool ModuloAgente { get; set; } = false;
+    public bool ModuloLens { get; set; } = false;
     public bool ModuloRelatorios { get; set; } = true;
 
     public string? ConfiguracoesJson { get; set; }

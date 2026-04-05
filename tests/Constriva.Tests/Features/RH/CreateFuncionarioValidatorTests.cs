@@ -13,9 +13,9 @@ public class CreateFuncionarioValidatorTests
     private static CreateFuncionarioCommand ValidCmd() => new(Guid.NewGuid(),
         new CreateFuncionarioDto(
             "Carlos Eduardo Souza", "123.456.789-09",
-            "carlos@email.com", "(11) 99999-0000",
-            Guid.NewGuid(), Guid.NewGuid(),
-            DateTime.Today.AddYears(-5), 5000m, StatusFuncionarioEnum.Ativo));
+            "carlos@email.com", DateTime.Today.AddYears(-5), 5000m,
+            Telefone: "(11) 99999-0000",
+            Status: StatusFuncionarioEnum.Ativo));
 
     [Fact]
     public void Validate_DevePassar_ComDadosValidos()

@@ -1,10 +1,17 @@
 using FluentValidation;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Serilog;
 using Constriva.Application.Common.Behaviors;
+using Constriva.Application.Features.Lens.Interfaces;
+using Constriva.API.Consumers;
+using Constriva.API.Hubs;
+using Constriva.API.Services;
 using Constriva.Infrastructure.DependencyInjection;
+using Constriva.Messaging.Contracts.Lens.Events;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -44,7 +51,11 @@ builder.Services.AddControllers()
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy("AllowAll", p => p
+        .SetIsOriginAllowed(_ => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
     options.AddPolicy("Production", p =>
         p.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>())
          .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
@@ -69,6 +80,54 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddSignalR();
+
+// ── Lens: Serviços ───────────────────────────────────────────────────────
+builder.Services.AddScoped<ILensFileStorageService, LensFileStorageService>();
+builder.Services.AddScoped<ILensNotificationService, LensNotificationService>();
+
+// ── Lens: MassTransit + RabbitMQ ─────────────────────────────────────────
+var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
+var rabbitPort = ushort.Parse(builder.Configuration["RabbitMq:Porta"] ?? "5672");
+var rabbitUser = builder.Configuration["RabbitMq:Usuario"] ?? "guest";
+var rabbitPass = builder.Configuration["RabbitMq:Senha"] ?? "guest";
+var rabbitVHost = builder.Configuration["RabbitMq:VirtualHost"] ?? "/";
+
+builder.Services.AddMassTransit(cfg =>
+{
+    cfg.AddConsumer<DocumentoLensConcluidoConsumer>();
+    cfg.AddConsumer<DocumentoLensErroConsumer>();
+
+    cfg.UsingRabbitMq((context, rabbitCfg) =>
+    {
+        rabbitCfg.Host(rabbitHost, rabbitPort, rabbitVHost, h =>
+        {
+            h.Username(rabbitUser);
+            h.Password(rabbitPass);
+        });
+
+        rabbitCfg.ReceiveEndpoint("constriva-api-lens-eventos", e =>
+        {
+            e.ConfigureConsumer<DocumentoLensConcluidoConsumer>(context);
+            e.ConfigureConsumer<DocumentoLensErroConsumer>(context);
+        });
+    });
+});
+
+// ── Lens: MongoDB (leitura para analytics) ───────────────────────────────
+var mongoConnStr = builder.Configuration["MongoDb:ConnectionString"];
+if (!string.IsNullOrEmpty(mongoConnStr))
+{
+    var mongoDbName = builder.Configuration["MongoDb:NomeBanco"] ?? "constriva_lens_logs";
+    builder.Services.AddSingleton<IMongoClient>(new MongoClient(mongoConnStr));
+    builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(mongoDbName));
+}
+
+// ── MediatR: registrar handlers do projeto API (Lens consumers usam MediatR)
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+});
+
 builder.Services.AddRateLimiter(opt =>
 {
     opt.AddFixedWindowLimiter("api", o => { o.PermitLimit = 200; o.Window = TimeSpan.FromMinutes(1); });
@@ -95,6 +154,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 app.MapHub<Constriva.API.Hubs.NotificationHub>("/hubs/notifications");
+app.MapHub<LensHub>("/hubs/lens");
 
 // Migrate + Seed
 await Constriva.Infrastructure.Persistence.DbSeeder.SeedAsync(app.Services);

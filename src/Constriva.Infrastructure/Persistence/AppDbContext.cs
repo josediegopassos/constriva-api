@@ -17,6 +17,7 @@ using Constriva.Domain.Entities.Qualidade;
 using Constriva.Domain.Entities.SST;
 using Constriva.Domain.Entities.GED;
 using Constriva.Domain.Entities.Agente;
+using Constriva.Domain.Entities.Lens;
 using Constriva.Application.Common.Interfaces;
 using MediatR;
 
@@ -165,6 +166,10 @@ public class AppDbContext : DbContext
     public DbSet<AgenteConsumoUsuario> AgenteConsumoUsuario => Set<AgenteConsumoUsuario>();
     public DbSet<AgenteCotaAvulsa> AgenteCotasAvulsas => Set<AgenteCotaAvulsa>();
     public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
+
+    // ── Lens (OCR) ─────────────────────────────────────────────────────────
+    public DbSet<DocumentoLens> DocumentosLens => Set<DocumentoLens>();
+    public DbSet<ItemDocumentoLens> ItensDocumentoLens => Set<ItemDocumentoLens>();
 
     // ── GED ───────────────────────────────────────────────────────────────
     public DbSet<PastaDocumento> PastasDocumentos => Set<PastaDocumento>();

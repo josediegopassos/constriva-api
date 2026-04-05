@@ -35,6 +35,6 @@ public class GetEmpresaByIdHandler : IRequestHandler<GetEmpresaByIdQuery, Empres
         e.Cidade, e.Estado,
         new(e.ModuloObras, e.ModuloEstoque, e.ModuloCronograma, e.ModuloOrcamento,
             e.ModuloCompras, e.ModuloQualidade, e.ModuloContratos, e.ModuloRH,
-            e.ModuloFinanceiro, e.ModuloSST, e.ModuloGED, e.ModuloRelatorios, e.ModuloClientes, e.ModuloFornecedores, e.ModuloAgente),
+            e.ModuloFinanceiro, e.ModuloSST, e.ModuloGED, e.ModuloRelatorios, e.ModuloClientes, e.ModuloFornecedores, e.ModuloAgente, e.ModuloLens),
         totalUsuarios, totalObras, e.CreatedAt);
 }

@@ -30,8 +30,10 @@ public class CreateFuncionarioHandlerTests
             .Returns(Task.CompletedTask);
         _uow.Setup(u => u.SaveChangesAsync(default)).ReturnsAsync(1);
 
-        var dto = new CreateFuncionarioDto("Ana Lima", "987.654.321-00", "ana@email.com",
-            null, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today.AddYears(-2), 3500m, StatusFuncionarioEnum.Ativo);
+        var dto = new CreateFuncionarioDto(
+            "Ana Lima", "987.654.321-00", "ana@email.com",
+            DateTime.Today.AddYears(-2), 3500m,
+            Status: StatusFuncionarioEnum.Ativo);
 
         var result = await _handler.Handle(new CreateFuncionarioCommand(EmpresaId, dto), default);
 

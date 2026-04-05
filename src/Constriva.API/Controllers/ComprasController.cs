@@ -22,6 +22,17 @@ namespace Constriva.API.Controllers
             [FromQuery] Guid? obraId = null, CancellationToken ct = default)
             => Ok(await Mediator.Send(new GetPedidosCompraQuery(RequireEmpresaId(), obraId, status, page), ct));
 
+        [HttpGet("pedidos/{id:guid}")]
+        public async Task<IActionResult> GetPedidoById(Guid id, CancellationToken ct)
+        {
+            try
+            {
+                var result = await Mediator.Send(new GetPedidoCompraByIdQuery(id, RequireEmpresaId()), ct);
+                return result is null ? NotFound(new { message = "Pedido não encontrado." }) : Ok(result);
+            }
+            catch (Exception ex) { return HandleException(ex); }
+        }
+
         [HttpPost("pedidos")]
         public async Task<IActionResult> CreatePedido([FromBody] CreatePedidoDto dto, CancellationToken ct)
         {
@@ -34,6 +45,20 @@ namespace Constriva.API.Controllers
             Guid id, [FromBody] UpdateStatusPedidoRequest req, CancellationToken ct)
         {
             try { await Mediator.Send(new UpdateStatusPedidoCommand(id, RequireEmpresaId(), req.Status), ct); return NoContent(); }
+            catch (Exception ex) { return HandleException(ex); }
+        }
+
+        [HttpPut("pedidos/{id:guid}")]
+        public async Task<IActionResult> UpdatePedido(Guid id, [FromBody] UpdatePedidoDto dto, CancellationToken ct)
+        {
+            try { return Ok(await Mediator.Send(new UpdatePedidoCompraCommand(id, RequireEmpresaId(), dto.FornecedorId, dto.DataEntregaPrevista, dto.Observacoes), ct)); }
+            catch (Exception ex) { return HandleException(ex); }
+        }
+
+        [HttpDelete("pedidos/{id:guid}")]
+        public async Task<IActionResult> DeletePedido(Guid id, CancellationToken ct)
+        {
+            try { await Mediator.Send(new DeletePedidoCompraCommand(id, RequireEmpresaId()), ct); return NoContent(); }
             catch (Exception ex) { return HandleException(ex); }
         }
 
@@ -69,18 +94,28 @@ namespace Constriva.API.Controllers
             catch (Exception ex) { return HandleException(ex); }
         }
 
-        [HttpPut("pedidos/{id:guid}")]
-        public async Task<IActionResult> UpdatePedido(Guid id, [FromBody] UpdatePedidoDto dto, CancellationToken ct)
+        [HttpGet("formas-pagamento")]
+        public IActionResult GetFormasPagamento()
         {
-            try { return Ok(await Mediator.Send(new UpdatePedidoCompraCommand(id, RequireEmpresaId(), dto.FornecedorId, dto.DataEntregaPrevista, dto.Observacoes), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
-        }
+            var formas = Enum.GetValues<FormaPagamentoEnum>()
+                .Select(f => new
+                {
+                    valor = (int)f,
+                    nome = f.ToString(),
+                    descricao = f switch
+                    {
+                        FormaPagamentoEnum.Dinheiro => "Dinheiro",
+                        FormaPagamentoEnum.Cheque => "Cheque",
+                        FormaPagamentoEnum.Transferencia => "Transferência Bancária",
+                        FormaPagamentoEnum.Boleto => "Boleto Bancário",
+                        FormaPagamentoEnum.CartaoCredito => "Cartão de Crédito",
+                        FormaPagamentoEnum.Pix => "PIX",
+                        _ => f.ToString()
+                    }
+                })
+                .ToList();
 
-        [HttpDelete("pedidos/{id:guid}")]
-        public async Task<IActionResult> DeletePedido(Guid id, CancellationToken ct)
-        {
-            try { await Mediator.Send(new DeletePedidoCompraCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            return Ok(new { sucesso = true, dados = formas, erros = Array.Empty<string>() });
         }
     }
 
