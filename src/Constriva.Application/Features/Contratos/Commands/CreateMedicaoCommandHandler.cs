@@ -54,7 +54,8 @@ public class CreateMedicaoCommandHandler : IRequestHandler<CreateMedicaoCommand,
             ValorMedicao = dto.ValorMedicao,
             PercentualMedicao = dto.PercentualMedicao,
             Status = StatusMedicaoEnum.Rascunho,
-            Observacoes = dto.Observacoes
+            Observacoes = dto.Observacoes,
+            ArquivoUrl = dto.ArquivoUrl
         };
 
         await _repo.AddMedicaoAsync(medicao, cancellationToken);
@@ -62,7 +63,7 @@ public class CreateMedicaoCommandHandler : IRequestHandler<CreateMedicaoCommand,
 
         return new MedicaoContratoDto(
             medicao.Id, medicao.ContratoId, medicao.Periodo, medicao.Numero,
-            medicao.ValorMedicao, medicao.ValorMedicao,
+            medicao.ValorMedicao, medicao.ValorLiquido, medicao.PercentualMedicao,
             medicao.Status, medicao.DataInicio, medicao.DataFim,
             null, null);
     }

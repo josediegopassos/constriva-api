@@ -54,23 +54,48 @@ public sealed class RHController : BaseController
         catch (Exception ex) { return HandleException(ex); }
     }
 
-    [HttpGet("ponto")]
-    public async Task<ActionResult<IEnumerable<RegistroPontoDto>>> GetPonto(
+    [HttpGet("pontos")]
+    public async Task<ActionResult<PaginatedResult<RegistroPontoDto>>> GetPontos(
         [FromQuery] Guid? funcionarioId, [FromQuery] DateTime? inicio, [FromQuery] DateTime? fim,
-        CancellationToken ct)
-        => Ok(await Mediator.Send(new GetPontosQuery(RequireEmpresaId(), funcionarioId, inicio, fim), ct));
+        [FromQuery] int page = 1, CancellationToken ct = default)
+        => Ok(await Mediator.Send(new GetPontosPagedQuery(RequireEmpresaId(), funcionarioId, inicio, fim, page), ct));
 
-    [HttpPost("ponto")]
+    [HttpPost("pontos")]
     public async Task<IActionResult> RegistrarPonto([FromBody] RegistrarPontoDto dto, CancellationToken ct)
     {
         try { return Ok(await Mediator.Send(new RegistrarPontoCommand(RequireEmpresaId(), dto), ct)); }
         catch (Exception ex) { return HandleException(ex); }
     }
 
+    [HttpGet("funcionarios/{funcionarioId:guid}/pontos")]
+    public async Task<ActionResult<IEnumerable<RegistroPontoDto>>> GetPontosFuncionario(Guid funcionarioId, CancellationToken ct)
+        => Ok(await Mediator.Send(new GetPontosQuery(RequireEmpresaId(), funcionarioId), ct));
+
+    [HttpPost("funcionarios/{funcionarioId:guid}/pontos")]
+    public async Task<IActionResult> RegistrarPontoFuncionario(Guid funcionarioId, [FromBody] RegistrarPontoDto dto, CancellationToken ct)
+    {
+        try { return Ok(await Mediator.Send(new RegistrarPontoCommand(RequireEmpresaId(), dto with { FuncionarioId = funcionarioId }), ct)); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
     [HttpPut("pontos/{id:guid}")]
     public async Task<IActionResult> UpdatePonto(Guid id, [FromBody] UpdatePontoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdatePontoCommand(id, RequireEmpresaId(), dto.Entrada, dto.Saida, dto.Observacoes), ct)); }
+        try { return Ok(await Mediator.Send(new UpdatePontoCommand(id, RequireEmpresaId(), dto), ct)); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("pontos/{id:guid}/aprovar")]
+    public async Task<IActionResult> AprovarPonto(Guid id, CancellationToken ct)
+    {
+        try { await Mediator.Send(new AprovarPontoCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPatch("pontos/{id:guid}/reprovar")]
+    public async Task<IActionResult> ReprovarPonto(Guid id, CancellationToken ct)
+    {
+        try { await Mediator.Send(new ReprovarPontoCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
         catch (Exception ex) { return HandleException(ex); }
     }
 

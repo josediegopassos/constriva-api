@@ -14,4 +14,9 @@ public interface IContratoRepository : ITenantRepository<Contrato>
     Task<int> GetCountByEmpresaAsync(Guid empresaId, CancellationToken ct = default);
     Task<decimal> GetTotalMedicoesAsync(Guid contratoId, CancellationToken ct = default);
     Task<MedicaoContratual?> GetMedicaoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
+    Task<IEnumerable<AditvoContrato>> GetAditivosAsync(Guid contratoId, Guid empresaId, CancellationToken ct = default);
+    Task<AditvoContrato?> GetAditivoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
+    Task AddAditivoAsync(AditvoContrato aditivo, CancellationToken ct = default);
+    Task<int> GetAditivosCountAsync(Guid contratoId, Guid empresaId, CancellationToken ct = default);
+    Task<IEnumerable<AditvoContrato>> GetTodosAditivosAsync(Guid empresaId, CancellationToken ct = default);
 }

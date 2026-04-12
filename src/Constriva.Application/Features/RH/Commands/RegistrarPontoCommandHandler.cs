@@ -38,16 +38,29 @@ public class RegistrarPontoCommandHandler : IRequestHandler<RegistrarPontoComman
         {
             EmpresaId = request.EmpresaId,
             FuncionarioId = dto.FuncionarioId,
+            ObraId = dto.ObraId,
             Tipo = dto.Tipo,
             DataHora = dto.DataHora,
             HorarioPrevisto = dto.HorarioPrevisto,
-            Manual = false,
-            Online = true
+            HorasExtras = dto.HorasExtras,
+            Latitude = dto.Latitude,
+            Longitude = dto.Longitude,
+            Dispositivo = dto.Dispositivo,
+            Online = dto.Online,
+            Manual = dto.Manual,
+            Justificativa = dto.Justificativa
         };
 
         await _repo.AddPontoAsync(ponto, cancellationToken);
         await _uow.SaveChangesAsync(cancellationToken);
 
-        return new RegistroPontoDto(ponto.Id, ponto.FuncionarioId, "", ponto.Tipo, ponto.DataHora, ponto.HorarioPrevisto, ponto.HorasExtras);
+        return new RegistroPontoDto(ponto.Id, ponto.FuncionarioId, "",
+            ponto.ObraId, ponto.Tipo, ponto.DataHora,
+            ponto.HorarioPrevisto, ponto.HorasExtras,
+            ponto.Latitude, ponto.Longitude, ponto.Dispositivo,
+            ponto.Online, ponto.Manual, ponto.Justificativa,
+            ponto.StatusAprovacao, ponto.AprovadoPor, null,
+            ponto.ReprovadoPor, null,
+            ponto.CreatedAt);
     }
 }

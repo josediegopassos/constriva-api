@@ -18,7 +18,7 @@ public class GetMedicoesContratoHandler : IRequestHandler<GetMedicoesContratoQue
         var medicoes = await _repo.GetMedicoesAsync(r.ContratoId, r.EmpresaId, ct);
         return medicoes.Select(m => new MedicaoContratoDto(
             m.Id, m.ContratoId, m.Periodo, m.Numero,
-            m.ValorMedicao, m.ValorLiquido, m.Status,
+            m.ValorMedicao, m.ValorLiquido, m.PercentualMedicao, m.Status,
             m.DataInicio, m.DataFim, m.DataSubmissao, m.DataAprovacao));
     }
 }

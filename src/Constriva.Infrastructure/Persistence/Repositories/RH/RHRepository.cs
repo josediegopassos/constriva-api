@@ -60,6 +60,21 @@ public class RHRepository : IRHRepository
         return await q.OrderByDescending(p => p.DataHora).Take(200).ToListAsync(ct);
     }
 
+    public async Task<(IEnumerable<RegistroPonto> Items, int Total)> GetPontosPagedAsync(
+        Guid empresaId, Guid? funcionarioId, DateTime? inicio, DateTime? fim,
+        int page, int pageSize, CancellationToken ct = default)
+    {
+        var q = _ctx.RegistrosPonto.Include(p => p.Funcionario)
+            .Where(p => p.EmpresaId == empresaId && !p.IsDeleted);
+        if (funcionarioId.HasValue) q = q.Where(p => p.FuncionarioId == funcionarioId);
+        if (inicio.HasValue) q = q.Where(p => p.DataHora >= inicio);
+        if (fim.HasValue) q = q.Where(p => p.DataHora <= fim);
+        var total = await q.CountAsync(ct);
+        var items = await q.OrderByDescending(p => p.DataHora)
+            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(ct);
+        return (items, total);
+    }
+
     public async Task AddPontoAsync(RegistroPonto ponto, CancellationToken ct = default) => await _ctx.RegistrosPonto.AddAsync(ponto, ct);
 
     public async Task<RegistroPonto?> GetPontoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default)
@@ -193,6 +208,15 @@ public class RHRepository : IRHRepository
             .Where(ff => ff.FuncionarioId == funcionarioId && ff.EmpresaId == empresaId && !ff.IsDeleted)
             .OrderByDescending(ff => ff.Folha.Competencia)
             .ToListAsync(ct);
+
+    public async Task<Dictionary<Guid, string>> GetUsuarioNomesAsync(IEnumerable<Guid> ids, CancellationToken ct = default)
+    {
+        var list = ids.Distinct().ToList();
+        if (list.Count == 0) return new();
+        return await _ctx.Usuarios
+            .Where(u => list.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id, u => u.Nome, ct);
+    }
 
     private static decimal CalcularINSS(decimal salario)
     {

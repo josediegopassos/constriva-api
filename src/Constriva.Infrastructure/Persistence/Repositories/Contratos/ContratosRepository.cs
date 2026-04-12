@@ -66,4 +66,25 @@ public class ContratoRepository : TenantRepository<Contrato>, IContratoRepositor
 
     public async Task<MedicaoContratual?> GetMedicaoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default)
         => await _ctx.MedicoesContratuais.FirstOrDefaultAsync(m => m.Id == id && m.EmpresaId == empresaId && !m.IsDeleted, ct);
+
+    public async Task<IEnumerable<AditvoContrato>> GetAditivosAsync(Guid contratoId, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.AditivosContrato
+            .Where(a => a.ContratoId == contratoId && a.EmpresaId == empresaId && !a.IsDeleted)
+            .OrderByDescending(a => a.DataAssinatura).ToListAsync(ct);
+
+    public async Task<AditvoContrato?> GetAditivoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.AditivosContrato.FirstOrDefaultAsync(a => a.Id == id && a.EmpresaId == empresaId && !a.IsDeleted, ct);
+
+    public async Task AddAditivoAsync(AditvoContrato aditivo, CancellationToken ct = default)
+        => await _ctx.AditivosContrato.AddAsync(aditivo, ct);
+
+    public async Task<int> GetAditivosCountAsync(Guid contratoId, Guid empresaId, CancellationToken ct = default)
+        => await _ctx.AditivosContrato.CountAsync(a => a.ContratoId == contratoId && a.EmpresaId == empresaId && !a.IsDeleted, ct);
+
+    public async Task<IEnumerable<AditvoContrato>> GetTodosAditivosAsync(Guid empresaId, CancellationToken ct = default)
+        => await _ctx.AditivosContrato
+            .Include(a => a.Contrato).ThenInclude(c => c.Fornecedor)
+            .Where(a => a.EmpresaId == empresaId && !a.IsDeleted)
+            .OrderByDescending(a => a.CreatedAt)
+            .ToListAsync(ct);
 }

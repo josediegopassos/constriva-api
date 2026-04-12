@@ -20,7 +20,7 @@ public class GetTodasMedicoesHandler : IRequestHandler<GetTodasMedicoesQuery, IE
             m.Id, m.ContratoId,
             m.Contrato?.Numero ?? "", m.Contrato?.Fornecedor?.RazaoSocial,
             m.Periodo, m.Numero,
-            m.ValorMedicao, m.ValorRetencao, m.ValorLiquido,
+            m.ValorMedicao, m.ValorRetencao, m.ValorLiquido, m.PercentualMedicao,
             m.Status, m.Status.ToString(),
             m.DataInicio, m.DataFim,
             m.DataSubmissao, m.DataAnalise, m.DataAprovacao,

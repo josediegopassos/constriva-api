@@ -8,8 +8,7 @@ using Constriva.Application.Features.RH.DTOs;
 
 namespace Constriva.Application.Features.RH.Commands;
 
-public record UpdatePontoCommand(Guid Id, Guid EmpresaId, DateTime Entrada,
-    DateTime? Saida, string? Observacoes)
+public record UpdatePontoCommand(Guid Id, Guid EmpresaId, UpdatePontoDto Dto)
     : IRequest<RegistroPontoDto>, ITenantRequest { public Guid TenantId => EmpresaId; }
 
 public class UpdatePontoCommandHandler : IRequestHandler<UpdatePontoCommand, RegistroPontoDto>
@@ -28,22 +27,28 @@ public class UpdatePontoCommandHandler : IRequestHandler<UpdatePontoCommand, Reg
         var ponto = await _repo.GetPontoByIdAsync(request.Id, request.EmpresaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Registro de ponto {request.Id} não encontrado.");
 
-        // Cada registro representa um único evento de entrada OU saída.
-        // O campo DataHora é atualizado com o valor correto conforme o tipo do registro.
-        ponto.DataHora = ponto.Tipo switch
-        {
-            TipoRegistroPontoEnum.Saida or TipoRegistroPontoEnum.FimIntervalo =>
-                request.Saida
-                ?? throw new InvalidOperationException(
-                    $"Campo 'Saida' é obrigatório para registros do tipo {ponto.Tipo}."),
-            _ => request.Entrada
-        };
+        var dto = request.Dto;
 
-        if (request.Observacoes != null) ponto.Justificativa = request.Observacoes;
-        ponto.Manual = true;
+        ponto.ObraId = dto.ObraId ?? ponto.ObraId;
+        ponto.DataHora = dto.DataHora;
+        ponto.HorarioPrevisto = dto.HorarioPrevisto;
+        ponto.HorasExtras = dto.HorasExtras;
+        ponto.Latitude = dto.Latitude;
+        ponto.Longitude = dto.Longitude;
+        ponto.Dispositivo = dto.Dispositivo;
+        if (dto.Online.HasValue) ponto.Online = dto.Online.Value;
+        if (dto.Manual.HasValue) ponto.Manual = dto.Manual.Value;
+        ponto.Justificativa = dto.Justificativa;
 
         await _uow.SaveChangesAsync(cancellationToken);
 
-        return new RegistroPontoDto(ponto.Id, ponto.FuncionarioId, "", ponto.Tipo, ponto.DataHora, ponto.HorarioPrevisto, ponto.HorasExtras);
+        return new RegistroPontoDto(ponto.Id, ponto.FuncionarioId, "",
+            ponto.ObraId, ponto.Tipo, ponto.DataHora,
+            ponto.HorarioPrevisto, ponto.HorasExtras,
+            ponto.Latitude, ponto.Longitude, ponto.Dispositivo,
+            ponto.Online, ponto.Manual, ponto.Justificativa,
+            ponto.StatusAprovacao, ponto.AprovadoPor, null,
+            ponto.ReprovadoPor, null,
+            ponto.CreatedAt);
     }
 }

@@ -8,8 +8,7 @@ using Constriva.Application.Features.Contratos.DTOs;
 
 namespace Constriva.Application.Features.Contratos.Commands;
 
-public record UpdateMedicaoCommand(Guid Id, Guid ContratoId, Guid EmpresaId,
-    string Numero, DateTime DataMedicao, decimal ValorMedido, string? Observacoes)
+public record UpdateMedicaoCommand(Guid Id, Guid ContratoId, Guid EmpresaId, UpdateMedicaoDto Dto)
     : IRequest<MedicaoContratualDto>, ITenantRequest { public Guid TenantId => EmpresaId; }
 
 public class UpdateMedicaoHandler : IRequestHandler<UpdateMedicaoCommand, MedicaoContratualDto>
@@ -32,15 +31,21 @@ public class UpdateMedicaoHandler : IRequestHandler<UpdateMedicaoCommand, Medica
             throw new InvalidOperationException(
                 $"Medição no status '{medicao.Status}' não pode ser editada. Apenas rascunhos podem ser alterados.");
 
-        medicao.Numero = request.Numero;
-        medicao.DataFim = request.DataMedicao; // DataMedicao = data da medição = fim do período
-        medicao.ValorMedicao = request.ValorMedido;
-        medicao.Observacoes = request.Observacoes;
+        var dto = request.Dto;
+        medicao.Numero = dto.Numero;
+        medicao.DataInicio = dto.DataInicio;
+        medicao.DataFim = dto.DataFim;
+        medicao.ValorMedicao = dto.ValorMedicao;
+        medicao.PercentualMedicao = dto.PercentualMedicao;
+        medicao.Observacoes = dto.Observacoes;
+        medicao.ArquivoUrl = dto.ArquivoUrl;
 
         await _uow.SaveChangesAsync(cancellationToken);
 
         return new MedicaoContratualDto(
             medicao.Id, medicao.ContratoId, medicao.Numero,
-            medicao.DataFim, medicao.ValorMedicao, medicao.Observacoes, medicao.CreatedAt);
+            medicao.DataInicio, medicao.DataFim,
+            medicao.ValorMedicao, medicao.PercentualMedicao,
+            medicao.Observacoes, medicao.ArquivoUrl, medicao.CreatedAt);
     }
 }

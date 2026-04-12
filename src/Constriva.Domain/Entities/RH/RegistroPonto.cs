@@ -17,6 +17,8 @@ public class RegistroPonto : TenantEntity
     public bool Online { get; set; } = true;
     public bool Manual { get; set; } = false;
     public string? Justificativa { get; set; }
+    public StatusAprovacaoPontoEnum StatusAprovacao { get; set; } = StatusAprovacaoPontoEnum.Pendente;
     public Guid? AprovadoPor { get; set; }
+    public Guid? ReprovadoPor { get; set; }
     public virtual Funcionario Funcionario { get; set; } = null!;
 }

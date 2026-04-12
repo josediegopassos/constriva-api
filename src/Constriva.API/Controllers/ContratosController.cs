@@ -7,6 +7,7 @@ using Constriva.Application.Features.Contratos.Commands;
 using Constriva.Application.Features.Contratos.DTOs;
 using Constriva.Application.Features.Contratos.Queries;
 using Constriva.Domain.Enums;
+using Constriva.Application.Features.Contratos.DTOs;
 
 namespace Constriva.API.Controllers;
 
@@ -26,6 +27,10 @@ public sealed class ContratosController : BaseController
     [HttpGet("medicoes")]
     public async Task<ActionResult<IEnumerable<MedicaoGeralDto>>> GetTodasMedicoes(CancellationToken ct)
         => Ok(await Mediator.Send(new GetTodasMedicoesQuery(RequireEmpresaId()), ct));
+
+    [HttpGet("aditivos")]
+    public async Task<ActionResult<IEnumerable<AditivoGeralDto>>> GetTodosAditivos(CancellationToken ct)
+        => Ok(await Mediator.Send(new GetTodosAditivosQuery(RequireEmpresaId()), ct));
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ContratoDetalheDto>> GetById(Guid id, CancellationToken ct)
@@ -94,7 +99,7 @@ public sealed class ContratosController : BaseController
     [HttpPut("{id:guid}/medicoes/{medicaoId:guid}")]
     public async Task<IActionResult> UpdateMedicao(Guid id, Guid medicaoId, [FromBody] UpdateMedicaoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateMedicaoCommand(medicaoId, id, RequireEmpresaId(), dto.Numero, dto.DataMedicao, dto.ValorMedido, dto.Observacoes), ct)); }
+        try { return Ok(await Mediator.Send(new UpdateMedicaoCommand(medicaoId, id, RequireEmpresaId(), dto), ct)); }
         catch (Exception ex) { return HandleException(ex); }
     }
 
@@ -141,4 +146,35 @@ public sealed class ContratosController : BaseController
     }
 
     public record RejeitarMedicaoRequest(string Motivo);
+
+    // ─── Aditivos ────────────────────────────────────────────────────────────────
+
+    [HttpGet("{id:guid}/aditivos")]
+    public async Task<ActionResult<IEnumerable<AditivoContratoDto>>> GetAditivos(Guid id, CancellationToken ct)
+        => Ok(await Mediator.Send(new GetAditivosContratoQuery(id, RequireEmpresaId()), ct));
+
+    [HttpGet("{id:guid}/aditivos/{aditivoId:guid}")]
+    public async Task<ActionResult<AditivoContratoDto>> GetAditivoById(Guid id, Guid aditivoId, CancellationToken ct)
+        => OkOrNotFound(await Mediator.Send(new GetAditivoByIdQuery(aditivoId, RequireEmpresaId()), ct));
+
+    [HttpPost("{id:guid}/aditivos")]
+    public async Task<IActionResult> CreateAditivo(Guid id, [FromBody] CreateAditivoDto dto, CancellationToken ct)
+    {
+        try { return Ok(await Mediator.Send(new CreateAditivoCommand(id, RequireEmpresaId(), dto), ct)); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpPut("{id:guid}/aditivos/{aditivoId:guid}")]
+    public async Task<IActionResult> UpdateAditivo(Guid id, Guid aditivoId, [FromBody] UpdateAditivoDto dto, CancellationToken ct)
+    {
+        try { return Ok(await Mediator.Send(new UpdateAditivoCommand(aditivoId, id, RequireEmpresaId(), dto), ct)); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    [HttpDelete("{id:guid}/aditivos/{aditivoId:guid}")]
+    public async Task<IActionResult> DeleteAditivo(Guid id, Guid aditivoId, CancellationToken ct)
+    {
+        try { await Mediator.Send(new DeleteAditivoCommand(aditivoId, id, RequireEmpresaId()), ct); return NoContent(); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
 }

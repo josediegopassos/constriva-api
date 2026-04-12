@@ -13,6 +13,9 @@ public interface IRHRepository
     Task AddFuncionarioAsync(Funcionario func, CancellationToken ct = default);
     Task<bool> CpfExisteAsync(Guid empresaId, string cpf, CancellationToken ct = default);
     Task<IEnumerable<RegistroPonto>> GetPontosAsync(Guid empresaId, Guid? funcionarioId, DateTime? inicio, DateTime? fim, CancellationToken ct = default);
+    Task<(IEnumerable<RegistroPonto> Items, int Total)> GetPontosPagedAsync(
+        Guid empresaId, Guid? funcionarioId, DateTime? inicio, DateTime? fim,
+        int page, int pageSize, CancellationToken ct = default);
     Task AddPontoAsync(RegistroPonto ponto, CancellationToken ct = default);
     Task<IEnumerable<FolhaPagamento>> GetFolhasAsync(Guid empresaId, string? competencia, CancellationToken ct = default);
     Task<IEnumerable<Cargo>> GetCargosAsync(Guid empresaId, CancellationToken ct = default);
@@ -30,4 +33,5 @@ public interface IRHRepository
     Task<RegistroPonto?> GetPontoByIdAsync(Guid id, Guid empresaId, CancellationToken ct = default);
     Task<FolhaPagamento> GerarFolhaAsync(Guid empresaId, string competencia, Guid? funcionarioId, CancellationToken ct = default);
     Task<IEnumerable<FolhaFuncionario>> GetFolhasFuncionarioAsync(Guid funcionarioId, Guid empresaId, CancellationToken ct = default);
+    Task<Dictionary<Guid, string>> GetUsuarioNomesAsync(IEnumerable<Guid> ids, CancellationToken ct = default);
 }
