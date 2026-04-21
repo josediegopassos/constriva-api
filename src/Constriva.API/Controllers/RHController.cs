@@ -54,6 +54,17 @@ public sealed class RHController : BaseController
         catch (Exception ex) { return HandleException(ex); }
     }
 
+    [HttpGet("pontos/resumo")]
+    public async Task<ActionResult<ResumoGeralPontoDto>> GetResumoGeralPonto(
+        [FromQuery] DateTime inicio, [FromQuery] DateTime fim, CancellationToken ct)
+        => Ok(await Mediator.Send(new GetResumoGeralPontoQuery(RequireEmpresaId(), inicio, fim), ct));
+
+    [HttpGet("pontos/resumo/{funcionarioId:guid}")]
+    public async Task<ActionResult<ResumoPontoDto>> GetResumoPonto(
+        Guid funcionarioId, [FromQuery] DateTime inicio, [FromQuery] DateTime fim,
+        CancellationToken ct)
+        => Ok(await Mediator.Send(new GetResumoPontoQuery(RequireEmpresaId(), funcionarioId, inicio, fim), ct));
+
     [HttpGet("pontos")]
     public async Task<ActionResult<PaginatedResult<RegistroPontoDto>>> GetPontos(
         [FromQuery] Guid? funcionarioId, [FromQuery] DateTime? inicio, [FromQuery] DateTime? fim,
