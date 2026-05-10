@@ -11,6 +11,3 @@ public record FornecedorCotacaoDto(
     StatusConviteCotacaoEnum Status,
     DateTime ConvidadoEm,
     DateTime? RespondeuEm);
-
-public record ConvidarFornecedoresDto(
-    List<Guid> FornecedorIds);

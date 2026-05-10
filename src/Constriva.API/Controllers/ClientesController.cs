@@ -44,28 +44,52 @@ public class ClientesController : BaseController
             var result = await Mediator.Send(new CreateClienteCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateClienteDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/status")]
     public async Task<IActionResult> AlterarStatus(Guid id, [FromBody] AlterarStatusClienteDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new AlterarStatusClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto.Status), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new AlterarStatusClienteCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto.Status), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("{id:guid}/obras")]

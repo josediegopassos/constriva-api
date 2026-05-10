@@ -1,4 +1,4 @@
-﻿using Constriva.Application.Common.Interfaces;
+using Constriva.Application.Common.Interfaces;
 using Constriva.Application.Features.Compras;
 using Constriva.Application.Features.Compras.Commands;
 using Constriva.Application.Features.Compras.DTOs;
@@ -28,20 +28,26 @@ namespace Constriva.API.Controllers
             try
             {
                 var result = await Mediator.Send(new GetPedidoCompraByIdQuery(id, RequireEmpresaId()), ct);
-                return result is null ? NotFound(new { message = "Pedido não encontrado." }) : Ok(result);
+                if (result is null)
+                    return NotFound(new { message = "Pedido não encontrado." });
+                return Ok(result);
             }
-            catch (Exception ex) { return HandleException(ex); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPost("pedidos")]
         public async Task<IActionResult> CreatePedido([FromBody] CreatePedidoDto dto, CancellationToken ct)
         {
-            try { 
-                return Ok(await Mediator.Send(new CreatePedidoCompraCommand(RequireEmpresaId(), dto), ct)); 
+            try
+            {
+                return Ok(await Mediator.Send(new CreatePedidoCompraCommand(RequireEmpresaId(), dto), ct));
             }
-            catch (Exception ex) 
-            { 
-                return HandleException(ex); 
+            catch (Exception ex)
+            {
+                return HandleException(ex);
             }
         }
 
@@ -49,22 +55,42 @@ namespace Constriva.API.Controllers
         public async Task<IActionResult> UpdateStatusPedido(
             Guid id, [FromBody] UpdateStatusPedidoRequest req, CancellationToken ct)
         {
-            try { await Mediator.Send(new UpdateStatusPedidoCommand(id, RequireEmpresaId(), req.Status), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new UpdateStatusPedidoCommand(id, RequireEmpresaId(), req.Status), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPut("pedidos/{id:guid}")]
         public async Task<IActionResult> UpdatePedido(Guid id, [FromBody] UpdatePedidoDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdatePedidoCompraCommand(id, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new UpdatePedidoCompraCommand(id, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("pedidos/{id:guid}")]
         public async Task<IActionResult> DeletePedido(Guid id, CancellationToken ct)
         {
-            try { await Mediator.Send(new DeletePedidoCompraCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new DeletePedidoCompraCommand(id, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("cotacoes")]
@@ -78,23 +104,40 @@ namespace Constriva.API.Controllers
             try
             {
                 var result = await Mediator.Send(new GetCotacaoByIdQuery(id, RequireEmpresaId()), ct);
-                return result is null ? NotFound(new { message = "Cotação não encontrada." }) : Ok(result);
+                if (result is null)
+                    return NotFound(new { message = "Cotação não encontrada." });
+                return Ok(result);
             }
-            catch (Exception ex) { return HandleException(ex); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPost("cotacoes")]
         public async Task<IActionResult> CreateCotacao([FromBody] CreateCotacaoDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new CreateCotacaoCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new CreateCotacaoCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPut("cotacoes/{id:guid}")]
         public async Task<IActionResult> UpdateCotacao(Guid id, [FromBody] UpdateCotacaoDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdateCotacaoCommand(id, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new UpdateCotacaoCommand(id, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPatch("cotacoes/{id:guid}/status")]
@@ -105,46 +148,77 @@ namespace Constriva.API.Controllers
                 await Mediator.Send(new UpdateStatusCotacaoCommand(id, RequireEmpresaId(), req.Status, req.FornecedorVencedorId, req.Observacoes), ct);
                 return NoContent();
             }
-            catch (Exception ex) { return HandleException(ex); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("cotacoes/{id:guid}")]
         public async Task<IActionResult> DeleteCotacao(Guid id, CancellationToken ct)
         {
-            try { await Mediator.Send(new DeleteCotacaoCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new DeleteCotacaoCommand(id, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
-
-        // ─── Fornecedores Convidados ─────────────────────────────────────────────
 
         [HttpGet("cotacoes/{id:guid}/fornecedores")]
         public async Task<IActionResult> GetFornecedoresCotacao(Guid id, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new GetFornecedoresCotacaoQuery(id, RequireEmpresaId()), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new GetFornecedoresCotacaoQuery(id, RequireEmpresaId()), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPost("cotacoes/{id:guid}/fornecedores")]
         public async Task<IActionResult> ConvidarFornecedores(Guid id, [FromBody] ConvidarFornecedoresDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new ConvidarFornecedoresCotacaoCommand(id, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new ConvidarFornecedoresCotacaoCommand(id, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("cotacoes/{id:guid}/fornecedores/{fornecedorId:guid}")]
         public async Task<IActionResult> RemoverFornecedorCotacao(Guid id, Guid fornecedorId, CancellationToken ct)
         {
-            try { await Mediator.Send(new RemoverFornecedorCotacaoCommand(id, fornecedorId, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new RemoverFornecedorCotacaoCommand(id, fornecedorId, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
-
-        // ─── Propostas ───────────────────────────────────────────────────────────
 
         [HttpGet("cotacoes/{id:guid}/propostas")]
         public async Task<IActionResult> GetPropostasCotacao(Guid id, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new GetPropostasCotacaoQuery(id, RequireEmpresaId()), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new GetPropostasCotacaoQuery(id, RequireEmpresaId()), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("cotacoes/{id:guid}/propostas/{propostaId:guid}")]
@@ -153,30 +227,54 @@ namespace Constriva.API.Controllers
             try
             {
                 var result = await Mediator.Send(new GetPropostaByIdQuery(propostaId, RequireEmpresaId()), ct);
-                return result is null ? NotFound(new { message = "Proposta não encontrada." }) : Ok(result);
+                if (result is null)
+                    return NotFound(new { message = "Proposta não encontrada." });
+                return Ok(result);
             }
-            catch (Exception ex) { return HandleException(ex); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPost("cotacoes/{id:guid}/propostas")]
         public async Task<IActionResult> CreateProposta(Guid id, [FromBody] CreatePropostaDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new CreatePropostaCotacaoCommand(id, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new CreatePropostaCotacaoCommand(id, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPut("cotacoes/{id:guid}/propostas/{propostaId:guid}")]
         public async Task<IActionResult> UpdateProposta(Guid id, Guid propostaId, [FromBody] UpdatePropostaDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdatePropostaCotacaoCommand(propostaId, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new UpdatePropostaCotacaoCommand(propostaId, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("cotacoes/{id:guid}/propostas/{propostaId:guid}")]
         public async Task<IActionResult> DeleteProposta(Guid id, Guid propostaId, CancellationToken ct)
         {
-            try { await Mediator.Send(new DeletePropostaCotacaoCommand(propostaId, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new DeletePropostaCotacaoCommand(propostaId, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("fornecedores")]
@@ -188,22 +286,41 @@ namespace Constriva.API.Controllers
         [HttpPost("fornecedores")]
         public async Task<IActionResult> CreateFornecedor([FromBody] CreateFornecedorDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new CreateFornecedorCommand(RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new CreateFornecedorCommand(RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPut("fornecedores/{id:guid}")]
         public async Task<IActionResult> UpdateFornecedor(Guid id, [FromBody] UpdateFornecedorDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdateFornecedorCommand(id, RequireEmpresaId(), dto.RazaoSocial, dto.NomeFantasia, dto.CNPJ, dto.Email, dto.Telefone, dto.Endereco, dto.Tipo), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new UpdateFornecedorCommand(id, RequireEmpresaId(), dto.RazaoSocial, dto.NomeFantasia, dto.CNPJ, dto.Email, dto.Telefone, dto.Endereco, dto.Tipo), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("fornecedores/{id:guid}")]
         public async Task<IActionResult> DeleteFornecedor(Guid id, CancellationToken ct)
         {
-            try { await Mediator.Send(new DeleteFornecedorCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new DeleteFornecedorCommand(id, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("formas-pagamento")]

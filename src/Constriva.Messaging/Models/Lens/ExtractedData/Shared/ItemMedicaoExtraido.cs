@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Item de medição extraído de um boletim de medição.
-/// </summary>
 public class ItemMedicaoExtraido
 {
     [JsonPropertyName("codigo")]

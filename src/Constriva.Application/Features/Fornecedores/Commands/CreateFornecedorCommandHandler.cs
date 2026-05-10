@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Domain.Entities.Common;
 using Constriva.Domain.Entities.Fornecedores;
 using Constriva.Domain.Interfaces.Repositories;
@@ -70,7 +70,7 @@ public class CreateFornecedorCommandHandler : IRequestHandler<CreateFornecedorCo
 
     internal static FornecedorResumoDto ToResumo(Fornecedor f) => new(
         f.Id, f.Codigo, f.TipoPessoaEnum, f.RazaoSocial, f.NomeFantasia,
-        f.Documento, f.Email, f.Telefone, f.Tipo, f.Ativo, f.Homologado,
+        f.Documento, f.Email, f.Telefone, f.Celular, f.Tipo, f.Ativo, f.Homologado,
         f.Endereco?.Cidade, f.Endereco?.Estado);
 
     internal static FornecedorDto ToDto(Fornecedor f) => new(

@@ -14,7 +14,7 @@ public class RegistrarPontoValidatorTests
     public void Validate_DevePassar_ComDadosValidos()
     {
         var cmd = new RegistrarPontoCommand(Guid.NewGuid(),
-            new RegistrarPontoDto(Guid.NewGuid(), TipoRegistroPontoEnum.Entrada, DateTime.Now, "08:00"));
+            new RegistrarPontoDto(Guid.NewGuid(), null, TipoRegistroPontoEnum.Entrada, DateTime.Now, "08:00", null, null, null, null));
         _validator.Validate(cmd).IsValid.Should().BeTrue();
     }
 
@@ -22,7 +22,7 @@ public class RegistrarPontoValidatorTests
     public void Validate_DeveFalhar_QuandoFuncionarioNaoInformado()
     {
         var cmd = new RegistrarPontoCommand(Guid.NewGuid(),
-            new RegistrarPontoDto(Guid.Empty, TipoRegistroPontoEnum.Entrada, DateTime.Now, "08:00"));
+            new RegistrarPontoDto(Guid.Empty, null, TipoRegistroPontoEnum.Entrada, DateTime.Now, "08:00", null, null, null, null));
         var result = _validator.Validate(cmd);
         result.IsValid.Should().BeFalse();
     }

@@ -6,9 +6,6 @@ using Constriva.Messaging.Services.Notification;
 
 namespace Constriva.Messaging.Consumers.Lens;
 
-/// <summary>
-/// Consumer responsável por reprocessar documentos que tiveram erro ou precisam de nova análise.
-/// </summary>
 public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLensCommand>
 {
     private readonly IPublishEndpoint _publishEndpoint;
@@ -16,9 +13,6 @@ public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLens
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<ReprocessarDocumentoLensConsumer> _logger;
 
-    /// <summary>
-    /// Inicializa o consumer de reprocessamento de documentos Lens.
-    /// </summary>
     public ReprocessarDocumentoLensConsumer(
         IPublishEndpoint publishEndpoint,
         ISignalRNotificationService notificacao,
@@ -31,9 +25,6 @@ public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLens
         _logger = logger;
     }
 
-    /// <summary>
-    /// Consome e processa o comando de reprocessamento de documento OCR.
-    /// </summary>
     public async Task Consume(ConsumeContext<ReprocessDocumentoLensCommand> context)
     {
         var comando = context.Message;
@@ -45,7 +36,6 @@ public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLens
 
         try
         {
-            // Buscar dados originais do processamento via HTTP na API
             var client = _httpClientFactory.CreateClient("ConstrivaApi");
             var resposta = await client.GetAsync($"/api/interno/lens/processamentos/{comando.ProcessamentoId}", ct);
 
@@ -61,14 +51,12 @@ public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLens
             var json = await resposta.Content.ReadAsStringAsync(ct);
             var dados = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(json);
 
-            // Verificar se dados foram retornados
             if (!dados.TryGetProperty("dados", out var dadosProcessamento))
             {
                 throw new InvalidOperationException(
                     $"Resposta da API não contém dados do processamento {comando.ProcessamentoId}.");
             }
 
-            // Atualizar status para Pendente
             await _publishEndpoint.Publish(new DocumentoLensProcessedEvent
             {
                 CorrelacaoId = comando.CorrelacaoId,
@@ -79,7 +67,6 @@ public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLens
                 Mensagem = $"Reprocessamento iniciado. Motivo: {comando.MotivoReprocessamento ?? "Não informado"}."
             }, ct);
 
-            // Publicar novo comando de processamento
             var novoComando = new ProcessDocumentoLensCommand
             {
                 CorrelacaoId = comando.CorrelacaoId,
@@ -97,7 +84,6 @@ public class ReprocessarDocumentoLensConsumer : IConsumer<ReprocessDocumentoLens
 
             await _publishEndpoint.Publish(novoComando, ct);
 
-            // Notificar via SignalR
             await _notificacao.NotificarProcessamentoAtualizadoAsync(
                 comando.UsuarioId,
                 novoComando.ObraId,

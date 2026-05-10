@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Dedução ou retenção extraída de um documento fiscal de serviço.
-/// </summary>
 public class DeducaoExtraida
 {
     [JsonPropertyName("descricao")]

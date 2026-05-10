@@ -43,48 +43,93 @@ public class FornecedoresController : BaseController
             var result = await Mediator.Send(new CreateFornecedorCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateFornecedorDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateFornecedorCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateFornecedorCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/ativar")]
     public async Task<IActionResult> Ativar(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new AtivarFornecedorCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new AtivarFornecedorCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/desativar")]
     public async Task<IActionResult> Desativar(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DesativarFornecedorCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DesativarFornecedorCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/homologar")]
     public async Task<IActionResult> Homologar(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new HomologarFornecedorCommand(id, RequireEmpresaId(), true), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new HomologarFornecedorCommand(id, RequireEmpresaId(), true), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/deshomologar")]
     public async Task<IActionResult> Deshomologar(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new HomologarFornecedorCommand(id, RequireEmpresaId(), false), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new HomologarFornecedorCommand(id, RequireEmpresaId(), false), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteFornecedorCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteFornecedorCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

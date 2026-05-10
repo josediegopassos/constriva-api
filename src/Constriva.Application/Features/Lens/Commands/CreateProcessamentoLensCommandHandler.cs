@@ -2,7 +2,7 @@ using MediatR;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Features.Lens.DTOs;
 using Constriva.Application.Features.Lens.Interfaces;
 using Constriva.Domain.Entities.Lens;

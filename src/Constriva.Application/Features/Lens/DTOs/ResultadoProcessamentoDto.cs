@@ -19,10 +19,3 @@ public record ResultadoProcessamentoDto(
     string MetodoExtracaoDescricao,
     bool PodeReprocessar,
     bool PodeConsolidar);
-
-public record DadosResumidosDto(
-    string? Numero,
-    string? DataEmissao,
-    decimal? ValorTotal,
-    string? Emitente,
-    string? Destinatario);

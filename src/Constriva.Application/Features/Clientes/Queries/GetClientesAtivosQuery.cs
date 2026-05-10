@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Features.Clientes.DTOs;
 using Constriva.Domain.Interfaces.Repositories;
 

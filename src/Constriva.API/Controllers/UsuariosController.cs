@@ -24,7 +24,8 @@ public sealed class UsuariosController : BaseController
         [FromQuery] bool? ativo, [FromQuery] int page = 1,
         CancellationToken ct = default)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         return Ok(await Mediator.Send(
             new GetUsuariosQuery(CurrentUser.EmpresaId, CurrentUser.IsSuperAdmin, empresaId, search, ativo, page),
             ct));
@@ -33,7 +34,8 @@ public sealed class UsuariosController : BaseController
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<UsuarioDetalheDto?>> GetById(Guid id, CancellationToken ct)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         return OkOrNotFound(await Mediator.Send(
             new GetUsuarioByIdQuery(id, CurrentUser.EmpresaId, CurrentUser.IsSuperAdmin),
             ct));
@@ -42,7 +44,8 @@ public sealed class UsuariosController : BaseController
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUsuarioDto dto, CancellationToken ct)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         try
         {
             var result = await Mediator.Send(
@@ -50,13 +53,17 @@ public sealed class UsuariosController : BaseController
                 ct);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUsuarioDto dto, CancellationToken ct)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         try
         {
             await Mediator.Send(
@@ -64,13 +71,17 @@ public sealed class UsuariosController : BaseController
                 ct);
             return NoContent();
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/ativo")]
     public async Task<IActionResult> AtivarDesativar(Guid id, [FromBody] bool ativo, CancellationToken ct)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         await Mediator.Send(
             new AtivarDesativarUsuarioCommand(id, CurrentUser.EmpresaId, CurrentUser.IsSuperAdmin, ativo),
             ct);
@@ -80,7 +91,8 @@ public sealed class UsuariosController : BaseController
     [HttpPatch("{id:guid}/senha")]
     public async Task<IActionResult> ResetSenha(Guid id, [FromBody] ResetSenhaDto dto, CancellationToken ct)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         try
         {
             await Mediator.Send(
@@ -88,14 +100,18 @@ public sealed class UsuariosController : BaseController
                 ct);
             return NoContent();
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("{id:guid}/permissoes")]
     public async Task<IActionResult> UpdatePermissoes(
         Guid id, [FromBody] List<UpdatePermissaoDto> dtos, CancellationToken ct)
     {
-        if (!PodeGerenciarUsuarios) return Forbid();
+        if (!PodeGerenciarUsuarios)
+            return Forbid();
         try
         {
             await Mediator.Send(
@@ -103,6 +119,9 @@ public sealed class UsuariosController : BaseController
                 ct);
             return NoContent();
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

@@ -43,70 +43,136 @@ public class ObrasController : BaseController
             var result = await Mediator.Send(new CreateObraCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-        catch (Exception ex) { return HandleException(ex); }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateObraDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, dto), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/status")]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateStatusObraRequest req, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, req.Status, req.Observacao), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, req.Status, req.Observacao), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/aprovar")]
     public async Task<IActionResult> Aprovar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Aprovada, body?.Observacao), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Aprovada, body?.Observacao), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/iniciar")]
     public async Task<IActionResult> Iniciar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.EmAndamento, body?.Observacao), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.EmAndamento, body?.Observacao), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/paralisar")]
     public async Task<IActionResult> Paralisar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Paralisada, body?.Observacao), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Paralisada, body?.Observacao), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/concluir")]
     public async Task<IActionResult> Concluir(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Concluida, body?.Observacao), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Concluida, body?.Observacao), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/cancelar")]
     public async Task<IActionResult> Cancelar(Guid id, [FromBody] ObservacaoRequest? body, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Cancelada, body?.Observacao), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdateStatusObraCommand(id, RequireEmpresaId(), CurrentUser.UserId, StatusObraEnum.Cancelada, body?.Observacao), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("{id:guid}/percentual")]
     public async Task<IActionResult> UpdatePercentual(Guid id, [FromBody] decimal percentual, CancellationToken ct)
     {
-        try { await Mediator.Send(new UpdatePercentualObraCommand(id, RequireEmpresaId(), percentual), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new UpdatePercentualObraCommand(id, RequireEmpresaId(), percentual), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteObraCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteObraCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("{id:guid}/curva-s")]
@@ -124,8 +190,14 @@ public class ObrasController : BaseController
     [HttpPost("{id:guid}/fases")]
     public async Task<IActionResult> CreateFase(Guid id, [FromBody] CreateFaseObraRequest req, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateFaseCommand(id, RequireEmpresaId(), req.Nome, req.Ordem, req.Inicio, req.Fim, req.ValorPrevisto, req.Descricao, req.Cor, req.FasePaiId), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateFaseCommand(id, RequireEmpresaId(), req.Nome, req.Ordem, req.Inicio, req.Fim, req.ValorPrevisto, req.Descricao, req.Cor, req.FasePaiId), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     public record UpdateStatusObraRequest(Domain.Enums.StatusObraEnum Status, string? Observacao);

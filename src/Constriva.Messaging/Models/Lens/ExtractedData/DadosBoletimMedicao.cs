@@ -3,9 +3,6 @@ using Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData;
 
-/// <summary>
-/// Dados extraídos de um Boletim de Medição de obra.
-/// </summary>
 public class DadosBoletimMedicao
 {
     [JsonPropertyName("numero_medicao")]

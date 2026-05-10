@@ -1,6 +1,6 @@
 using FluentValidation;
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Domain.Interfaces.Repositories;
 using Constriva.Application.Features.SST.DTOs;
 using Constriva.Application.Common.Interfaces;

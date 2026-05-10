@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Features.Financeiro;
 using Constriva.Domain.Entities.Financeiro;
 using Constriva.Domain.Enums;

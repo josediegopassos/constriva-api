@@ -24,7 +24,6 @@ public class AgentService : IAgentService
     private readonly IUnitOfWork _uow;
     private readonly ILogger<AgentService> _logger;
 
-    // System prompt estático — só muda a data
     private const string SystemPromptTemplate = """
         Você é o assistente IA do Constriva, sistema de gestão de obras.
         Módulos: clientes, compras, contratos, cronograma, estoque, financeiro, fornecedores, ged, obras, orcamento, qualidade, rh, sst.
@@ -61,10 +60,8 @@ public class AgentService : IAgentService
 
     public async Task<ChatResponseDto> ChatAsync(Guid empresaId, Guid usuarioId, ChatRequestDto request, CancellationToken ct)
     {
-        // 1. Validar cota — lança CotaExcedidaException se excedida
         await _tokenService.ValidarCotaAsync(empresaId, ct);
 
-        // 2. Obter ou criar sessão
         AgenteSessao sessao;
         if (request.SessaoId.HasValue)
         {
@@ -85,10 +82,8 @@ public class AgentService : IAgentService
             await _uow.SaveChangesAsync(ct);
         }
 
-        // 3. Montar mensagens com context windowing
         var messages = await BuildMessagesAsync(sessao.Id, request.Mensagem, ct);
 
-        // 4. Salvar mensagem do usuário no histórico
         var userHistorico = new AgenteHistorico
         {
             EmpresaId = empresaId,
@@ -101,7 +96,6 @@ public class AgentService : IAgentService
         await _repo.AddHistoricoAsync(userHistorico, ct);
         await _uow.SaveChangesAsync(ct);
 
-        // 5. Loop de chamadas à OpenAI
         var client = _httpClientFactory.CreateClient("OpenAI");
         var tools = _toolsService.GetToolDefinitions();
         var totalTokensInput = 0;
@@ -132,7 +126,6 @@ public class AgentService : IAgentService
                 using var responseDoc = JsonDocument.Parse(responseJson);
                 var root = responseDoc.RootElement;
 
-                // Acumular tokens de TODAS as iterações
                 if (root.TryGetProperty("usage", out var usage))
                 {
                     totalTokensInput += usage.TryGetProperty("prompt_tokens", out var pt) ? pt.GetInt32() : 0;
@@ -149,14 +142,16 @@ public class AgentService : IAgentService
                     continue;
                 }
 
-                // Resposta final
                 assistantResponse = message.TryGetProperty("content", out var contentProp) && contentProp.ValueKind != JsonValueKind.Null
                     ? contentProp.GetString()
                     : "Desculpe, não consegui gerar uma resposta.";
                 break;
             }
         }
-        catch (InvalidOperationException) { throw; }
+        catch (InvalidOperationException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "[AGENTE] Erro no loop de chat para empresa {EmpresaId}", empresaId);
@@ -165,7 +160,6 @@ public class AgentService : IAgentService
 
         assistantResponse ??= "Desculpe, o número máximo de iterações foi atingido.";
 
-        // 6. Salvar resposta do assistente com tokens totais acumulados
         var assistantHistorico = new AgenteHistorico
         {
             EmpresaId = empresaId,
@@ -178,10 +172,8 @@ public class AgentService : IAgentService
         await _repo.AddHistoricoAsync(assistantHistorico, ct);
         await _uow.SaveChangesAsync(ct);
 
-        // 7. Registrar consumo (tokens de TODAS as iterações)
         await _tokenService.RegistrarConsumoAsync(empresaId, usuarioId, totalTokensInput, totalTokensOutput, ct);
 
-        // 8. Retornar resposta
         var dashboard = await _tokenService.ObterDashboardConsumoAsync(empresaId, ct);
         var consumo = dashboard.ConsumoMesAtual;
 
@@ -193,27 +185,19 @@ public class AgentService : IAgentService
             consumo.PercentualUso);
     }
 
-    /// <summary>
-    /// Monta o array de mensagens com system prompt cacheado e context windowing.
-    /// Limita o histórico para não estourar o contexto.
-    /// </summary>
     private async Task<List<Dictionary<string, object>>> BuildMessagesAsync(Guid sessaoId, string novaMensagem, CancellationToken ct)
     {
         var messages = new List<Dictionary<string, object>>();
 
-        // System prompt cacheado por dia (só muda a data)
         var hoje = DateTime.UtcNow.ToString("yyyy-MM-dd");
         var systemPrompt = string.Format(SystemPromptTemplate, hoje);
         messages.Add(new Dictionary<string, object> { ["role"] = "system", ["content"] = systemPrompt });
 
-        // Carregar histórico com limite
         var historicoMensagens = (await _repo.GetUltimasMensagensAsync(sessaoId, _settings.MaxMensagensHistorico, ct)).ToList();
 
-        // Context windowing: estimar tokens e truncar se necessário
         var tokensEstimados = EstimarTokens(systemPrompt) + EstimarTokens(novaMensagem);
         var mensagensIncluidas = new List<AgenteHistorico>();
 
-        // Iterar do mais recente ao mais antigo, incluir enquanto cabe no contexto
         for (var i = historicoMensagens.Count - 1; i >= 0; i--)
         {
             var msg = historicoMensagens[i];
@@ -225,7 +209,6 @@ public class AgentService : IAgentService
             mensagensIncluidas.Insert(0, msg);
         }
 
-        // Adicionar histórico filtrado
         try
         {
             foreach (var msg in mensagensIncluidas)
@@ -243,15 +226,11 @@ public class AgentService : IAgentService
             messages.Add(new Dictionary<string, object> { ["role"] = "system", ["content"] = systemPrompt });
         }
 
-        // Nova mensagem do usuário
         messages.Add(new Dictionary<string, object> { ["role"] = "user", ["content"] = novaMensagem });
 
         return messages;
     }
 
-    /// <summary>
-    /// Monta o payload JSON da requisição para a OpenAI.
-    /// </summary>
     private System.Text.Json.Nodes.JsonObject BuildRequestPayload(
         List<Dictionary<string, object>> messages,
         IReadOnlyList<object> tools)
@@ -283,9 +262,6 @@ public class AgentService : IAgentService
         };
     }
 
-    /// <summary>
-    /// Processa tool calls com cache de resultados para evitar chamadas repetidas.
-    /// </summary>
     private async Task ProcessToolCallsAsync(
         JsonElement message,
         List<Dictionary<string, object>> messages,
@@ -296,16 +272,15 @@ public class AgentService : IAgentService
         var assistantContent = message.TryGetProperty("content", out var ac) && ac.ValueKind != JsonValueKind.Null
             ? ac.GetString() : null;
 
-        // Adicionar mensagem do assistente com tool_calls ao contexto
         var assistantMsg = new Dictionary<string, object>
         {
             ["role"] = "assistant",
             ["tool_calls"] = JsonSerializer.Deserialize<JsonElement>(toolCallsElement.GetRawText())
         };
-        if (assistantContent != null) assistantMsg["content"] = assistantContent;
+        if (assistantContent != null)
+            assistantMsg["content"] = assistantContent;
         messages.Add(assistantMsg);
 
-        // Salvar no histórico
         var toolCallsHistorico = new AgenteHistorico
         {
             EmpresaId = empresaId,
@@ -318,7 +293,6 @@ public class AgentService : IAgentService
         };
         await _repo.AddHistoricoAsync(toolCallsHistorico, ct);
 
-        // Executar cada tool call
         foreach (var toolCall in toolCallsElement.EnumerateArray())
         {
             var toolCallId = toolCall.GetProperty("id").GetString()!;
@@ -326,7 +300,6 @@ public class AgentService : IAgentService
             var toolName = function.GetProperty("name").GetString()!;
             var toolArgs = function.GetProperty("arguments").GetString()!;
 
-            // Cache de resultados de tools — mesma chamada em 60s retorna cache
             var cacheKey = $"agent:tool:{empresaId}:{toolName}:{toolArgs.GetHashCode()}";
             var toolResult = await _cache.GetAsync<string>(cacheKey, ct);
 
@@ -341,7 +314,6 @@ public class AgentService : IAgentService
                     toolResult = $"Erro ao executar ferramenta '{toolName}': {ex.Message}";
                 }
 
-                // Cachear resultado por tempo configurável
                 await _cache.SetAsync(cacheKey, toolResult, TimeSpan.FromSeconds(_settings.CacheToolResultSegundos), ct);
             }
             else
@@ -349,14 +321,12 @@ public class AgentService : IAgentService
                 _logger.LogDebug("[AGENTE] Cache hit para tool {Tool}, args hash {Hash}", toolName, toolArgs.GetHashCode());
             }
 
-            // Truncar resultado muito grande para economizar tokens
             if (toolResult.Length > 2000)
             {
                 toolResult = toolResult[..2000] + "\n... (resultado truncado para economizar tokens)";
                 _logger.LogInformation("[AGENTE] Resultado da tool {Tool} truncado de {Original} para 2000 chars.", toolName, toolResult.Length);
             }
 
-            // Salvar no histórico
             var toolResultHistorico = new AgenteHistorico
             {
                 EmpresaId = empresaId,
@@ -369,7 +339,6 @@ public class AgentService : IAgentService
             };
             await _repo.AddHistoricoAsync(toolResultHistorico, ct);
 
-            // Adicionar resultado ao contexto
             messages.Add(new Dictionary<string, object>
             {
                 ["role"] = "tool",
@@ -381,14 +350,8 @@ public class AgentService : IAgentService
         await _uow.SaveChangesAsync(ct);
     }
 
-    /// <summary>
-    /// Estimativa rápida de tokens (~4 chars por token para português).
-    /// </summary>
     private static int EstimarTokens(string texto) => (texto.Length + 3) / 4;
 
-    /// <summary>
-    /// Extrai mensagem de erro amigável da resposta da OpenAI.
-    /// </summary>
     private static string ParseOpenAIError(int statusCode, string errorBody)
     {
         var errorDetail = "";
@@ -399,7 +362,7 @@ public class AgentService : IAgentService
                 errObj.TryGetProperty("message", out var errMsg))
                 errorDetail = errMsg.GetString() ?? "";
         }
-        catch { /* ignore */ }
+        catch { }
 
         return statusCode switch
         {

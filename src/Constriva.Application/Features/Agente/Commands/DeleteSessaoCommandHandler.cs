@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Domain.Interfaces.Repositories;
 
 namespace Constriva.Application.Features.Agente.Commands;

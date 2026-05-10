@@ -71,7 +71,10 @@ public class JwtService : IJwtService
             var userId = jwt.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
             return Guid.Parse(userId);
         }
-        catch { return null; }
+        catch
+        {
+            return null;
+        }
     }
 
     private static string GenerateRefreshToken()
@@ -114,8 +117,9 @@ public class CurrentUserService : Constriva.Application.Common.Interfaces.ICurre
 
     public bool HasPermission(string modulo, string acao)
     {
-        if (IsSuperAdmin || IsAdminEmpresa) return true;
-        // In real scenario, load from cache
+        if (IsSuperAdmin || IsAdminEmpresa)
+            return true;
+
         return true;
     }
 }

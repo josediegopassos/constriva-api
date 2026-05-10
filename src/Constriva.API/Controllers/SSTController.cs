@@ -23,22 +23,41 @@ public sealed class SSTController : BaseController
     [HttpPost("dds")]
     public async Task<IActionResult> CreateDDS([FromBody] CreateDDSDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateDDSCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateDDSCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("dds/{id:guid}")]
     public async Task<IActionResult> UpdateDDS(Guid id, [FromBody] UpdateDDSDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateDDSCommand(id, RequireEmpresaId(), dto.Tema, dto.Local, dto.DataRealizacao, dto.QuantidadeParticipantes, dto.Observacoes), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateDDSCommand(id, RequireEmpresaId(), dto.Tema, dto.Local, dto.DataRealizacao, dto.QuantidadeParticipantes, dto.Observacoes), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("dds/{id:guid}")]
     public async Task<IActionResult> DeleteDDS(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteDDSCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteDDSCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("acidentes")]
@@ -49,22 +68,41 @@ public sealed class SSTController : BaseController
     [HttpPost("acidentes")]
     public async Task<IActionResult> RegistrarAcidente([FromBody] CreateAcidenteDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateAcidenteCommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateAcidenteCommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("acidentes/{id:guid}")]
     public async Task<IActionResult> UpdateAcidente(Guid id, [FromBody] UpdateAcidenteDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateAcidenteCommand(id, RequireEmpresaId(), dto.Descricao, dto.DataAcidente, dto.AfastamentoMedico, dto.DiasAfastamento, dto.CausaRaiz, dto.AcoesCorretivas), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateAcidenteCommand(id, RequireEmpresaId(), dto.Descricao, dto.DataAcidente, dto.AfastamentoMedico, dto.DiasAfastamento, dto.CausaRaiz, dto.AcoesCorretivas), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("acidentes/{id:guid}")]
     public async Task<IActionResult> DeleteAcidente(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteAcidenteCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteAcidenteCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("indicadores")]
@@ -79,21 +117,40 @@ public sealed class SSTController : BaseController
     [HttpPost("epis")]
     public async Task<IActionResult> CreateEPI([FromBody] CreateEPIDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateEPICommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateEPICommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("epis/{id:guid}")]
     public async Task<IActionResult> UpdateEPI(Guid id, [FromBody] UpdateEPIDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateEPICommand(id, RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateEPICommand(id, RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("epis/{id:guid}")]
     public async Task<IActionResult> DeleteEPI(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteEPICommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteEPICommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

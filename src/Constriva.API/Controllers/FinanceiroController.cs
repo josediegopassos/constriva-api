@@ -1,4 +1,4 @@
-﻿using Constriva.Application.Common.Interfaces;
+using Constriva.Application.Common.Interfaces;
 using Constriva.Application.Features.Financeiro.Commands;
 using Constriva.Application.Features.Financeiro.DTOs;
 using Constriva.Application.Features.Financeiro.Queries;
@@ -26,8 +26,14 @@ namespace Constriva.API.Controllers
         [HttpPost("lancamentos")]
         public async Task<IActionResult> CreateLancamento([FromBody] CreateLancamentoDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new CreateLancamentoCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new CreateLancamentoCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPatch("lancamentos/{id:guid}/baixar")]
@@ -39,9 +45,11 @@ namespace Constriva.API.Controllers
                 await Mediator.Send(new BaixarLancamentoCommand(id, RequireEmpresaId(), req.ValorRealizado, req.DataPagamento), ct);
                 return NoContent();
             }
-            catch (Exception ex) { return HandleException(ex); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
-
 
         [HttpPut("lancamentos/{id:guid}")]
         public async Task<IActionResult> UpdateLancamento(Guid id, [FromBody] UpdateLancamentoDto dto, CancellationToken ct)
@@ -51,7 +59,10 @@ namespace Constriva.API.Controllers
                 await Mediator.Send(new UpdateLancamentoCommand(id, RequireEmpresaId(), dto), ct);
                 return NoContent();
             }
-            catch (Exception ex) { return HandleException(ex); }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("lancamentos/{id:guid}")]

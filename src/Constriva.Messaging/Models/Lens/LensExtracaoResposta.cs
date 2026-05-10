@@ -3,10 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens;
 
-/// <summary>
-/// Modelo de resposta da extração de dados pelo Constriva.Lens.
-/// Mapeado 1:1 com o LensResponse do Python.
-/// </summary>
 public class LensExtracaoResposta
 {
     [JsonPropertyName("document_type")]

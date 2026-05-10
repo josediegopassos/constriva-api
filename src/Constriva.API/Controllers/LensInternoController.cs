@@ -40,8 +40,6 @@ public sealed class LensInternoController : ControllerBase
 
         try
         {
-            // Delegate to specific notification methods based on event name
-            // The Messaging service sends pre-formatted data
             await _notificacao.NotificarItemAtualizado(
                 dto.ProcessamentoId ?? Guid.Empty,
                 Guid.Empty,
@@ -59,6 +57,7 @@ public sealed class LensInternoController : ControllerBase
             return StatusCode(500, new { sucesso = false, erro = "Erro interno ao processar notificacao." });
         }
     }
+
     [HttpGet("processamentos/{id:guid}")]
     public async Task<IActionResult> GetProcessamento(Guid id, CancellationToken ct)
     {

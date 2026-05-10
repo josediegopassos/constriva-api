@@ -31,7 +31,7 @@ public abstract class BaseController : ControllerBase
     {
         ValidationException ve => BadRequest(new
         {
-            message = "Validação falhou.",
+            message = ve.Errors.Any() ? "Validação falhou." : ve.Message,
             errors = ve.Errors.Select(e => new { field = e.PropertyName, error = e.ErrorMessage })
         }),
         UnauthorizedAccessException => Forbid(),

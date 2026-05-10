@@ -24,22 +24,41 @@ public sealed class GEDController : BaseController
     [HttpPost("pastas")]
     public async Task<IActionResult> CreatePasta([FromBody] CreatePastaDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreatePastaCommand(RequireEmpresaId(), dto.Nome, dto.ObraId, dto.PastaPaiId), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreatePastaCommand(RequireEmpresaId(), dto.Nome, dto.ObraId, dto.PastaPaiId), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("pastas/{id:guid}")]
     public async Task<IActionResult> UpdatePasta(Guid id, [FromBody] UpdatePastaDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdatePastaCommand(id, RequireEmpresaId(), dto.Nome), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdatePastaCommand(id, RequireEmpresaId(), dto.Nome), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("pastas/{id:guid}")]
     public async Task<IActionResult> DeletePasta(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeletePastaCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeletePastaCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("documentos")]
@@ -51,21 +70,40 @@ public sealed class GEDController : BaseController
     [HttpPost("documentos/upload")]
     public async Task<IActionResult> Upload([FromForm] UploadDocumentoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UploadDocumentoCommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UploadDocumentoCommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("documentos/{id:guid}")]
     public async Task<IActionResult> UpdateDocumento(Guid id, [FromBody] UpdateDocumentoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateDocumentoCommand(id, RequireEmpresaId(), dto.Nome, dto.Descricao, dto.DataVencimento, dto.Tags), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateDocumentoCommand(id, RequireEmpresaId(), dto.Nome, dto.Descricao, dto.DataVencimento, dto.Tags), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("documentos/{id:guid}")]
     public async Task<IActionResult> DeleteDocumento(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteDocumentoCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteDocumentoCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

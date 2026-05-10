@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Parte envolvida em um documento (emitente, destinatário, prestador, tomador).
-/// </summary>
 public class ParteExtraida
 {
     [JsonPropertyName("nome")]

@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Common.Interfaces;
 using Constriva.Domain.Entities.Cronograma;
 using Constriva.Domain.Enums;
@@ -9,7 +9,10 @@ using Constriva.Application.Features.Cronograma.DTOs;
 namespace Constriva.Application.Features.Cronograma.Commands;
 
 public record UpdatePredecessorasCommand(Guid AtividadeId, Guid EmpresaId, IEnumerable<Guid> Predecessoras)
-    : IRequest<Unit>, ITenantRequest { public Guid TenantId => EmpresaId; }
+    : IRequest<Unit>, ITenantRequest
+{
+    public Guid TenantId => EmpresaId;
+}
 
 public class UpdatePredecessorasCommandHandler : IRequestHandler<UpdatePredecessorasCommand, Unit>
 {
@@ -29,7 +32,6 @@ public class UpdatePredecessorasCommandHandler : IRequestHandler<UpdatePredecess
 
         var novasPredecessoras = request.Predecessoras.Distinct().ToList();
 
-        // 1. Valida existência de cada predecessora e pertença ao mesmo cronograma
         foreach (var predecessoraId in novasPredecessoras)
         {
             if (predecessoraId == request.AtividadeId)
@@ -43,18 +45,12 @@ public class UpdatePredecessorasCommandHandler : IRequestHandler<UpdatePredecess
                     $"Atividade predecessora {predecessoraId} pertence a um cronograma diferente.");
         }
 
-        // 2. Detecção de ciclos via DFS
-        // Carrega todos os vínculos existentes do cronograma para construir o grafo
         var vinculos = await _repo.GetVinculosAsync(atividade.CronogramaId, cancellationToken);
 
-        // Grafo: origem (predecessor) → lista de destinos (dependentes)
         var grafo = vinculos
             .GroupBy(v => v.AtividadeOrigemId)
             .ToDictionary(g => g.Key, g => g.Select(v => v.AtividadeDestinoId).ToList());
 
-        // Para cada nova predecessora Pi: verificar se a atividade X já é acessível a partir de Pi
-        // (i.e., há caminho Pi → ... → X no grafo atual).
-        // Se sim, adicionar Pi → X criaria Pi → X → ... → Pi = ciclo.
         foreach (var predecessoraId in novasPredecessoras)
         {
             if (TemCaminhoParaAlvo(predecessoraId, request.AtividadeId, grafo))
@@ -63,12 +59,9 @@ public class UpdatePredecessorasCommandHandler : IRequestHandler<UpdatePredecess
                     $"Verifique as dependências existentes.");
         }
 
-        // 3. Substitui os vínculos atuais pelos novos
-        // Remove vínculos existentes da atividade (onde ela é destino)
         foreach (var vinculo in atividade.Predecessoras.ToList())
             atividade.Predecessoras.Remove(vinculo);
 
-        // Adiciona novos vínculos
         foreach (var predecessoraId in novasPredecessoras)
         {
             atividade.Predecessoras.Add(new VinculoAtividade
@@ -84,11 +77,6 @@ public class UpdatePredecessorasCommandHandler : IRequestHandler<UpdatePredecess
         return Unit.Value;
     }
 
-    /// <summary>
-    /// DFS: verifica se há caminho de <paramref name="inicio"/> até <paramref name="alvo"/>
-    /// no grafo de dependências (origem → destino).
-    /// Retorna true se a atividade alvo é acessível a partir de inicio, indicando ciclo potencial.
-    /// </summary>
     private static bool TemCaminhoParaAlvo(Guid inicio, Guid alvo, Dictionary<Guid, List<Guid>> grafo)
     {
         var visitados = new HashSet<Guid>();
@@ -98,12 +86,16 @@ public class UpdatePredecessorasCommandHandler : IRequestHandler<UpdatePredecess
         while (stack.Count > 0)
         {
             var atual = stack.Pop();
-            if (atual == alvo) return true;
-            if (!visitados.Add(atual)) continue;
+            if (atual == alvo)
+                return true;
+            if (!visitados.Add(atual))
+                continue;
 
             if (grafo.TryGetValue(atual, out var destinos))
+            {
                 foreach (var d in destinos)
                     stack.Push(d);
+            }
         }
 
         return false;

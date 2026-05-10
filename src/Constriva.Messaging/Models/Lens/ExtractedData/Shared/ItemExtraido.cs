@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Item de produto/serviço extraído de um documento fiscal.
-/// </summary>
 public class ItemExtraido
 {
     [JsonPropertyName("codigo")]

@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.Extensions.Options;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Common.Interfaces;
 using Constriva.Application.Features.Financeiro;
 using Constriva.Domain.Enums;

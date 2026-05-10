@@ -1,16 +1,11 @@
 using MassTransit;
 using Constriva.Messaging.Consumers.Lens;
+using Constriva.Messaging.Consumers.WhatsApp;
 
 namespace Constriva.Messaging.Configuration;
 
-/// <summary>
-/// Configuração do MassTransit com RabbitMQ para mensageria assíncrona.
-/// </summary>
 public static class MassTransitConfiguration
 {
-    /// <summary>
-    /// Registra e configura o MassTransit com RabbitMQ no container de DI.
-    /// </summary>
     public static IServiceCollection AdicionarMassTransit(this IServiceCollection services, IConfiguration configuration)
     {
         var rabbitConfig = configuration.GetSection("RabbitMq").Get<RabbitMqConfiguration>() ?? new RabbitMqConfiguration();
@@ -19,6 +14,11 @@ public static class MassTransitConfiguration
         {
             cfg.AddConsumer<ProcessarDocumentoLensConsumer>();
             cfg.AddConsumer<ReprocessarDocumentoLensConsumer>();
+
+            cfg.AddConsumer<EnviarCotacaoWhatsAppConsumer>();
+            cfg.AddConsumer<EnviarLembreteCotacaoConsumer>();
+            cfg.AddConsumer<ProcessarRespostaFornecedorConsumer>();
+            cfg.AddConsumer<CotacaoAprovadaConsumer>();
 
             cfg.UsingRabbitMq((context, rabbitCfg) =>
             {
@@ -45,6 +45,34 @@ public static class MassTransitConfiguration
                     e.PrefetchCount = rabbitConfig.PrefetchCount;
                     e.ConcurrentMessageLimit = rabbitConfig.LimiteConcorrencia;
                     e.ConfigureConsumer<ReprocessarDocumentoLensConsumer>(context);
+                });
+
+                rabbitCfg.ReceiveEndpoint("constriva-whatsapp-enviar-cotacao", e =>
+                {
+                    e.PrefetchCount = rabbitConfig.PrefetchCount;
+                    e.ConcurrentMessageLimit = rabbitConfig.LimiteConcorrencia;
+                    e.ConfigureConsumer<EnviarCotacaoWhatsAppConsumer>(context);
+                });
+
+                rabbitCfg.ReceiveEndpoint("constriva-whatsapp-enviar-lembrete", e =>
+                {
+                    e.PrefetchCount = 2;
+                    e.ConcurrentMessageLimit = 2;
+                    e.ConfigureConsumer<EnviarLembreteCotacaoConsumer>(context);
+                });
+
+                rabbitCfg.ReceiveEndpoint("constriva-whatsapp-processar-resposta", e =>
+                {
+                    e.PrefetchCount = 1;
+                    e.ConcurrentMessageLimit = 1;
+                    e.ConfigureConsumer<ProcessarRespostaFornecedorConsumer>(context);
+                });
+
+                rabbitCfg.ReceiveEndpoint("constriva-whatsapp-cotacao-aprovada", e =>
+                {
+                    e.PrefetchCount = 1;
+                    e.ConcurrentMessageLimit = 1;
+                    e.ConfigureConsumer<CotacaoAprovadaConsumer>(context);
                 });
             });
         });

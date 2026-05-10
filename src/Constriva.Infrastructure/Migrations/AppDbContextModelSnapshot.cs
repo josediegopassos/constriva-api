@@ -10356,6 +10356,331 @@ namespace Constriva.Infrastructure.Migrations
                     b.ToTable("UsuarioPermissoes", (string)null);
                 });
 
+            modelBuilder.Entity("Constriva.Domain.Entities.WhatsApp.CotacaoWhatsApp", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CotacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataLimiteResposta")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DisparadaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("EncerradaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MensagemPersonalizada")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("NomeExibicaoEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("TelefoneEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("TotalFornecedoresConvidados")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("TotalPropostasExtraidas")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("TotalRespostas")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CotacaoId")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "DataLimiteResposta");
+
+                    b.ToTable("CotacoesWhatsApp", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.WhatsApp.MensagemWhatsApp", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CotacaoWhatsAppId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("EntregueEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("EnviadaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ErroEnvio")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("FornecedorCotacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FornecedorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LidaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("NomeFornecedor")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("NumeroTentativa")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("PayloadEnviado")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TelefoneDestino")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("TipoMensagem")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("WaMessageId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CotacaoWhatsAppId");
+
+                    b.HasIndex("EmpresaId");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("WaMessageId")
+                        .IsUnique()
+                        .HasFilter("\"WaMessageId\" IS NOT NULL");
+
+                    b.HasIndex("EmpresaId", "Status");
+
+                    b.HasIndex("FornecedorCotacaoId", "TipoMensagem");
+
+                    b.ToTable("MensagensWhatsApp", (string)null);
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.WhatsApp.RespostaFornecedorWhatsApp", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CotacaoWhatsAppId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DescricaoFalha")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("EmpresaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("ExtraidaComSucesso")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("FornecedorCotacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FornecedorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MediaMimeType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("MediaNomeArquivo")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("MediaPathArmazenado")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("MediaUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int?>("MotivoFalha")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("NivelConfianca")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PayloadWebhookOriginal")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ProcessadaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("ProcessadoPelaIa")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid?>("PropostaCotacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("RecebidaEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("TelefoneOrigem")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("TentativasProcessamento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("TextoMensagem")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TipoConteudo")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("WaMediaId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("WaMessageId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CotacaoWhatsAppId");
+
+                    b.HasIndex("EmpresaId");
+
+                    b.HasIndex("FornecedorCotacaoId");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("WaMessageId")
+                        .IsUnique();
+
+                    b.HasIndex("EmpresaId", "ProcessadoPelaIa");
+
+                    b.HasIndex("TelefoneOrigem", "RecebidaEm");
+
+                    b.ToTable("RespostasFornecedorWhatsApp", (string)null);
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteEmpresaConfig", b =>
                 {
                     b.HasOne("Constriva.Domain.Entities.Agente.AgenteTier", "Tier")
@@ -11497,6 +11822,28 @@ namespace Constriva.Infrastructure.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Constriva.Domain.Entities.WhatsApp.MensagemWhatsApp", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.WhatsApp.CotacaoWhatsApp", "CotacaoWhatsApp")
+                        .WithMany("Mensagens")
+                        .HasForeignKey("CotacaoWhatsAppId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CotacaoWhatsApp");
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.WhatsApp.RespostaFornecedorWhatsApp", b =>
+                {
+                    b.HasOne("Constriva.Domain.Entities.WhatsApp.CotacaoWhatsApp", "CotacaoWhatsApp")
+                        .WithMany("Respostas")
+                        .HasForeignKey("CotacaoWhatsAppId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CotacaoWhatsApp");
+                });
+
             modelBuilder.Entity("Constriva.Domain.Entities.Agente.AgenteSessao", b =>
                 {
                     b.Navigation("Mensagens");
@@ -11803,6 +12150,13 @@ namespace Constriva.Infrastructure.Migrations
                     b.Navigation("ObrasVinculadas");
 
                     b.Navigation("Permissoes");
+                });
+
+            modelBuilder.Entity("Constriva.Domain.Entities.WhatsApp.CotacaoWhatsApp", b =>
+                {
+                    b.Navigation("Mensagens");
+
+                    b.Navigation("Respostas");
                 });
 #pragma warning restore 612, 618
         }

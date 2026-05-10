@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Serilog;
-using Constriva.Application.Common.Behaviors;
 using Constriva.Application.Features.Lens.Interfaces;
-using Constriva.API.Consumers;
+using Constriva.API.Consumers.Lens;
+using Constriva.API.Consumers.WhatsApp;
 using Constriva.API.Hubs;
 using Constriva.API.Services;
 using Constriva.Infrastructure.DependencyInjection;
@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
+using Constriva.Application.Common.Implementations.Behaviors;
 
 var ptBr = new CultureInfo("pt-BR");
 CultureInfo.DefaultThreadCurrentCulture   = ptBr;
@@ -85,7 +86,7 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<ILensFileStorageService, LensFileStorageService>();
 builder.Services.AddScoped<ILensNotificationService, LensNotificationService>();
 
-// ── Lens: MassTransit + RabbitMQ ─────────────────────────────────────────
+// ── MassTransit + RabbitMQ (API: só publica + consumers de eventos Lens) ─
 var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
 var rabbitPort = ushort.Parse(builder.Configuration["RabbitMq:Porta"] ?? "5672");
 var rabbitUser = builder.Configuration["RabbitMq:Usuario"] ?? "guest";
@@ -94,8 +95,17 @@ var rabbitVHost = builder.Configuration["RabbitMq:VirtualHost"] ?? "/";
 
 builder.Services.AddMassTransit(cfg =>
 {
+    // Lens event consumers
     cfg.AddConsumer<DocumentoLensConcluidoConsumer>();
     cfg.AddConsumer<DocumentoLensErroConsumer>();
+
+    // WhatsApp event consumers (notificação SignalR)
+    cfg.AddConsumer<WhatsAppCotacaoEnviadaConsumer>();
+    cfg.AddConsumer<WhatsAppRespostaRecebidaConsumer>();
+    cfg.AddConsumer<WhatsAppPropostaExtraidaConsumer>();
+    cfg.AddConsumer<WhatsAppPropostaFalhaConsumer>();
+    cfg.AddConsumer<WhatsAppEnvioFalhouConsumer>();
+    cfg.AddConsumer<WhatsAppAprovacaoProcessadaConsumer>();
 
     cfg.UsingRabbitMq((context, rabbitCfg) =>
     {
@@ -109,6 +119,16 @@ builder.Services.AddMassTransit(cfg =>
         {
             e.ConfigureConsumer<DocumentoLensConcluidoConsumer>(context);
             e.ConfigureConsumer<DocumentoLensErroConsumer>(context);
+        });
+
+        rabbitCfg.ReceiveEndpoint("constriva-api-whatsapp-eventos", e =>
+        {
+            e.ConfigureConsumer<WhatsAppCotacaoEnviadaConsumer>(context);
+            e.ConfigureConsumer<WhatsAppRespostaRecebidaConsumer>(context);
+            e.ConfigureConsumer<WhatsAppPropostaExtraidaConsumer>(context);
+            e.ConfigureConsumer<WhatsAppPropostaFalhaConsumer>(context);
+            e.ConfigureConsumer<WhatsAppEnvioFalhouConsumer>(context);
+            e.ConfigureConsumer<WhatsAppAprovacaoProcessadaConsumer>(context);
         });
     });
 });
@@ -155,6 +175,7 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 app.MapHub<Constriva.API.Hubs.NotificationHub>("/hubs/notifications");
 app.MapHub<LensHub>("/hubs/lens");
+app.MapHub<Constriva.API.Hubs.CotacaoWhatsAppHub>("/hubs/cotacao-whatsapp");
 
 // Migrate + Seed
 await Constriva.Infrastructure.Persistence.DbSeeder.SeedAsync(app.Services);

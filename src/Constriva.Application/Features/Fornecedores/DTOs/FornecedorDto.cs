@@ -33,20 +33,3 @@ public record FornecedorDto(
     string? Estado,
     string? Cep,
     DateTime CreatedAt);
-
-public record FornecedorResumoDto(
-    Guid Id,
-    string Codigo,
-    TipoPessoaEnum TipoPessoa,
-    string RazaoSocial,
-    string? NomeFantasia,
-    string Documento,
-    string? Email,
-    string? Telefone,
-    TipoFornecedorEnum Tipo,
-    bool Ativo,
-    bool Homologado,
-    string? Cidade,
-    string? Estado);
-
-public record FornecedorAtivoDto(Guid Id, string RazaoSocial, string? NomeFantasia);

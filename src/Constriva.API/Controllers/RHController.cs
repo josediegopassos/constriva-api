@@ -29,29 +29,55 @@ public sealed class RHController : BaseController
     [HttpPost("funcionarios")]
     public async Task<IActionResult> CreateFuncionario([FromBody] CreateFuncionarioDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateFuncionarioCommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateFuncionarioCommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("funcionarios/{id:guid}")]
     public async Task<IActionResult> UpdateFuncionario(Guid id, [FromBody] UpdateFuncionarioDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateFuncionarioCommand(id, RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateFuncionarioCommand(id, RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("funcionarios/{id:guid}/status")]
     public async Task<IActionResult> AlterarStatusFuncionario(Guid id, [FromBody] AlterarStatusFuncionarioDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new AlterarStatusFuncionarioCommand(id, RequireEmpresaId(), dto.Status, dto.Motivo), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new AlterarStatusFuncionarioCommand(id, RequireEmpresaId(), dto.Status, dto.Motivo), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("funcionarios/{id:guid}")]
     public async Task<IActionResult> DeleteFuncionario(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteFuncionarioCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteFuncionarioCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("pontos/resumo")]
@@ -74,8 +100,14 @@ public sealed class RHController : BaseController
     [HttpPost("pontos")]
     public async Task<IActionResult> RegistrarPonto([FromBody] RegistrarPontoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new RegistrarPontoCommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new RegistrarPontoCommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("funcionarios/{funcionarioId:guid}/pontos")]
@@ -85,36 +117,69 @@ public sealed class RHController : BaseController
     [HttpPost("funcionarios/{funcionarioId:guid}/pontos")]
     public async Task<IActionResult> RegistrarPontoFuncionario(Guid funcionarioId, [FromBody] RegistrarPontoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new RegistrarPontoCommand(RequireEmpresaId(), dto with { FuncionarioId = funcionarioId }), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new RegistrarPontoCommand(RequireEmpresaId(), dto with { FuncionarioId = funcionarioId }), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("pontos/{id:guid}")]
     public async Task<IActionResult> UpdatePonto(Guid id, [FromBody] UpdatePontoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdatePontoCommand(id, RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdatePontoCommand(id, RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("pontos/{id:guid}/aprovar")]
     public async Task<IActionResult> AprovarPonto(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new AprovarPontoCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new AprovarPontoCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("pontos/{id:guid}/reprovar")]
     public async Task<IActionResult> ReprovarPonto(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new ReprovarPontoCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new ReprovarPontoCommand(id, RequireEmpresaId(), CurrentUser.UserId), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("pontos/{id:guid}")]
     public async Task<IActionResult> DeletePonto(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeletePontoCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeletePontoCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("folhas")]
@@ -125,8 +190,14 @@ public sealed class RHController : BaseController
     [HttpPost("folhas/gerar")]
     public async Task<IActionResult> GerarFolha([FromBody] GerarFolhaDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new GerarFolhaPagamentoCommand(RequireEmpresaId(), dto.Competencia, dto.FuncionarioId), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new GerarFolhaPagamentoCommand(RequireEmpresaId(), dto.Competencia, dto.FuncionarioId), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("funcionarios/{id:guid}/folhas")]
@@ -144,29 +215,55 @@ public sealed class RHController : BaseController
     [HttpPost("cargos")]
     public async Task<IActionResult> CreateCargo([FromBody] CreateCargoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateCargoCommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateCargoCommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("cargos/{id:guid}")]
     public async Task<IActionResult> UpdateCargo(Guid id, [FromBody] UpdateCargoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateCargoCommand(id, RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateCargoCommand(id, RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("cargos/{id:guid}/ativo")]
     public async Task<IActionResult> ToggleAtivoCargo(Guid id, [FromBody] ToggleAtivoDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new ToggleAtivoCargoCommand(id, RequireEmpresaId(), dto.Ativo), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new ToggleAtivoCargoCommand(id, RequireEmpresaId(), dto.Ativo), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("cargos/{id:guid}")]
     public async Task<IActionResult> DeleteCargo(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteCargoCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteCargoCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("departamentos")]
@@ -176,28 +273,54 @@ public sealed class RHController : BaseController
     [HttpPost("departamentos")]
     public async Task<IActionResult> CreateDepartamento([FromBody] CreateDepartamentoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new CreateDepartamentoCommand(RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new CreateDepartamentoCommand(RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPut("departamentos/{id:guid}")]
     public async Task<IActionResult> UpdateDepartamento(Guid id, [FromBody] UpdateDepartamentoDto dto, CancellationToken ct)
     {
-        try { return Ok(await Mediator.Send(new UpdateDepartamentoCommand(id, RequireEmpresaId(), dto), ct)); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            return Ok(await Mediator.Send(new UpdateDepartamentoCommand(id, RequireEmpresaId(), dto), ct));
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpDelete("departamentos/{id:guid}")]
     public async Task<IActionResult> DeleteDepartamento(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteDepartamentoCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteDepartamentoCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpPatch("departamentos/{id:guid}/ativo")]
     public async Task<IActionResult> ToggleAtivoDepartamento(Guid id, [FromBody] ToggleAtivoDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new ToggleAtivoDepartamentoCommand(id, RequireEmpresaId(), dto.Ativo), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new ToggleAtivoDepartamentoCommand(id, RequireEmpresaId(), dto.Ativo), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

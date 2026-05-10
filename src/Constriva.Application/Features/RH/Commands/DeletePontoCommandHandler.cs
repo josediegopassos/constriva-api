@@ -1,6 +1,6 @@
 using FluentValidation;
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Domain.Entities.RH;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;

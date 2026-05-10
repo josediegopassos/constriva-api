@@ -4,14 +4,8 @@ using Polly.Extensions.Http;
 
 namespace Constriva.Messaging.Policies;
 
-/// <summary>
-/// Política de retentativa com backoff exponencial para chamadas HTTP ao Constriva.Lens.
-/// </summary>
 public static class RetryPolicy
 {
-    /// <summary>
-    /// Cria uma política de retentativa assíncrona com 3 tentativas e backoff exponencial.
-    /// </summary>
     public static IAsyncPolicy<HttpResponseMessage> Criar(IServiceProvider serviceProvider)
     {
         var logger = serviceProvider.GetRequiredService<ILogger<HttpClient>>();

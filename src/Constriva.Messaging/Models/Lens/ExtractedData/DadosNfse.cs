@@ -3,9 +3,6 @@ using Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData;
 
-/// <summary>
-/// Dados extraídos de uma Nota Fiscal de Serviço Eletrônica (NFS-e).
-/// </summary>
 public class DadosNfse
 {
     [JsonPropertyName("numero")]

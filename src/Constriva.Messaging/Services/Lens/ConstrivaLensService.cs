@@ -5,18 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Constriva.Messaging.Services.Lens;
 
-/// <summary>
-/// Implementação do serviço de comunicação com o Constriva.Lens.
-/// </summary>
 public class ConstrivaLensService : IConstrivaLensService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILensAuthenticationService _autenticacao;
     private readonly ILogger<ConstrivaLensService> _logger;
 
-    /// <summary>
-    /// Inicializa uma nova instância do serviço Constriva.Lens.
-    /// </summary>
     public ConstrivaLensService(
         IHttpClientFactory httpClientFactory,
         ILensAuthenticationService autenticacao,
@@ -27,10 +21,8 @@ public class ConstrivaLensService : IConstrivaLensService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<LensExtracaoResposta> ProcessarDocumentoAsync(string caminhoArquivo, string tipoDocumento, CancellationToken ct)
     {
-        // Normalizar: "Nfce" → "NFCE", "CupomFiscal" → "CUPOM_FISCAL", etc.
         var tipoNormalizado = NormalizarTipoDocumento(tipoDocumento);
 
         _logger.LogInformation("Iniciando processamento OCR do arquivo {Arquivo} como {TipoDocumento}.", caminhoArquivo, tipoNormalizado);
@@ -80,7 +72,6 @@ public class ConstrivaLensService : IConstrivaLensService
         return resultado;
     }
 
-    /// <inheritdoc />
     public async Task<bool> VerificarSaudeAsync(CancellationToken ct)
     {
         try
@@ -98,11 +89,9 @@ public class ConstrivaLensService : IConstrivaLensService
 
     private static string NormalizarTipoDocumento(string tipo)
     {
-        // Se já está no formato correto (ex: "NFCE", "BOLETO"), retorna direto
         if (tipo == tipo.ToUpperInvariant() && !tipo.Any(char.IsLower))
             return tipo;
 
-        // Mapa de enum C# para API Lens
         return tipo switch
         {
             "Nfe" => "NFE",

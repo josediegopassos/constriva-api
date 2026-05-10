@@ -6,17 +6,11 @@ using Constriva.Messaging.Models.Lens;
 
 namespace Constriva.Messaging.Repositories.Lens;
 
-/// <summary>
-/// Implementação do repositório de logs de processamento Lens usando MongoDB.
-/// </summary>
 public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
 {
     private readonly IMongoCollection<LogProcessamentoLens> _colecao;
     private readonly ILogger<LogProcessamentoLensRepository> _logger;
 
-    /// <summary>
-    /// Inicializa o repositório e cria os índices necessários.
-    /// </summary>
     public LogProcessamentoLensRepository(
         IMongoDatabase database,
         IOptions<MongoDbConfiguration> config,
@@ -35,15 +29,12 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
         {
             var indices = new List<CreateIndexModel<LogProcessamentoLens>>
             {
-                // Índice TTL em CriadoEm
                 new(Builders<LogProcessamentoLens>.IndexKeys.Ascending(x => x.CriadoEm),
                     new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(ttlDias), Name = "idx_ttl_criado_em" }),
 
-                // Índice único em ProcessamentoId
                 new(Builders<LogProcessamentoLens>.IndexKeys.Ascending(x => x.ProcessamentoId),
                     new CreateIndexOptions { Unique = true, Name = "idx_processamento_id" }),
 
-                // Índice composto para queries de analytics
                 new(Builders<LogProcessamentoLens>.IndexKeys
                     .Ascending(x => x.EmpresaId)
                     .Ascending(x => x.CriadoEm),
@@ -59,7 +50,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
         }
     }
 
-    /// <inheritdoc />
     public async Task InserirAsync(LogProcessamentoLens log, CancellationToken ct)
     {
         var filtro = Builders<LogProcessamentoLens>.Filter.Eq(x => x.ProcessamentoId, log.ProcessamentoId);
@@ -79,7 +69,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
         _logger.LogDebug("Log de processamento {ProcessamentoId} salvo no MongoDB.", log.ProcessamentoId);
     }
 
-    /// <inheritdoc />
     public async Task<LogProcessamentoLens?> ObterPorProcessamentoIdAsync(Guid processamentoId, CancellationToken ct)
     {
         return await _colecao
@@ -87,7 +76,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
             .FirstOrDefaultAsync(ct);
     }
 
-    /// <inheritdoc />
     public async Task<List<LogProcessamentoLens>> ListarPorEmpresaAsync(Guid empresaId, DateTime de, DateTime ate, CancellationToken ct)
     {
         return await _colecao
@@ -96,7 +84,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
             .ToListAsync(ct);
     }
 
-    /// <inheritdoc />
     public async Task<ResumoProcessamentoLens> ObterResumoAsync(Guid empresaId, DateTime de, DateTime ate, CancellationToken ct)
     {
         var filtro = Builders<LogProcessamentoLens>.Filter.And(
@@ -139,7 +126,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
         };
     }
 
-    /// <inheritdoc />
     public async Task<List<ProcessamentoPorTipo>> ObterPorTipoAsync(Guid empresaId, DateTime de, DateTime ate, CancellationToken ct)
     {
         var filtro = Builders<LogProcessamentoLens>.Filter.And(
@@ -161,7 +147,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
         return await pipeline.ToListAsync(ct);
     }
 
-    /// <inheritdoc />
     public async Task<List<TendenciaConfidence>> ObterTendenciaConfidenceAsync(Guid empresaId, DateTime de, DateTime ate, CancellationToken ct)
     {
         var filtro = Builders<LogProcessamentoLens>.Filter.And(
@@ -183,7 +168,6 @@ public class LogProcessamentoLensRepository : ILogProcessamentoLensRepository
         return await pipeline.ToListAsync(ct);
     }
 
-    /// <inheritdoc />
     public async Task<List<WarningFrequente>> ObterWarningsFrequentesAsync(Guid empresaId, int limite, CancellationToken ct)
     {
         var filtro = Builders<LogProcessamentoLens>.Filter.Eq(x => x.EmpresaId, empresaId);

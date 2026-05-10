@@ -21,9 +21,3 @@ public record ItemDocumentoLensDto(
     decimal? QuantidadeOriginal,
     decimal? PrecoUnitarioOriginal,
     ProdutoSugeridoDto? ProdutoSugerido);
-
-public record ProdutoSugeridoDto(
-    Guid Id,
-    string Codigo,
-    string Descricao,
-    string? Unidade);

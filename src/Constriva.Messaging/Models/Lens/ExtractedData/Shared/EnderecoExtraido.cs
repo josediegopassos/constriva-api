@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Endereço extraído de um documento via OCR.
-/// </summary>
 public class EnderecoExtraido
 {
     [JsonPropertyName("logradouro")]

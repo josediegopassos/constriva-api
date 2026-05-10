@@ -1,5 +1,15 @@
+using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Constriva.Application.Common.Interfaces;
+using Constriva.Domain.Interfaces.WhatsApp;
+using Constriva.Infrastructure.Integrations.OpenAI.Extrator;
+using Constriva.Infrastructure.Integrations.WhatsApp;
+using Constriva.Infrastructure.Integrations.WhatsApp.Options;
+using Constriva.Infrastructure.Persistence;
+using Constriva.Infrastructure.Services;
 using Constriva.Messaging.Configuration;
 using Constriva.Messaging.Policies;
 using Constriva.Messaging.Repositories.Lens;
@@ -8,24 +18,15 @@ using Constriva.Messaging.Services.Notification;
 
 namespace Constriva.Messaging.Extensions;
 
-/// <summary>
-/// Extensões para configuração dos serviços do Constriva.Messaging.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Registra todos os serviços necessários para o Constriva.Messaging.
-    /// </summary>
     public static IServiceCollection AdicionarConstrivaMensageria(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configurações tipadas
         services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMq"));
         services.Configure<MongoDbConfiguration>(configuration.GetSection("MongoDb"));
 
-        // MassTransit + RabbitMQ
         services.AdicionarMassTransit(configuration);
 
-        // MongoDB
         var mongoConfig = configuration.GetSection("MongoDb").Get<MongoDbConfiguration>() ?? new MongoDbConfiguration();
         services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoConfig.ConnectionString));
         services.AddSingleton(sp =>
@@ -34,18 +35,14 @@ public static class ServiceCollectionExtensions
             return client.GetDatabase(mongoConfig.NomeBanco);
         });
 
-        // Repositórios
         services.AddScoped<ILogProcessamentoLensRepository, LogProcessamentoLensRepository>();
 
-        // Serviços
         services.AddScoped<IConstrivaLensService, ConstrivaLensService>();
         services.AddScoped<ILensAuthenticationService, LensAuthenticationService>();
         services.AddScoped<ISignalRNotificationService, SignalRNotificationService>();
 
-        // Cache em memória
         services.AddMemoryCache();
 
-        // HttpClient - Constriva.Lens com Polly
         var lensBaseUrl = configuration["ConstrivaLens:BaseUrl"] ?? "http://localhost:8001";
         var lensTimeout = int.Parse(configuration["ConstrivaLens:TimeoutSegundos"] ?? "120");
 
@@ -57,7 +54,6 @@ public static class ServiceCollectionExtensions
         .AddPolicyHandler((sp, _) => RetryPolicy.Criar(sp))
         .AddPolicyHandler((sp, _) => CircuitBreakerPolicy.Criar(sp));
 
-        // HttpClient - Constriva.API (para notificações SignalR)
         var apiBaseUrl = configuration["ConstrivaApi:BaseUrl"] ?? "http://localhost:5000";
         var chaveInterna = configuration["ConstrivaApi:ChaveInterna"] ?? "";
 
@@ -71,7 +67,46 @@ public static class ServiceCollectionExtensions
             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
         });
 
-        // Health Checks
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        var connStr = configuration.GetConnectionString("DefaultConnection");
+        if (!string.IsNullOrEmpty(connStr))
+        {
+            var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(connStr);
+            dataSourceBuilder.EnableDynamicJson();
+            var dataSource = dataSourceBuilder.Build();
+
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(dataSource,
+                    npg => npg.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
+        }
+
+        services.Configure<WhatsAppOptions>(configuration.GetSection("WhatsApp"));
+        services.Configure<Constriva.Application.Features.Agente.Settings.OpenAISettings>(
+            configuration.GetSection("OpenAI"));
+
+        services.AddHttpClient("OpenAI", client =>
+        {
+            var baseUrl = configuration["OpenAI:BaseUrl"] ?? "https://api.openai.com";
+            client.BaseAddress = new Uri(baseUrl);
+            var apiKey = configuration["OpenAI:ApiKey"];
+            if (!string.IsNullOrEmpty(apiKey))
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+        });
+
+        services.AddHttpClient("WhatsApp", (sp, client) =>
+        {
+            var opts = sp.GetRequiredService<IOptions<WhatsAppOptions>>().Value;
+            client.BaseAddress = new Uri(opts.BaseUrl);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", opts.AccessToken);
+            client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSegundos);
+        });
+
+        services.AddScoped<IWhatsAppGateway, WhatsAppGatewayService>();
+        services.AddScoped<IExtratorPropostaService, ExtratorPropostaService>();
+        services.AddScoped<IFileStorageService, S3StorageService>();
+
         services.AddHealthChecks()
             .AddCheck("rabbitmq", () => HealthCheckResult.Healthy("RabbitMQ operacional"), tags: new[] { "ready" })
             .AddCheck("mongodb", () =>

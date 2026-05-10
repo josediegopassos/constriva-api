@@ -10,9 +10,6 @@ using Constriva.Messaging.Services.Notification;
 
 namespace Constriva.Messaging.Consumers.Lens;
 
-/// <summary>
-/// Consumer responsável por processar documentos via Constriva.Lens (OCR).
-/// </summary>
 public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensCommand>
 {
     private readonly IConstrivaLensService _lensServico;
@@ -21,9 +18,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ILogger<ProcessarDocumentoLensConsumer> _logger;
 
-    /// <summary>
-    /// Inicializa o consumer de processamento de documentos Lens.
-    /// </summary>
     public ProcessarDocumentoLensConsumer(
         IConstrivaLensService lensServico,
         ILogProcessamentoLensRepository logRepositorio,
@@ -38,9 +32,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
         _logger = logger;
     }
 
-    /// <summary>
-    /// Consome e processa o comando de processamento de documento OCR.
-    /// </summary>
     public async Task Consume(ConsumeContext<ProcessDocumentoLensCommand> context)
     {
         var comando = context.Message;
@@ -50,7 +41,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
             "Iniciando processamento OCR. ProcessamentoId: {ProcessamentoId}, Arquivo: {Arquivo}, Tipo: {Tipo}.",
             comando.ProcessamentoId, comando.NomeArquivo, comando.TipoDocumento);
 
-        // Notificar que o processamento está em andamento
         await _publishEndpoint.Publish(new DocumentoLensProcessedEvent
         {
             CorrelacaoId = comando.CorrelacaoId,
@@ -68,18 +58,15 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
 
         try
         {
-            // Verificar se o arquivo existe
             if (!File.Exists(comando.CaminhoArquivo))
             {
                 throw new FileNotFoundException(
                     $"Arquivo não encontrado no caminho: {comando.CaminhoArquivo}", comando.CaminhoArquivo);
             }
 
-            // Processar documento via Constriva.Lens
             var resultado = await _lensServico.ProcessarDocumentoAsync(
                 comando.CaminhoArquivo, comando.TipoDocumento, ct);
 
-            // Salvar log no MongoDB
             var log = new LogProcessamentoLens
             {
                 ProcessamentoId = comando.ProcessamentoId,
@@ -104,7 +91,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
 
             await _logRepositorio.InserirAsync(log, ct);
 
-            // Publicar evento de conclusão
             var eventoConcluido = new DocumentoLensCompletedEvent
             {
                 CorrelacaoId = comando.CorrelacaoId,
@@ -126,7 +112,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
 
             await _publishEndpoint.Publish(eventoConcluido, ct);
 
-            // Notificar via SignalR
             await _notificacao.NotificarProcessamentoConcluidoAsync(
                 comando.UsuarioId, comando.ObraId, comando.EmpresaId,
                 new
@@ -151,7 +136,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
                 "Erro no processamento OCR. ProcessamentoId: {ProcessamentoId}, Arquivo: {Arquivo}.",
                 comando.ProcessamentoId, comando.NomeArquivo);
 
-            // Salvar log de erro no MongoDB
             var logErro = new LogProcessamentoLens
             {
                 ProcessamentoId = comando.ProcessamentoId,
@@ -177,7 +161,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
                 _logger.LogError(logEx, "Falha ao salvar log de erro no MongoDB para ProcessamentoId: {ProcessamentoId}.", comando.ProcessamentoId);
             }
 
-            // Publicar evento de erro
             var podeReprocessar = ex is not FileNotFoundException;
             await _publishEndpoint.Publish(new DocumentoLensErrorEvent
             {
@@ -191,7 +174,6 @@ public class ProcessarDocumentoLensConsumer : IConsumer<ProcessDocumentoLensComm
                 PodeReprocessar = podeReprocessar
             }, ct);
 
-            // Notificar erro via SignalR
             await _notificacao.NotificarProcessamentoErroAsync(
                 comando.UsuarioId, comando.ObraId, comando.EmpresaId,
                 new

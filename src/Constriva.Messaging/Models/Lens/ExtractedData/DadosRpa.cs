@@ -3,9 +3,6 @@ using Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData;
 
-/// <summary>
-/// Dados extraídos de um Recibo de Pagamento Autônomo (RPA).
-/// </summary>
 public class DadosRpa
 {
     [JsonPropertyName("numero")]

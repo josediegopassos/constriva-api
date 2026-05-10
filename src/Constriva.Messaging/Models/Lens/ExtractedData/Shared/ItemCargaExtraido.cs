@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Item de carga extraído de um CT-e.
-/// </summary>
 public class ItemCargaExtraido
 {
     [JsonPropertyName("descricao")]

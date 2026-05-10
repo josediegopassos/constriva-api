@@ -13,6 +13,15 @@ using Constriva.Infrastructure.Persistence.Repositories;
 using Constriva.Infrastructure.Persistence.Repositories.Clientes;
 using Constriva.Infrastructure.Persistence.Repositories.Orcamento;
 using Constriva.Infrastructure.Services;
+using Constriva.Infrastructure.Integrations.OpenAI.Extrator;
+using Constriva.Infrastructure.Integrations.WhatsApp;
+using Constriva.Infrastructure.Integrations.WhatsApp.Options;
+using Constriva.Domain.Interfaces.WhatsApp;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Extensions.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Constriva.Infrastructure.DependencyInjection;
@@ -93,6 +102,9 @@ public static class InfrastructureServiceExtensions
         // Repositories - Lens
         services.AddScoped<IDocumentoLensRepository, DocumentoLensRepository>();
 
+        // Repositories - WhatsApp
+        services.AddScoped<IWhatsAppCotacaoRepository, Persistence.Repositories.WhatsApp.WhatsAppCotacaoRepository>();
+
         // Repositories - Agente
         services.AddScoped<IAgenteRepository, AgenteRepository>();
 
@@ -112,6 +124,44 @@ public static class InfrastructureServiceExtensions
             if (!string.IsNullOrEmpty(apiKey))
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
         });
+
+        // WhatsApp Business API
+        services.AddOptions<WhatsAppOptions>()
+            .Bind(configuration.GetSection("WhatsApp"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddHttpClient("WhatsApp", (sp, client) =>
+        {
+            var opts = sp.GetRequiredService<IOptions<WhatsAppOptions>>().Value;
+            client.BaseAddress = new Uri(opts.BaseUrl);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", opts.AccessToken);
+            client.Timeout = TimeSpan.FromSeconds(opts.TimeoutSegundos);
+        })
+        .AddPolicyHandler((sp, _) =>
+        {
+            var opts = sp.GetRequiredService<IOptions<WhatsAppOptions>>().Value;
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(
+                    opts.MaxTentativas,
+                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    onRetry: (outcome, timespan, retryCount, _) =>
+                    {
+                        var logger = sp.GetRequiredService<ILogger<WhatsAppGatewayService>>();
+                        logger.LogWarning(
+                            "[WHATSAPP] Retry {RetryCount} aguardando {Delay}s. Erro: {Error}",
+                            retryCount, timespan.TotalSeconds,
+                            outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString());
+                    });
+        });
+
+        services.AddScoped<IWhatsAppGateway, WhatsAppGatewayService>();
+
+        // Extrator de propostas via IA (GPT-4o mini Vision)
+        services.AddScoped<Constriva.Domain.Interfaces.WhatsApp.IExtratorPropostaService, ExtratorPropostaService>();
 
         // Services - Lens
         services.AddScoped<Constriva.Application.Features.Lens.Interfaces.ILensLogService, LensLogService>();

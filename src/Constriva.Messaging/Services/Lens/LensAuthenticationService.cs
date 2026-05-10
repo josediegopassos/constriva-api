@@ -6,10 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Constriva.Messaging.Services.Lens;
 
-/// <summary>
-/// Implementação do serviço de autenticação com o Constriva.Lens.
-/// Thread-safe via SemaphoreSlim para evitar múltiplas requisições simultâneas de token.
-/// </summary>
 public class LensAuthenticationService : ILensAuthenticationService
 {
     private const string ChaveCache = "constriva-lens-token";
@@ -19,9 +15,6 @@ public class LensAuthenticationService : ILensAuthenticationService
     private readonly ILogger<LensAuthenticationService> _logger;
     private readonly SemaphoreSlim _semaforo = new(1, 1);
 
-    /// <summary>
-    /// Inicializa uma nova instância do serviço de autenticação Lens.
-    /// </summary>
     public LensAuthenticationService(
         IHttpClientFactory httpClientFactory,
         IMemoryCache cache,
@@ -34,7 +27,6 @@ public class LensAuthenticationService : ILensAuthenticationService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<string> ObterTokenAsync(CancellationToken ct)
     {
         if (_cache.TryGetValue(ChaveCache, out string? tokenCache) && !string.IsNullOrEmpty(tokenCache))
@@ -43,7 +35,6 @@ public class LensAuthenticationService : ILensAuthenticationService
         await _semaforo.WaitAsync(ct);
         try
         {
-            // Verificar novamente após obter o semáforo (double-check)
             if (_cache.TryGetValue(ChaveCache, out tokenCache) && !string.IsNullOrEmpty(tokenCache))
                 return tokenCache;
 
@@ -76,7 +67,6 @@ public class LensAuthenticationService : ILensAuthenticationService
             if (tokenResposta is null || string.IsNullOrEmpty(tokenResposta.AccessToken))
                 throw new InvalidOperationException("Token de acesso do Constriva.Lens retornou vazio.");
 
-            // Cache com margem de segurança de 60 segundos
             var expiracao = TimeSpan.FromSeconds(Math.Max(tokenResposta.ExpiresIn - 60, 30));
             _cache.Set(ChaveCache, tokenResposta.AccessToken, expiracao);
 
@@ -90,7 +80,6 @@ public class LensAuthenticationService : ILensAuthenticationService
         }
     }
 
-    /// <inheritdoc />
     public Task InvalidarTokenAsync()
     {
         _cache.Remove(ChaveCache);

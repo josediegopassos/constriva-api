@@ -3,7 +3,14 @@
     "allow": [
       "Bash(dotnet build:*)",
       "Bash(dotnet restore:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs wc:*)",
+      "Bash(mkdir -p \"C:/Projetos/Capital/constriva-api/src/Constriva.Messaging.Contracts/WhatsApp/Commands\")",
+      "Bash(mkdir -p \"C:/Projetos/Capital/constriva-api/src/Constriva.Messaging.Contracts/WhatsApp/Events\")",
+      "Bash(git -C \"C:/Projetos/Capital/constriva-api\" status --short)",
+      "Bash(dotnet ef:*)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

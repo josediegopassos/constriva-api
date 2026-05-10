@@ -13,7 +13,6 @@ public sealed class AuthController : BaseController
     public AuthController(IMediator mediator, ICurrentUser currentUser)
         : base(mediator, currentUser) { }
 
-    /// <summary>Autenticar usuário e retornar tokens JWT</summary>
     [HttpPost("login")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
@@ -33,7 +32,6 @@ public sealed class AuthController : BaseController
         }
     }
 
-    /// <summary>Renovar access token usando refresh token</summary>
     [HttpPost("refresh")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
@@ -53,7 +51,6 @@ public sealed class AuthController : BaseController
         }
     }
 
-    /// <summary>Obter dados do usuário logado</summary>
     [HttpGet("me")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -2,9 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
-/// <summary>
-/// Item detalhado de uma fatura.
-/// </summary>
 public class ItemFaturaExtraido
 {
     [JsonPropertyName("descricao")]

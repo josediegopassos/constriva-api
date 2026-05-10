@@ -1,6 +1,6 @@
 using MediatR;
 using MassTransit;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Domain.Entities.Lens;
 using Constriva.Domain.Enums;
 using Constriva.Domain.Interfaces.Repositories;

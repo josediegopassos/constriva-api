@@ -3,9 +3,6 @@ using Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData;
 
-/// <summary>
-/// Dados extraídos de uma Fatura.
-/// </summary>
 public class DadosFatura
 {
     [JsonPropertyName("numero")]

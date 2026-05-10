@@ -4,14 +4,8 @@ using Polly.Extensions.Http;
 
 namespace Constriva.Messaging.Policies;
 
-/// <summary>
-/// Política de circuit breaker para proteger contra falhas consecutivas do Constriva.Lens.
-/// </summary>
 public static class CircuitBreakerPolicy
 {
-    /// <summary>
-    /// Cria uma política de circuit breaker que abre após 5 falhas consecutivas por 30 segundos.
-    /// </summary>
     public static IAsyncPolicy<HttpResponseMessage> Criar(IServiceProvider serviceProvider)
     {
         var logger = serviceProvider.GetRequiredService<ILogger<HttpClient>>();

@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Common.Interfaces;
 using Constriva.Application.Features.Lens.DTOs;
 using Constriva.Application.Features.Lens.Extensions;

@@ -1,5 +1,5 @@
 using MediatR;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Common.Interfaces;
 using Constriva.Domain.Entities.Qualidade;
 using Constriva.Domain.Enums;

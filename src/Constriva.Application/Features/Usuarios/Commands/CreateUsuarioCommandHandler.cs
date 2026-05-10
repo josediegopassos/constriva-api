@@ -1,6 +1,6 @@
 using MediatR;
 using BCrypt.Net;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Common.Interfaces;
 using Constriva.Domain.Entities.Tenant;
 using Constriva.Domain.Enums;

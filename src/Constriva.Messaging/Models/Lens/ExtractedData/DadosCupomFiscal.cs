@@ -3,9 +3,6 @@ using Constriva.Messaging.Models.Lens.ExtractedData.Shared;
 
 namespace Constriva.Messaging.Models.Lens.ExtractedData;
 
-/// <summary>
-/// Dados extraídos de um Cupom Fiscal.
-/// </summary>
 public class DadosCupomFiscal
 {
     [JsonPropertyName("numero")]

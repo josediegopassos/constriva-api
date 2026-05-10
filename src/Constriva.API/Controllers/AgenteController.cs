@@ -20,13 +20,13 @@ public class AgenteController : BaseController
     [HttpPost("chat")]
     public async Task<IActionResult> Chat([FromBody] ChatRequestDto dto, CancellationToken ct)
     {
-        try 
-        { 
-            return Ok(await Mediator.Send(new ChatCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct)); 
+        try
+        {
+            return Ok(await Mediator.Send(new ChatCommand(RequireEmpresaId(), CurrentUser.UserId, dto), ct));
         }
-        catch (Exception ex) 
-        { 
-            return HandleException(ex); 
+        catch (Exception ex)
+        {
+            return HandleException(ex);
         }
     }
 
@@ -41,8 +41,15 @@ public class AgenteController : BaseController
     [HttpDelete("sessao/{id:guid}")]
     public async Task<IActionResult> DeleteSessao(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new DeleteSessaoCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new DeleteSessaoCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("consumo")]
@@ -65,7 +72,14 @@ public class AgenteController : BaseController
     [HttpPatch("notificacoes/{id:guid}/lida")]
     public async Task<IActionResult> MarcarNotificacaoLida(Guid id, CancellationToken ct)
     {
-        try { await Mediator.Send(new MarcarNotificacaoLidaCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new MarcarNotificacaoLidaCommand(id, RequireEmpresaId()), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

@@ -1,6 +1,6 @@
 using MediatR;
 using MassTransit;
-using Constriva.Application.Common.Behaviors;
+
 using Constriva.Application.Features.Lens.DTOs;
 using Constriva.Domain.Entities.Compras;
 using Constriva.Domain.Entities.Lens;

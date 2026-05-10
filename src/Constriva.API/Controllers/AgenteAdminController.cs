@@ -25,8 +25,15 @@ public class AgenteAdminController : BaseController
     [HttpPost("cota-avulsa")]
     public async Task<IActionResult> CriarCotaAvulsa([FromBody] CriarCotaAvulsaDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new CriarCotaAvulsaCommand(dto.EmpresaId, CurrentUser.UserId, dto), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new CriarCotaAvulsaCommand(dto.EmpresaId, CurrentUser.UserId, dto), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     [HttpGet("empresas")]
@@ -36,7 +43,14 @@ public class AgenteAdminController : BaseController
     [HttpPut("empresas/{empresaId:guid}/tier")]
     public async Task<IActionResult> AlterarTier(Guid empresaId, [FromBody] AlterarTierDto dto, CancellationToken ct)
     {
-        try { await Mediator.Send(new AlterarTierEmpresaCommand(empresaId, dto.TierId), ct); return NoContent(); }
-        catch (Exception ex) { return HandleException(ex); }
+        try
+        {
+            await Mediator.Send(new AlterarTierEmpresaCommand(empresaId, dto.TierId), ct);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 }

@@ -27,15 +27,27 @@ namespace Constriva.API.Controllers
         [HttpPost("{obraId:guid}")]
         public async Task<IActionResult> CreateCronograma(Guid obraId, [FromBody] CreateCronogramaDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new CreateCronogramaCommand(obraId, RequireEmpresaId(), dto.Nome, dto.DataInicio, dto.DataFim, dto.Descricao, dto.Observacoes, dto.ELinhaDBase, dto.VersaoBaseadaEm), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new CreateCronogramaCommand(obraId, RequireEmpresaId(), dto.Nome, dto.DataInicio, dto.DataFim, dto.Descricao, dto.Observacoes, dto.ELinhaDBase, dto.VersaoBaseadaEm), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCronograma(Guid id, [FromBody] UpdateCronogramaDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdateCronogramaCommand(id, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new UpdateCronogramaCommand(id, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("{obraId:guid}/atividades")]
@@ -45,15 +57,28 @@ namespace Constriva.API.Controllers
         [HttpPost("{obraId:guid}/atividades")]
         public async Task<IActionResult> CreateAtividade(Guid obraId, [FromBody] CreateAtividadeDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new CreateAtividadeCommand(obraId, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new CreateAtividadeCommand(obraId, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpPatch("atividades/{id:guid}/progresso")]
         public async Task<IActionResult> UpdateProgresso(Guid id, [FromBody] UpdateProgressoDto dto, CancellationToken ct)
         {
-            try { await Mediator.Send(new UpdateProgressoAtividadeCommand(id, RequireEmpresaId(), dto.PercentualConcluido, dto.Observacao), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new UpdateProgressoAtividadeCommand(id, RequireEmpresaId(), dto.PercentualConcluido, dto.Observacao), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("{obraId:guid}/curva-s")]
@@ -63,8 +88,14 @@ namespace Constriva.API.Controllers
         [HttpPost("{id:guid}/curva-s/reprocessar")]
         public async Task<IActionResult> ReprocessarCurvaS(Guid id, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new ReprocessarCurvaSCommand(id, RequireEmpresaId()), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new ReprocessarCurvaSCommand(id, RequireEmpresaId()), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpGet("{obraId:guid}/evm")]
@@ -78,22 +109,42 @@ namespace Constriva.API.Controllers
         [HttpPut("atividades/{id:guid}")]
         public async Task<IActionResult> UpdateAtividade(Guid id, [FromBody] UpdateAtividadeDto dto, CancellationToken ct)
         {
-            try { return Ok(await Mediator.Send(new UpdateAtividadeCommand(id, RequireEmpresaId(), dto), ct)); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                return Ok(await Mediator.Send(new UpdateAtividadeCommand(id, RequireEmpresaId(), dto), ct));
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("atividades/{id:guid}")]
         public async Task<IActionResult> DeleteAtividade(Guid id, CancellationToken ct)
         {
-            try { await Mediator.Send(new DeleteAtividadeCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new DeleteAtividadeCommand(id, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCronograma(Guid id, CancellationToken ct)
         {
-            try { await Mediator.Send(new DeleteCronogramaCommand(id, RequireEmpresaId()), ct); return NoContent(); }
-            catch (Exception ex) { return HandleException(ex); }
+            try
+            {
+                await Mediator.Send(new DeleteCronogramaCommand(id, RequireEmpresaId()), ct);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
     }
 }
